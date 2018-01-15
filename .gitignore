@@ -45,3 +45,9 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# matlab .asv
+*.asv
+
+# exe files
+*.exe

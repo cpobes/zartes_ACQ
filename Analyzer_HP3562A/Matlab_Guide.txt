@@ -1,0 +1,34 @@
+
+bueno si lo que quieres es crear un .exe con matlab: 
+
+a) mbuild -setup para elegir el compilador a usar 
+Lcc-win32 C 2.4.1 . si es la primer ves que compilas.. 
+
+primero si es un unico archivo .m es decir una funcion de matlab (los scripts de matlab tambien son archivos .m pero estos 
+no se pueden convertir a .exe) o una gui de matlab ( 1 archivo .m y uno .fig) entonces lo que debes hacer es.... 
+
+1.-escribir en la linea de comandos la palabra deploytool: la cual hara aparecer una ventana para crear ejecutables.. 
+
+2.- crear con el boton de la barra de herramientas un nuevo proyecto...aparece una ventana donde debes escribir el nombre 
+del proyecto(el de tu .exe) utilizando la opcion por defecto standalone aplication. 
+
+3.- una ves echo esto te regresa a la ventana de al principio en la cual aparecen tres carpetas... Main function.....other 
+files....c..c++ files.. enontces seleccionas La carpeta main function y le das agregar archivo... con esto seleccionas el 
+archivo .m solamente. si es el unico archivo a agregar te vas directo al paso 5. 
+
+4.-si ademas vas a agregar un archivo .fig, una foto,un archivo de audio, o cualquier otro tipo de archivo para que la gui 
+funcione entonce debes dar click a la carpeta other files y de nuevo agregar lors archivos necesarios. 
+
+5.- una ves agregados todos los archivos vas al open proyect settings windows 
+ahi vas a la opcion packaging y seleccionas en esa ventana la opcion include MATLAB compiler Runtime le das ok y luego de 
+salir de ahi vas al boton built the proyect.. 
+
+6.- esperas y despues de un tiempo se crean dos carpetas una es scr y otra es distrib ambas contiene el .exe este ejecutable
+ solo puede correr cuando esta instalado matlab (o el MCR de matlab)... si lo que deseas es que el programa corra en una 
+maquina sin matlab entonces debes de elegir el boton package the proyect el cual agregara al .exe el MATLAB COMPILER RUNTIME
+(MCR)que pesa unos 80-260 mbs dependiendo de la version... 
+
+7.- el archivo que contiene el exe y el MCR esta en la carpeta distrib....se le da click y empieza a instalar....una ves 
+instalado el MCR ya puedes correr tu .exe sin la necesidad de matlab y en ejecutables posteriores solo llegar hasta cuando 
+se construye el proyecto es decir ya no tendras que empaquetar tus proyectos.
+
