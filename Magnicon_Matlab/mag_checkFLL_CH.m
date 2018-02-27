@@ -18,7 +18,7 @@ mode=query(s,str,'%s','%s');
 %mode=query(s,str,'%s','%s');
 
 if strcmp(mode,'>16F')
-    mode='FFL mode';
+    mode='FLL mode';
 elseif strcmp(mode,'>06E')
     mode='AMP mode';
 else
