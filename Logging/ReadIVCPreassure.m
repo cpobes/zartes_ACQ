@@ -14,8 +14,8 @@ out2=regexp(out,'(?<presion>\d.\d*E(-?\+?)\d*),','names')
 if isempty(out2) save('Pivc','IVC_values');return;end
 IVC_Preassure=str2double(out2.presion);
 IVC_values(end+1,:)=[now IVC_Preassure];
-figure(2)
-plot(IVC_values(:,1),IVC_values(:,2)*1e-1,'o-'),dateaxis('X',15);grid on
+%figure(2)
+%plot(IVC_values(:,1),IVC_values(:,2)*1e-1,'o-'),dateaxis('X',15);grid on
 xlabel('hora','fontsize',12,'fontweight','bold')
 ylabel('IVC Preassure (bar)','fontsize',12,'fontweight','bold')
 title('Presión de la IVC','fontsize',12,'fontweight','bold')

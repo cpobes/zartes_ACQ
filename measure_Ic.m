@@ -83,8 +83,8 @@ else
         %if (abs(vout2*1e6)-abs(vout1*1e6))<0, break;end
         %vout2,vout1
         Ivalues(2),Ivalues(1)
-        slope=(vout2-vout1)/(Ivalues(2)-Ivalues(1))
-        if slope<0,break;end
+        slope=(vout2-vout1)/((Ivalues(2)-Ivalues(1))*1e-6)
+        if slope<3000*700/3e3,break;end
         vout1=vout2;
     end
     mag_setImag_CH(mag,0,nCH);

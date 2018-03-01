@@ -52,22 +52,30 @@ end
 mag_setAMP_CH(mag,sourceCH);
 mag_setFLL_CH(mag,sourceCH);
 
+slope=0;state=0;jj=1;
+
 for i=1:length(Ibvalues)
     strcat('Ibias:',num2str(Ibvalues(i)))
+    if slope>3000 state=1;end %%%estado superconductor
+    if state && mod(Ibvalues(i),10), continue;end
     %mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
     mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
-    pause(2)
+    pause(1.5)
     Vdc=multi_read(multi);
     %Ireal=mag_readLNCSImag(mag);
     Ireal=mag_readImag_CH(mag,sourceCH);
     %%%Vout=mag_readVout(mag);
-    data(i,1)=now;
-    data(i,2)=Ireal;%*1e-6;
-    data(i,3)=0;%%%Vout
-    data(i,4)=Vdc;
-    x(i)=Ireal*1e-6;
-    y(i)=Vdc;
+    data(jj,1)=now;
+    data(jj,2)=Ireal;%*1e-6;
+    data(jj,3)=0;%%%Vout
+    data(jj,4)=Vdc;
+    x(jj)=Ireal*1e-6;
+    y(jj)=Vdc;
+    jj=jj+1;
+    if i>1 && ~state
+        slope=(data(i,4)-data(i-1,4))/((data(i,2)-data(i-1,2))*1e-6)
+    end
     if (boolplot)
         figure(1)
         if i==1
