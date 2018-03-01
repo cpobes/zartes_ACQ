@@ -3,6 +3,7 @@
 %%%fichero Pivc. El IVC está en el COM5
 WS_variables=who;
 if(~sum(~cellfun('isempty',strfind(WS_variables,'IVC_values')))) IVC_values=[];end
+if(~sum(~cellfun('isempty',strfind(WS_variables,'IVC_values')))) boolplot=1;end
 %if isempty(instrfind('Port','COM5')), ivc=serial('com5');end %%%COM 5 en
 %PC viejo. COM 6 en PC nuevo
 if isempty(instrfind('Port','COM6')), ivc=serial('com6');end
@@ -14,13 +15,18 @@ out2=regexp(out,'(?<presion>\d.\d*E(-?\+?)\d*),','names')
 if isempty(out2) save('Pivc','IVC_values');return;end
 IVC_Preassure=str2double(out2.presion);
 IVC_values(end+1,:)=[now IVC_Preassure];
-%figure(2)
-%plot(IVC_values(:,1),IVC_values(:,2)*1e-1,'o-'),dateaxis('X',15);grid on
-xlabel('hora','fontsize',12,'fontweight','bold')
-ylabel('IVC Preassure (bar)','fontsize',12,'fontweight','bold')
-title('Presión de la IVC','fontsize',12,'fontweight','bold')
-set(gca,'fontsize',12,'fontweight','bold');
-h=get(gca,'children');set(h,'linewidth',3,'marker','.','markersize',20)
+
+if boolplot
+    auxhandle=findobj('name','IVC Preasure');
+    if isempty(auxhandle) figure('name','IVC Preasure'); else figure(auxhandle);end
+    figure(findobj('name','IVC Preasure'));
+    plot(IVC_values(:,1),IVC_values(:,2)*1e-1,'o-'),dateaxis('X',15);grid on
+    xlabel('hora','fontsize',12,'fontweight','bold')
+    ylabel('IVC Preassure (bar)','fontsize',12,'fontweight','bold')
+    title('Presión de la IVC','fontsize',12,'fontweight','bold')
+    set(gca,'fontsize',12,'fontweight','bold');
+    h=get(gca,'children');set(h,'linewidth',3,'marker','.','markersize',20)
+end
 IVCfile=strcat(datadir,'\Pivc')
 save(IVCfile,'IVC_values');
 fclose(ivc);
