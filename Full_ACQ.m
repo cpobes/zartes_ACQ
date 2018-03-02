@@ -30,18 +30,18 @@ for i=1:length(temps)
         cd IVtemp
         
 %         IbiasValues=[500:-10:200 198:-2:120 119:-1:0];%%%!!!!Crear funcion!!!!
-        if temps(i)<0.065
-            IbiasValues=[500:-20:200 195:-5:180 179:-1:140 139.9:-0.1:0]; %%%Debería saltar al detectar el estado S.
-        elseif temps(i)<=0.077
-            IbiasValues=[500:-20:200 190:-10:120 118:-1:100 99.9:-0.1:0]; %%%Debería saltar al detectar el estado S.
+        if temps(i)<0.072
+            IbiasValues=[500:-20:200 195:-5:150 149.5:-0.5:0]; %%%Debería saltar al detectar el estado S.
+        elseif temps(i)<0.08
+            IbiasValues=[500:-20:200 190:-10:150 148:-2:100 99.5:-0.5:0]; %%%Debería saltar al detectar el estado S.
         else
-            IbiasValues=[500:-20:200 190:-10:100 99:-1:0];
+            IbiasValues=[500:-20:100 95:-5:60 59.5:-0.5:0];
         end
          IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues);
         
         cd ..
         %%%Para medir Icriticas
-        if(temps(i)>0.080)
+        if(1) %%%temps(i)>0.080
         mkdir ICs
         cd ICs
         Ivalues=[0:0.25:500];
@@ -52,7 +52,7 @@ for i=1:length(temps)
 %%%definimos un array con temperaturas a las que adquirir Z(w)-ruido, que
 %%%puede ser un subconjunto de las Tbath a las que se mida IV.
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];
-    auxarray=[0.08];
+    auxarray=[0];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -62,11 +62,13 @@ for i=1:length(temps)
             %%%y vuelve al superior
             %%%acquire Z(w). Automatizar definición de los IZvalues
 
-            IVset=GetIVTES(circuit,IVaux.ivp);%%%nos quedamos con la IV de bias positivo.
+            IVsetP=GetIVTES(circuit,IVaux.ivp);%%%nos quedamos con la IV de bias positivo.
+            IVsetN=GetIVTES(circuit,IVaux.ivn);
 
-            rp=[0.9:-0.05:0.1]; %%%Vector con los puntos donde tomar Z(w).           
-            IZvalues=BuildIbiasFromRp(IVset,rp);
-            hp_auto_acq_POS_NEG(IZvalues)
+            rp=[0.85:-0.05:0.15]; %%%Vector con los puntos donde tomar Z(w).           
+            IZvaluesP=BuildIbiasFromRp(IVsetP,rp);
+            IZvaluesN=BuildIbiasFromRp(IVsetN,rp);
+            hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN)
             %cd .. %%%(en acq Z(w) se sube ya un nivel.)
         end
     DONEstr=strcat('T',Tstring,'.end')  

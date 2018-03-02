@@ -53,6 +53,7 @@ mag_setAMP_CH(mag,sourceCH);
 mag_setFLL_CH(mag,sourceCH);
 
 slope=0;state=0;jj=1;
+averages=1;
 
 for i=1:length(Ibvalues)
     strcat('Ibias:',num2str(Ibvalues(i)))
@@ -61,8 +62,13 @@ for i=1:length(Ibvalues)
     %mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
     mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
-    pause(1.5)
-    Vdc=multi_read(multi);
+    if i==1, pause(2);end
+    pause(1.)
+    
+    for i_av=1:averages
+        Vdc_array(i_av)=multi_read(multi);
+    end
+    Vdc=mean(Vdc_array);
     %Ireal=mag_readLNCSImag(mag);
     Ireal=mag_readImag_CH(mag,sourceCH);
     %%%Vout=mag_readVout(mag);
