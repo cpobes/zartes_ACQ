@@ -20,8 +20,8 @@ Rf=mag_readRf_FLL_CH(mag,nCH);
 mag_setRf_FLL_CH(mag,700,nCH);
 
 %%%Reseteamos el lazo.
-mag_setAMP(mag);
-%mag_setFLL(mag);
+mag_setAMP_CH(mag,nCH);
+mag_setFLL_CH(mag,nCH);
 
 boolplot=1;
 
@@ -109,4 +109,4 @@ plot(data(:,2),data(:,4),opt)
 %%%cerrar ficheros
 fclose(mag)
 fclose(multi)
-instrreset
+%instrreset

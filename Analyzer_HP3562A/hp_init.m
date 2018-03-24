@@ -7,6 +7,10 @@ else
     gpib_dir=varargin{1};
 end
 
+%%clear
+aux=instrfind('type','gpib','Status','close','Boardindex',gpib_dir,'primaryaddress',11);
+for i=1:length(aux) delete(aux(i));end
+
 %dsa=instrfind('Status','open');%ojo! puede haber otros devices abiertos!
 dsa=instrfind('type','gpib','Status','open','primaryaddress',11);
 if isempty(dsa)    

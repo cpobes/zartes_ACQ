@@ -27,7 +27,7 @@ mag_setRf_FLL_CH(mag,3e3,sourceCH);
 signo=sign(Ibvalues(1));
 
 if ~Put_TES_toNormal_State_CH(mag,signo,sourceCH)
-    instrreset;
+    %instrreset;
     error('El TES no se ha podido poner en estado normal');
 end
 
@@ -57,7 +57,7 @@ averages=1;
 
 for i=1:length(Ibvalues)
     strcat('Ibias:',num2str(Ibvalues(i)))
-    if slope>3000 state=1;end %%%estado superconductor
+    if slope>3000 state=1;end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
     if state && mod(Ibvalues(i),10), continue;end
     %mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
     mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
@@ -108,6 +108,6 @@ file=strcat(Temp,'_Rf',num2str(Rf),'K_',dire,'_',pol,'_matlab.txt');
 save(file,'data','-ascii');
 
 %%%cerrar ficheros
-fclose(mag);
-fclose(multi);
-instrreset
+fclose(mag);delete(mag);
+fclose(multi);delete(multi);
+%instrreset

@@ -79,7 +79,9 @@ size(freq),size(data)
 
 
 datos=[freq' data'];
+loglog(freq,data)
+
 save('tempresults.txt','datos','-ascii');
 
-loglog(freq,data)
+
 grid on

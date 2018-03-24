@@ -7,6 +7,10 @@ else
     gpib_dir=varargin{1};
 end
 
+%%clear
+aux=instrfind('type','gpib','Status','close','Boardindex',gpib_dir,'primaryaddress',4);
+for i=1:length(aux) delete(aux(i));end
+
 %dsa=instrfind('Status','open');%ojo! puede haber otros devices abiertos!
 multi=instrfind('type','gpib','Status','open','primaryaddress',4);
 if isempty(multi)    
@@ -26,5 +30,5 @@ if ~strcmpi('HP3458A',device(1:7)), return;end %dispositivo correcto?
 %%%Configuración copiada del programa de test de LabView modulo hp3458a
 %%%Config Vdc. Con la configuración por defecto daban error los programas
 %%%de IV etc y tenia que ejecutar a mano el programa de LabView.
-command='RESET; END 1; FUNC DCV, 10.3e; NPLC 10';
+command='RESET; END 1; FUNC DCV, 10.3e; NPLC 5'; %%% NPLC 10 -> 1.
 query(multi,command);

@@ -5,8 +5,8 @@ function hp_auto_acq(IbValues)
 %%%de comunicación con la caja magnicon.
 
 if checkDirb4Acq() error('ponte en el directorio correcto');end
-instrreset();
-dsa=hp_init(1);%inicializa el HP.
+%instrreset();
+dsa=hp_init(0);%inicializa el HP.
 
 %hp_ss_config(dsa);%configura el HP para medir Función de
 %Transferencia.Pero aqui sobra.
@@ -80,7 +80,8 @@ end
 %mag_setLNCSImag(mag,0);%%%Ponemos la corriente a cero.
 mag_setImag_CH(mag,0,sourceCH);%%%Ponemos la corriente a cero.
 
-fclose(dsa);%cierra la comunicación con el HP.
-fclose(mag);
-fclose(multi);
-instrreset();
+fclose(dsa);delete(dsa);%cierra la comunicación con el HP y borra el obj.
+fclose(mag);delete(mag);
+fclose(multi);delete(multi);
+
+%instrreset();
