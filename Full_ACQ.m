@@ -32,7 +32,7 @@ for i=1:length(temps)
         cd IVtemp
         
          IbiasValues=[500:-10:300 295:-5:200 198:-2:130 129.5:-0.5:0];%%%!!!!Crear funcion!!!!
-         if temps(i)>84
+         if temps(i)>82
              IbiasValues=[500:-10:50 49:-1:0];
          end
 %         if temps(i)<0.072
@@ -54,11 +54,19 @@ for i=1:length(temps)
         ic(i)=measure_Pos_Neg_Ic(Tstring,Ivalues);
         cd ..
         end
-
+        
+        auxarrayIC=[0.06 0.065 0.075];
+        if(~isempty(find(auxarrayIC==temps(i), 1)))
+            Bvalues=[0:40:2500]*1e-6;
+            ICpairs=Barrido_fino_Ic_B(Bvalues)
+            icstring=strcat('ICpairs',Tstring);
+            save(icstring,'ICpairs');
+        end
+        
 %%%definimos un array con temperaturas a las que adquirir Z(w)-ruido, que
 %%%puede ser un subconjunto de las Tbath a las que se mida IV.
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];
-    auxarray=[.045 0.060 0.065 0.070 0.075 0.080];
+    auxarray=[0.04 .045 0.060 0.065 0.070 0.075 0.080];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -71,13 +79,14 @@ for i=1:length(temps)
             IVsetP=GetIVTES(circuit,IVaux.ivp);%%%nos quedamos con la IV de bias positivo.
             IVsetN=GetIVTES(circuit,IVaux.ivn);
 
-            rp=[0.85:-0.05:0.15]; %%%Vector con los puntos donde tomar Z(w).           
-            IZvaluesP=BuildIbiasFromRp(IVsetP,rp);
-            IZvaluesN=BuildIbiasFromRp(IVsetN,rp);
+            rpp=[0.85:-0.05:0.05]; %%%Vector con los puntos donde tomar Z(w).           
+            rpn=[0.85:-0.2:0.05];
+            IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
+            IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             try
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);
             catch
-                cd basedir
+                cd(basedir)%%%!!! da error al poner cd basedir.
             end
             %cd .. %%%(en acq Z(w) se sube ya un nivel.)
         end

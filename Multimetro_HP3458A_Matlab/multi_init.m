@@ -8,7 +8,7 @@ else
 end
 
 %%clear
-aux=instrfind('type','gpib','Status','close','Boardindex',gpib_dir,'primaryaddress',4);
+aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',4);
 for i=1:length(aux) delete(aux(i));end
 
 %dsa=instrfind('Status','open');%ojo! puede haber otros devices abiertos!

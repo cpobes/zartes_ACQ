@@ -15,11 +15,11 @@ switch length(s)
         s=serial(COM);
         fopen(s);
     case 1
-        if (strcmp(s.Status,'close')) fopen(s);end
+        if (strcmp(s.Status,'closed')) fopen(s);end
     otherwise        
         for i=2:length(s) delete(s(i));end
         s=s(1);
-        if (strcmp(s.Status,'close')) fopen(s);end
+        if (strcmp(s.Status,'closed')) fopen(s);end
 end
 
             

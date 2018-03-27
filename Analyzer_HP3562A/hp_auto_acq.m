@@ -4,7 +4,8 @@ function hp_auto_acq(IbValues)
 %%%funciones medidas en ficheros separados. Hay que implementar la función
 %%%de comunicación con la caja magnicon.
 
-if checkDirb4Acq() error('ponte en el directorio correcto');end
+%if checkDirb4Acq() error('ponte en el directorio correcto');end
+
 %instrreset();
 dsa=hp_init(0);%inicializa el HP.
 
@@ -66,15 +67,20 @@ for i=1:length(IbValues)
     ix=mag_readImag_CH(mag,sourceCH);
     %Itxt=num2str(IbValues(i));
     Itxt=num2str(ix);
+    
     %mide TF
+    if(1)
     datos=hp_measure_TF(dsa);
     file=strcat('TF_',Itxt,'uA','.txt');
     save(file,'datos','-ascii');%salva los datos a fichero.
+    end
     
     %mide ruido
+    if(1)
     datos=hp_measure_noise(dsa);
     file=strcat('HP_noise_',Itxt,'uA','.txt');
     save(file,'datos','-ascii');%salva los datos a fichero.
+    end
 end
 
 %mag_setLNCSImag(mag,0);%%%Ponemos la corriente a cero.

@@ -16,7 +16,7 @@ nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
 step=10; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
-Ivalues=[0:step:5000];
+Ivalues=[0:step:500];
 
 if(abs(Ivalues(end)))>500
     mag_ConnectLNCS(mag);

@@ -22,6 +22,7 @@ for i=1:length(B)
         ICpairs(i).B=B(i);
     catch
         warning('error de lectura')
+        pause(1)
         ICpairs(i).p=nan;ICpairs(i).n=nan;
         ICpairs(i).B=B(i);
         %continue;
