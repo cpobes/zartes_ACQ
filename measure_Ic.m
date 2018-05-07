@@ -17,7 +17,7 @@ if(abs(Ivalues(end)))>500
 end
 
 Rf=mag_readRf_FLL_CH(mag,nCH);
-mag_setRf_FLL_CH(mag,700,nCH);
+mag_setRf_FLL_CH(mag,7e2,nCH);%700
 
 %%%Reseteamos el lazo.
 mag_setAMP_CH(mag,nCH);
@@ -73,7 +73,7 @@ else
         
         Ivalues(i)
         mag_setImag_CH(mag,Ivalues(i),nCH);
-        pause(1)%0.5
+        pause(0.5)%0.5
         vout2=multi_read(multi);
         IV.ic(i)=mag_readImag_CH(mag,nCH);
         IV.vc(i)=vout2

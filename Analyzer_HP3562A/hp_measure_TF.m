@@ -1,7 +1,15 @@
-function datos=hp_measure_TF(dsa)
+function datos=hp_measure_TF(dsa,varargin)
 %%funcion para medir una TF.
 hp_ss_config(dsa);
-
+    
+    if nargin==2
+        V=round(varargin{1}*1e4*1e3);%%%Expresado en mV
+        str=strcat('SRLV ',' ',num2str(V),'mV')%%amplitud de excitación*10
+    else
+        str=strcat('SRLV 20mV');
+    end
+    
+    fprintf(dsa,str);
     fprintf(dsa,'STRT');%Lanza la medida
     fprintf(dsa,'SMSD');%query measure finish?
     ready=str2double(fscanf(dsa));

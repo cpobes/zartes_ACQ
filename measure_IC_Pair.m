@@ -15,7 +15,7 @@ mag=mag_init();
 nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
-step=10; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
+step=2; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
 Ivalues=[0:step:500];
 
 if(abs(Ivalues(end)))>500

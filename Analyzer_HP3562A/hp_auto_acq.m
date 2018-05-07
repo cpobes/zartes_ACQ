@@ -4,6 +4,8 @@ function hp_auto_acq(IbValues)
 %%%funciones medidas en ficheros separados. Hay que implementar la función
 %%%de comunicación con la caja magnicon.
 
+%%%Comentar cuando se quiera ejecutar sobre directorio con ficheros
+%%%existentes.
 %if checkDirb4Acq() error('ponte en el directorio correcto');end
 
 %instrreset();
@@ -13,7 +15,7 @@ dsa=hp_init(0);%inicializa el HP.
 %Transferencia.Pero aqui sobra.
 
 mag=mag_init();
-multi=multi_init();
+%multi=multi_init();
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
@@ -49,15 +51,14 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%resetea lazo de realimentacion del squid.
-mag_setAMP_CH(mag,sourceCH);
-mag_setFLL_CH(mag,sourceCH);
-
 %questdlg('TES normal?')
 
 for i=1:length(IbValues)
     
+    %resetea lazo de realimentacion del squid.
+    mag_setAMP_CH(mag,sourceCH);
+    mag_setFLL_CH(mag,sourceCH);
+
     strcat('Ibias:',num2str(IbValues(i)))
     %Set Magnicon Ib value here
     %SetIb(IbValues(i));
@@ -70,7 +71,8 @@ for i=1:length(IbValues)
     
     %mide TF
     if(1)
-    datos=hp_measure_TF(dsa);
+        %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
+    datos=hp_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
     file=strcat('TF_',Itxt,'uA','.txt');
     save(file,'datos','-ascii');%salva los datos a fichero.
     end
@@ -88,6 +90,6 @@ mag_setImag_CH(mag,0,sourceCH);%%%Ponemos la corriente a cero.
 
 fclose(dsa);delete(dsa);%cierra la comunicación con el HP y borra el obj.
 fclose(mag);delete(mag);
-fclose(multi);delete(multi);
+%fclose(multi);delete(multi);
 
 %instrreset();

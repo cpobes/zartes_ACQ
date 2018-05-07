@@ -22,7 +22,7 @@ boolplot=1;%%%si queremos o no pintar la curva.
 
 mag=mag_init();
 multi=multi_init();
-mag_setRf_FLL_CH(mag,3e3,sourceCH);
+mag_setRf_FLL_CH(mag,1e5,sourceCH);%3e3
 %%%Ponemos el máximo de corriente 
 signo=sign(Ibvalues(1));
 
@@ -55,15 +55,19 @@ mag_setFLL_CH(mag,sourceCH);
 slope=0;state=0;jj=1;
 averages=1;
 
+% mag_ConnectLNCS(mag);%%%%
+%     mag_setLNCSImag(mag,signo*0.5e3);
+%     mag_setImag_CH(mag,0,sourceCH);%%%Fuente en Ch1
+
 for i=1:length(Ibvalues)
     strcat('Ibias:',num2str(Ibvalues(i)))
     if slope>3000 state=1;end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
-    if state && mod(Ibvalues(i),10), continue;end
+    if state && mod(Ibvalues(i),1), continue;end  %%%mod(,10)
     %mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
     mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
     if i==1, pause(2);end
-    pause(1.)
+    pause(2.)
     
     for i_av=1:averages
         Vdc_array(i_av)=multi_read(multi);
@@ -71,6 +75,7 @@ for i=1:length(Ibvalues)
     Vdc=mean(Vdc_array);
     %Ireal=mag_readLNCSImag(mag);
     Ireal=mag_readImag_CH(mag,sourceCH);
+    
     %%%Vout=mag_readVout(mag);
     data(jj,1)=now;
     data(jj,2)=Ireal;%*1e-6;
@@ -93,6 +98,9 @@ for i=1:length(Ibvalues)
         refreshdata(1,'caller');
     end
 end
+
+% mag_setLNCSImag(mag,0);%%%%%
+% mag_DisconnectLNCS(mag);%%%%%
 
 IV=corregir1rama(data);
 % IV.ibias=data(:,2)*1e-6;

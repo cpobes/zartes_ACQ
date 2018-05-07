@@ -7,7 +7,7 @@ fprintf(dsa,'LGSW')
 fprintf(dsa,'RES 20P/DC');%%%He usado normalmente 5P/DC
 fprintf(dsa,'SF 1Hz')
 fprintf(dsa,'FRS 5Dec')
-fprintf(dsa,'SRLV 20mV')%%amplitud de excitación*10
+fprintf(dsa,'SRLV 100mV')%%amplitud de excitación*10
 fprintf(dsa,'PSUN')
 fprintf(dsa,'VTRM')
 fprintf(dsa,'VHZ')
