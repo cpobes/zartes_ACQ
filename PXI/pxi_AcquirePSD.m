@@ -1,15 +1,26 @@
-function pxi_AcquirePSD(pxi,comment)
+function datos=pxi_AcquirePSD(pxi,comment)
 %%%Función para adquirir y salvar en fichero un espectro PSD con la
 %%%PXI. Asume que la tarjeta está ya correctamente configurada. Se pasa
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
 Options.TimeOut=5;
-Options.channelList='0';
+Options.channelList='1';
 
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 
 [psd,freq]=PSD(data);
+
+if(0)%%%subsampleo?
+    if freq(1)==0, logfmin=log10(freq(2));end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
+    logfmax=log10(freq(end));
+    Ndec=logfmax-logfmin;
+    NpointsDec=80;
+    N=NpointsDec*Ndec;%%%numero de puntos.
+    xx=logspace(logfmin,logfmax,N+1);%%%subsampleamos entre 1Hz y 100KHz.
+    psd=interp1(freq,psd,xx);
+    freq=xx;
+end
 
 if(1) %%%plot?
     subplot(2,1,1)

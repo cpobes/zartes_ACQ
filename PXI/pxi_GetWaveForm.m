@@ -19,7 +19,7 @@ for i = 1:numChannels %%%Inicializamos la Info.
 end 
 waveformArray=zeros(1,numSamples*numChannels);%%%Prealojamos espacio.
 
-invoke(pxi.Acquisition, 'initiateacquisition'); %%%Pued ir aquí o fuera.
+invoke(pxi.Acquisition, 'initiateacquisition'); %%%Puede ir aquí o fuera.
 [Wfm, WfmI] = invoke(pxi.Acquisition, 'fetch', channelList,TimeOut, numSamples, waveformArray, waveformInfo); %%
 
 %size(Wfm)
