@@ -5,11 +5,11 @@ if isempty(who('datadir'))
 end
 
 if exist(strcat(datadir,'\Pivc.mat'))==2
-    load strcat(datadir,'\Pivc.mat')
+    load(strcat(datadir,'\Pivc.mat'))
 end
 
 if exist(strcat(datadir,'\HeLevel.mat'))==2
-    load strcat(datadir,'\HeLevel.mat')
+    load(strcat(datadir,'\HeLevel.mat'))
 end
 
 startHeLtimer

@@ -1,4 +1,4 @@
-function Full_ACQ(file,circuit)
+function Full_ACQ(file,circuit,varargin)
 %%%Función para adquirir IVs y Z(w) a varias temperaturas de forma
 %%%automática a través de un fichero de comunicación compartido con el
 %%%control de temperatura. Necesitamos pasar el circuit con Rn si queremos
@@ -14,11 +14,18 @@ fclose(fid)
 
 basedir=pwd;
 
+if nargin>2
+    ivauxP=varargin{1};
+end
+if nargin>3
+    ivauxN=varargin{2};
+end
+
 for i=1:length(temps)
 
     %SETstr=strcat('tmp\T',num2str(1e3*temps(i)),'mK.stb')
     Tstring=sprintf('%0.1fmK',temps(i)*1e3)
-    SETstr=strcat('tmp2\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!
+    SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!
     
     
     while(~exist(SETstr,'file'))
@@ -29,14 +36,16 @@ for i=1:length(temps)
         %%%acquireIVs. Automatizar definición de los IbiasValues.
         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
         %ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08:0.002:0.12]; 
-        ivsarray=[0.110:0.001:0.122];
+        %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
+        %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
+        ivsarray=[];
         if(~isempty(find(ivsarray==temps(i), 1)))
-        mkdir IVfinas
-        cd IVfinas
+         mkdir IVs
+         cd IVs
         
-         %IbiasValues=[500:-10:300 295:-5:200 198:-2:130 129.5:-0.5:0];%%%!!!!Crear funcion!!!!
-         imin=10+4*(i-1);
-         IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
+         IbiasValues=[500:-10:150 145:-5:100 99:-1:60 59.5:-0.5:0];%%%!!!!Crear funcion!!!!
+         %imin=10+4*(i-1);
+         %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
          
 %          if temps(i)>82
 %              IbiasValues=[500:-10:50 49:-1:0];
@@ -81,12 +90,12 @@ for i=1:length(temps)
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];
     
     %auxarray=[0.050 0.055 0.070 0.075];
-    auxarray=[0.065 0.060];
+    auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.070 0.075];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
 
-            if(1) %%%adquirir o no una IV coarse
+            if(0) %%%adquirir o no una IV coarse. nargin==2
                 %imin=90-5*(i);%%%ojo si se reejecuta. Asume 50,55,70,75 i=1:4.
                 IbiasCoarseValues=[500:-5:200 198:-2:85 10:-1:0];
                 mkdir IVcoarse
@@ -105,25 +114,33 @@ for i=1:length(temps)
             %%%y vuelve al superior
             %%%acquire Z(w). Automatizar definición de los IZvalues
 
+            if nargin==2
             IVsetP=GetIVTES(circuit,IVaux.ivp);%%%nos quedamos con la IV de bias positivo.
             IVsetN=GetIVTES(circuit,IVaux.ivn);
-
-            rpp=[0.85:-0.05:0.05]; %%%Vector con los puntos donde tomar Z(w).    
-            if temps(i)==0.065 || temps(i)==0.060 || temps(i)==0.07 || temps(i)==0.075
-                rpp=0.85:-0.02:0.05;
+            else
+                IVsetP=ivauxP(GetTbathIndex(temps(i)*1e3,ivauxP,ivauxP));
+                IVsetN=IVsetP;IVsetN.ibias=-IVsetP.ibias;IVsetN.vout=-IVsetP.vout;%%% ad hoc
+                if nargin>3 IVsetN=ivauxN(GetTbathIndex(temps(i)*1e3,ivauxN,ivauxN));end
             end
-            rpn=[0.85:-0.05:0.05];
+            
+            rpp=[0.95:-0.05:0.01]; %%%Vector con los puntos donde tomar Z(w).    
+            if temps(i)==0.050 ||  temps(i)==0.07 
+                rpp=[0.9:-0.05:0.2 0.19:-0.01:0.1];
+            end
+            rpn=[0.90:-0.1:0.1];
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             try
-                hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);
+                hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
+                cd(Tstring)
+                pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%se sube tb un nivel
             catch
                 cd(basedir)%%%!!! da error al poner cd basedir.
             end
             %cd .. %%%(en acq Z(w) se sube ya un nivel.)
         end
     DONEstr=strcat('T',Tstring,'.end')  
-    cd tmp2
+    cd tmp
     f = fopen(DONEstr, 'w' );  
     fclose(f);
     cd ..

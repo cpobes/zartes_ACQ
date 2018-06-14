@@ -16,6 +16,8 @@ dsa=hp_init(0);%inicializa el HP.
 
 mag=mag_init();
 %multi=multi_init();
+fprintf(dsa,'SNGC');%%%Calibramos el HP.
+pause(20);
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 

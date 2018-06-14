@@ -1,6 +1,5 @@
 function out=mag_setCalPulseAMP_CH(s,RL,AMP,nch)
-%Funcion para fijar el rango de duración del pulso de calibracion.
-% pasamos el modo en formato numérico mode=1 '<150us'; mode=2 '>=150us';
+%Funcion para fijar la amplitud del pulso.
 
 %%Ojo, RL se pasa como parámetro. No hay forma de verificar que sea el
 %%correcto.

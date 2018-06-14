@@ -2,6 +2,9 @@ function datos=hp_measure_noise(dsa)
 %%funcion para medir una TF.
 hp_noise_config(dsa);
 
+    %fprintf(dsa,'SNGC');
+    %pause(20);%%%Si lanzamos CAL(SNGC) hay que esperar un poco.
+
     fprintf(dsa,'STRT');%Lanza la medida
     fprintf(dsa,'SMSD');%query measure finish?
     ready=str2double(fscanf(dsa));

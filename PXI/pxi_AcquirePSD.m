@@ -1,4 +1,4 @@
-function datos=pxi_AcquirePSD(pxi,comment)
+function datos=pxi_AcquirePSD(pxi,varargin)
 %%%Función para adquirir y salvar en fichero un espectro PSD con la
 %%%PXI. Asume que la tarjeta está ya correctamente configurada. Se pasa
 %%%como argumento el handle al instrumento y un string para identificar el
@@ -11,11 +11,11 @@ Options.channelList='1';
 
 [psd,freq]=PSD(data);
 
-if(0)%%%subsampleo?
+if(1)%%%subsampleo?
     if freq(1)==0, logfmin=log10(freq(2));end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
     logfmax=log10(freq(end));
     Ndec=logfmax-logfmin;
-    NpointsDec=80;
+    NpointsDec=200;%%%
     N=NpointsDec*Ndec;%%%numero de puntos.
     xx=logspace(logfmin,logfmax,N+1);%%%subsampleamos entre 1Hz y 100KHz.
     psd=interp1(freq,psd,xx);
@@ -33,7 +33,10 @@ if(1) %%%plot?
 end
 
 datos(:,1)=freq;
-datos(:,2)=psd;
+datos(:,2)=sqrt(psd);
 
-file=strcat('PXI_PSD_noise_',comment,'.txt');
-save(file,'datos','-ascii');%salva los datos a fichero.
+if nargin==2
+    comment=varargin{1};
+    file=strcat('PXI_noise_',comment,'.txt');
+    save(file,'datos','-ascii');%salva los datos a fichero.
+end

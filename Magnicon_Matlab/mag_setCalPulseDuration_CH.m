@@ -1,7 +1,7 @@
 function out=mag_setCalPulseDuration_CH(s,duration,nch)
-%Funcion para leer el rango de duración del pulso de calibracion.
-% usamos formato numérico: mode=1 '<150us'; mode=2 '>=150us';
+%Funcion para fijar la duracion del pulso.
 % duration en us!!!
+
 if nch==1
     ch='1';
 elseif nch==2
