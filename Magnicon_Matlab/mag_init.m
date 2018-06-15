@@ -2,6 +2,7 @@ function s=mag_init()
 %Funcion para inicializar la comunicacion con la electronica magnicon.
 COM='COM5';%puerto serie.
 s=instrfind('type','serial','Port',COM);
+%s=[];
 
 % if isempty(s)    
 %     s=serial(COM);

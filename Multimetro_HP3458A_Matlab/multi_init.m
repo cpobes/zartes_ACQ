@@ -7,11 +7,11 @@ else
     gpib_dir=varargin{1};
 end
 
+%%%%%%%%%%%%Error instrfind!!!!!!!!!!!
 %%clear
-aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',4);
-for i=1:length(aux) delete(aux(i));end
+ aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',4);
+ for i=1:length(aux) delete(aux(i));end
 
-%dsa=instrfind('Status','open');%ojo! puede haber otros devices abiertos!
 multi=instrfind('type','gpib','Status','open','primaryaddress',4);
 if isempty(multi)    
     multi=gpib('ni',gpib_dir,4);%dir:1 puede cambiar
