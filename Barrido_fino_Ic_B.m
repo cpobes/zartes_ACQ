@@ -30,7 +30,7 @@ for i=1:length(B)
         save('ICpairs','ICpairs');
         plot(B(1:i),[ICpairs.p],'o-',B(1:i),[ICpairs.n],'o-'),hold off;
 end
-k220_setI(k220,500e-6);
+k220_setI(k220,0e-6);
 
 %%%Truco para que mande el dilución a Tbase si antes se ha lanzado el
 %%%programa de LabView adecuadamente.

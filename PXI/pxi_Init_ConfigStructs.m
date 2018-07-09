@@ -16,8 +16,8 @@ ConfStructs.Vertical.offset=0;
 ConfStructs.Vertical.Enabled=1;
 
 %%% Trigger Configuration
-ConfStructs.Trigger.Source='1'; 
 ConfStructs.Trigger.Type=1;
+ConfStructs.Trigger.Source='1'; 
 ConfStructs.Trigger.Slope=0;%%%0:Neg, 1:Pos
 ConfStructs.Trigger.Level=-0.05; %%%%Habrá que resetear el lazo del Squid pq el ch1 se acopla en DC.
 ConfStructs.Trigger.Coupling=1;%%%DC=1; AC=0;?. '0' da error.

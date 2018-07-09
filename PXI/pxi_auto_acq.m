@@ -67,7 +67,7 @@ for i=1:length(IbValues)
     Itxt=num2str(ix);
     
     %mide TF
-    if(0)
+    if(1)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         TF=pxi_AcquireTF(pxi);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
@@ -76,8 +76,9 @@ for i=1:length(IbValues)
     end
     
     %mide ruido
-    if(1)
+    if(0)
         pxi_Noise_Configure(pxi);
+        pause(1)
         aux=pxi_AcquirePSD(pxi);
         datos=aux;
         n_avg=5;
@@ -91,7 +92,7 @@ for i=1:length(IbValues)
     end
     
     %mide pulsos
-    if (1)
+    if (0)
         mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA)
         
         %%%Resetea lazo para anular la componente DC del CH1. OJO: lo
@@ -106,9 +107,9 @@ for i=1:length(IbValues)
         %%%'NISCOPE_VAL_VOLTAGE_BASE'=26
         %invoke(pxi.Measurement,'addwaveformprocessing','1',26);
         %vdc=pxi_getMeasurement(pxi,'1',26)
-        opt.Level=vdc-0.03;%%%Amplitude dependent trigger above DC level.
+        opt.Level=vdc-0.005;%%%Amplitude dependent trigger above DC level.
         
-        pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos.
+        pxi_Pulses_Configure(pxi);%%%configuramos la pxi para adquirir pulsos. Con modulo trigger no pasamos Level.
         pause(1)
         try
             datos=pxi_AcquirePulse(pxi);
@@ -116,7 +117,7 @@ for i=1:length(IbValues)
             datos=[];
             pxi_AbortAcquisition(pxi);
         end
-        mag_setCalPulseOFF_CH(mag,2)%%desactivamos la fuente
+        mag_setCalPulseOFF_CH(mag,2);%%desactivamos la fuente
         
         mkdir Pulsos
         cd Pulsos

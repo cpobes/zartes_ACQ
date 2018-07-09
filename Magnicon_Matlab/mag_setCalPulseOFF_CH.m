@@ -21,3 +21,5 @@ str=sprintf('%s%s%s%s','<0',ch,'P0',out(2:end-2));%%%
 chk=mod(sum(double(str)),256);
 str=sprintf('%s%02X\r',str,chk);
 out=query(s,str,'%s','%s');
+
+mag_setCalPulseAMP_CH(s,0,0,nch)

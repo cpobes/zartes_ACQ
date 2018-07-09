@@ -4,12 +4,18 @@ function data=pxi_AcquirePulse(pxi,varargin)
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
+pxi_Pulses_Configure(pxi);
+
 Options.TimeOut=5;
 Options.channelList='1';
 
+%stdpulso=0;
+%while stdpulso<0.01
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+%stdpulso=std(data(1:2500,2));%%%%
+%end
 
-if(1) %%%plot?
+if(0) %%%plot?
     [psd,freq]=PSD(data);
     subplot(2,1,1)
     plot(data(:,1),data(:,2));

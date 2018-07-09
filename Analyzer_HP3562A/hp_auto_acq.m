@@ -17,7 +17,7 @@ dsa=hp_init(0);%inicializa el HP.
 mag=mag_init();
 %multi=multi_init();
 fprintf(dsa,'SNGC');%%%Calibramos el HP.
-pause(20);
+pause(25);
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
@@ -73,8 +73,8 @@ for i=1:length(IbValues)
     
     %mide TF
     if(1)
-        %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
-    datos=hp_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
+        datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
+    %datos=hp_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
     file=strcat('TF_',Itxt,'uA','.txt');
     save(file,'datos','-ascii');%salva los datos a fichero.
     end

@@ -15,7 +15,7 @@ mag=mag_init();
 nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
-step=2; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
+step=0.5; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
 Ivalues=[0:step:500];
 
 if(abs(Ivalues(end)))>500
@@ -31,7 +31,7 @@ Rf=mag_readRf_FLL_CH(mag,nCH);%%%Guardamos el valor original (normalmente 3e3).
 Rfnew=mag_readRf_FLL_CH(mag,nCH);
 THR=3000*Rfnew/Rf; %%% Tenemos medido que las pendientes en estado superconductor cuando la Rf=3e3 están sobre 800 y las de estado N sobre 8000. Se toma 3000 como valor de separacion.
 
-    if jj==2 Ivalues=-Ivalues;end %%%Metemos a pelo el barrido negativo asi.
+    if jj==2 Ivalues=-Ivalues;IV=[];end %%%Metemos a pelo el barrido negativo asi.
 %%%Reseteamos el lazo.
 mag_setAMP_CH(mag,nCH);
 mag_setFLL_CH(mag,nCH);
