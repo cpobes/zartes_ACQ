@@ -16,12 +16,13 @@ multi=instrfind('type','gpib','Status','open','primaryaddress',4);
 if isempty(multi)    
     multi=gpib('ni',gpib_dir,4);%dir:1 puede cambiar
     fopen(multi); %cerrar al final.
+    multi.EOSmode='read';
 end
 %instrfind; %muestra los instrumentos y su estado.
 
 %fprintf(dsa,'ID?');
 %device=fscanf(dsa)%devuelve HP3562A. Permite comprobar si estamos leyendo el 
-device=query(multi,'ID?');%esta instruccion es más directa.
+device=query(multi,'ID?')%esta instruccion es más directa.
 %if ~strcmpi('HP3458A',device(1:end-2)), return;end %dispositivo
 %correcto?Este comando fallaba pq ademas de devolver el código, devuelve también un
 %array de valores de voltaje.

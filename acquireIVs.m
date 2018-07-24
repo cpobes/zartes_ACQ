@@ -61,7 +61,7 @@ averages=1;
 %     mag_setImag_CH(mag,0,sourceCH);%%%Fuente en Ch1
 %%
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
-psl=1;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
+psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 for i=1:length(Ibvalues)
     strcat('Ibias:',num2str(Ibvalues(i)))
     if slope/Rf>slopeTHR && slope<Inf && ~psl
