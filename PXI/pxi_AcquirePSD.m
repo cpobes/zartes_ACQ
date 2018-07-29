@@ -22,7 +22,7 @@ if(1)%%%subsampleo?
     freq=xx;
 end
 
-if(0) %%%plot?
+if(1) %%%plot?
     subplot(2,1,1)
     plot(data(:,1),data(:,2));
     grid on

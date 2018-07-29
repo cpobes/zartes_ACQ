@@ -15,7 +15,7 @@ Options.channelList='1';
 %stdpulso=std(data(1:2500,2));%%%%
 %end
 
-if(0) %%%plot?
+if(1) %%%plot?
     [psd,freq]=PSD(data);
     subplot(2,1,1)
     plot(data(:,1),data(:,2));

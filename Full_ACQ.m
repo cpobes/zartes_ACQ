@@ -37,20 +37,24 @@ for i=1:length(temps)
         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
         %ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08:0.002:0.12]; 
         %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
-        ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.105 0.106 0.107 0.108 0.109 0.11 0.115];
+        %ivsarray=[0.04 0.045 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.106 0.108 0.110 0.112 0.114 0.115 0.12 0.125];
         %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
-        %ivsarray=[];
+        ivsarray=[];
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
          cd IVs
         
-         IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
+         %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
+         IbiasValues=[500:-10:200 195:-5:100 99:-1:75 74.9:-0.1:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
          
-%          if temps(i)>82
-%              IbiasValues=[500:-10:50 49:-1:0];
-%          end
+         if temps(i)>100
+             IbiasValues=[500:-10:50 49:-1:0];
+         end
+         if temps(i)==125
+             IbiasValues=[2000:-20:0];
+         end
 %         if temps(i)<0.072
 %             IbiasValues=[500:-20:200 195:-5:150 149.5:-0.5:0]; %%%Debería saltar al detectar el estado S.
 %         elseif temps(i)<0.08
@@ -90,15 +94,16 @@ for i=1:length(temps)
 %%%definimos un array con temperaturas a las que adquirir Z(w)-ruido, que
 %%%puede ser un subconjunto de las Tbath a las que se mida IV.
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];    
-    %auxarray=[0.070];
-    auxarray=[0.05 0.055 0.070 0.075];
+    
+    auxarray=[0.055 0.0750];
+    %auxarray=[0.05 0.055 0.070 0.075];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
 
-            if(0) %%%adquirir o no una IV coarse. nargin==2
+            if(1) %%%adquirir o no una IV coarse. nargin==2
                 %imin=90-5*(i);%%%ojo si se reejecuta. Asume 50,55,70,75 i=1:4.
-                IbiasCoarseValues=[500:-5:130 129:-1:80 79.9:-0.1:0];
+                IbiasCoarseValues=[500:-1:0];
                 mkdir IVcoarse
                 cd IVcoarse
                 try  %%%A veces dan error las IVs. pq?
@@ -124,11 +129,13 @@ for i=1:length(temps)
                 if nargin>3 IVsetN=ivauxN(GetTbathIndex(temps(i)*1e3,ivauxN,ivauxN));end
             end
             
-            rpp=[0.9:-0.05:0.02 0.18:-0.02:0.01]; %%%Vector con los puntos donde tomar Z(w).    
-            if temps(i)==0.050 || temps(i)==0.07 
-                rpp=[0.9:-0.05:0.2 0.19:-0.01:0.1];
-            end
-            rpn=[0.90:-0.05:0.2 0.18:-0.02:0.1];
+            %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
+            rpp=[0.9:-0.02:0.02];
+%             if temps(i)==0.050 %%% || temps(i)==0.07 
+%                 rpp=[0.21:-0.01:0.01];
+%             end
+            rpn=[0.90:-0.02:0.02];
+            %rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             try
