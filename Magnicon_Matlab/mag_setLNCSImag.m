@@ -1,7 +1,8 @@
 function out=mag_setLNCSImag(s,IuA)
 %Función para fijar valor de Ibias de la LNCS!!!
 
-if abs(IuA)>5000  %%%Protección para no pasarse.
+Ilimite=5500;
+if abs(IuA)>Ilimite  %%%Protección para no pasarse.
     error('Ibias too high');
 end
 

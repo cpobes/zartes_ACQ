@@ -39,13 +39,14 @@ for i=1:length(temps)
         %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
         %ivsarray=[0.04 0.045 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.106 0.108 0.110 0.112 0.114 0.115 0.12 0.125];
         %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
-        ivsarray=[];
+        ivsarray=temps;
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
          cd IVs
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
-         IbiasValues=[500:-10:200 195:-5:100 99:-1:75 74.9:-0.1:0];
+         %IbiasValues=[500:-10:200 195:-5:100 99:-1:75 74.9:-0.1:0];
+         IbiasValues=[200:-2:100 99:-1:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
          
@@ -95,13 +96,13 @@ for i=1:length(temps)
 %%%puede ser un subconjunto de las Tbath a las que se mida IV.
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];    
     
-    auxarray=[0.055 0.0750];
+    auxarray=[0.05 0.070];
     %auxarray=[0.05 0.055 0.070 0.075];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
 
-            if(1) %%%adquirir o no una IV coarse. nargin==2
+            if(0) %%%adquirir o no una IV coarse. nargin==2
                 %imin=90-5*(i);%%%ojo si se reejecuta. Asume 50,55,70,75 i=1:4.
                 IbiasCoarseValues=[500:-1:0];
                 mkdir IVcoarse
@@ -130,11 +131,11 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.02:0.02];
+            rpp=[0.9:-0.02:0.08];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
-            rpn=[0.90:-0.02:0.02];
+            rpn=[0.90:-0.02:0.08];
             %rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);

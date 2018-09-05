@@ -103,13 +103,14 @@ for i=1:length(Ibvalues)
     end
     if (boolplot)
             auxhandle_1=findobj('name','IV_raw');
-            if isempty(auxhandle_1) figure('name','IV_raw'); else figure(auxhandle_1);end
+            if isempty(auxhandle_1) figure('name','IV_raw'); auxhandle_1=findobj('name','IV_raw'); else figure(auxhandle_1);end
         if i==1
             h=plot(x,y,'o-k','linewidth',3);hold on;grid on
             %plot(Ireal*1e-6,Vdc,'ok','linewidth',3);hold on;grid on
             %linkdata(1);
             set(h,'xdatasource','x','ydatasource','y','linestyle','-');
         end
+        
         refreshdata(auxhandle_1,'caller');
     end
 end
