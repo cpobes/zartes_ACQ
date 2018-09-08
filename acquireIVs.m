@@ -67,7 +67,7 @@ for i=1:length(Ibvalues)
     if slope/Rf>slopeTHR && slope<Inf && ~psl
         state=1;
     end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
-    if state && mod(Ibvalues(i),10), continue;end  %%%mod(,10)
+    if state && mod(Ibvalues(i),10) && Ibvalues(i)>10, continue;end  %%%mod(,10)
     %mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
     mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL

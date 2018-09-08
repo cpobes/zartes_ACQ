@@ -1,4 +1,4 @@
-function ICpair=measure_IC_Pair()
+function ICpair=measure_IC_Pair(varargin)
 %%%%Funci´çon para medir directamente los valores de Icrítica positivos y
 %%%%negativos sin crear los ficheros .txt. Para poder automatizra medidas
 %%%%Ic(B). Construiuda a partir de measure_Ic eliminando la parte de
@@ -15,7 +15,13 @@ mag=mag_init();
 nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
-step=0.5; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
+if nargin==1
+    step=varargin{1};
+else
+    step=0.20; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
+end
+
+
 Ivalues=[0:step:500];
 
 if(abs(Ivalues(end)))>500

@@ -1,4 +1,4 @@
-function ICpairs=Barrido_Fino_Ic_B(Bvalues)
+function ICpairs=Barrido_Fino_Ic_B(Bvalues,varargin)
 %%%Barrido Bfield Fino a 80mK
 k220=k220_init();
 %B=[830:5:900 902:2:1300 1305:5:1400]*1e-6;
@@ -9,6 +9,12 @@ B=Bvalues;
 
 k220_setI(k220,B(1));
 
+if nargin==2
+    step=varargin{1};
+else
+    step=0.2;
+end
+
 for i=1:length(B)
     B(i)
     k220_setI(k220,B(i));
@@ -16,7 +22,7 @@ for i=1:length(B)
     %str=strcat('80mK_',num2str(B(i)*1e6),'uA');
     %measure_Pos_Neg_Ic(str,ICvalues);
     try 
-        aux=measure_IC_Pair();
+        aux=measure_IC_Pair(step);
         ICpairs(i).p=aux.p;
         ICpairs(i).n=aux.n;
         ICpairs(i).B=B(i);

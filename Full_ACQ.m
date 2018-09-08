@@ -39,22 +39,23 @@ for i=1:length(temps)
         %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
         %ivsarray=[0.04 0.045 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.106 0.108 0.110 0.112 0.114 0.115 0.12 0.125];
         %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
-        ivsarray=temps;
+        %ivsarray=temps;%[0.07 0.05];
+        ivsarray=[];
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
          cd IVs
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
          %IbiasValues=[500:-10:200 195:-5:100 99:-1:75 74.9:-0.1:0];
-         IbiasValues=[200:-2:100 99:-1:50 49.5:-0.5:0];
+         IbiasValues=[200:-5:100 98:-2:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
          
-         if temps(i)>100
-             IbiasValues=[500:-10:50 49:-1:0];
-         end
-         if temps(i)==125
-             IbiasValues=[2000:-20:0];
+%          if temps(i)>100
+%              IbiasValues=[500:-10:50 49:-1:0];
+%          end
+         if temps(i)==120
+             IbiasValues=[500:-10:0];
          end
 %         if temps(i)<0.072
 %             IbiasValues=[500:-20:200 195:-5:150 149.5:-0.5:0]; %%%Debería saltar al detectar el estado S.
@@ -84,10 +85,21 @@ for i=1:length(temps)
         end
         
         %auxarrayIC=[0.06 0.065 0.075];
-        auxarrayIC=[];%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%
+        auxarrayIC=temps;
+        %auxarrayIC=[];%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%
         if(~isempty(find(auxarrayIC==temps(i), 1)))
-            Bvalues=[0:40:2500]*1e-6;
-            ICpairs=Barrido_fino_Ic_B(Bvalues)
+            %Bvalues=[0:40:2500]*1e-6;
+            Bvalues=[-3000:25:4000]*1e-6;
+            if temps(i)<90e-3
+                step=5;
+            elseif temps(i)>=90e-3 &&temps(i)<95e-3
+                step=2;
+            elseif temps(i)<100e-3 && temps(i)>=95e-3
+                step=1;
+            elseif temps(i)>=100e-3
+                step=0.2;
+            end
+            ICpairs=Barrido_fino_Ic_B(Bvalues,step)
             icstring=strcat('ICpairs',Tstring);
             save(icstring,'ICpairs');
         end
