@@ -67,7 +67,7 @@ for i=1:length(IbValues)
     Itxt=num2str(ix);
     
     %mide TF
-    if(0)
+    if(1)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         TF=pxi_AcquireTF(pxi);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
@@ -76,7 +76,7 @@ for i=1:length(IbValues)
     end
     
     %mide ruido
-    if(1)
+    if(0)
         pxi_Noise_Configure(pxi);
         pause(1)
         aux=pxi_AcquirePSD(pxi);
@@ -92,8 +92,8 @@ for i=1:length(IbValues)
     end
     
     %mide pulsos
-    if (0)
-        mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA)
+    if (1)
+        mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA).Ojo, el canal no se pasa como parametro.
         
         %%%Resetea lazo para anular la componente DC del CH1. OJO: lo
         %%%robusto es sacar señal de trigger y meterla por Trigger EXT.

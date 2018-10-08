@@ -15,7 +15,7 @@ hp_ss_config(dsa);
     ready=str2double(fscanf(dsa));
     %bucle de espera de la medida.
     while(~ready)
-        pause(10);
+        pause(5);
         fprintf(dsa,'SMSD');
         ready=str2double(fscanf(dsa));
         second(now)

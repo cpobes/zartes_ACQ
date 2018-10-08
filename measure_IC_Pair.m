@@ -39,8 +39,9 @@ THR=3000*Rfnew/Rf; %%% Tenemos medido que las pendientes en estado superconducto
 
     if jj==2 Ivalues=-Ivalues;IV=[];end %%%Metemos a pelo el barrido negativo asi.
 %%%Reseteamos el lazo.
-mag_setAMP_CH(mag,nCH);
-mag_setFLL_CH(mag,nCH);
+%mag_setAMP_CH(mag,nCH);
+%mag_setFLL_CH(mag,nCH);
+mag_LoopResetCH(mag,nCH);
 
 boolplot=0;%No pintamos.
 

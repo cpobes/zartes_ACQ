@@ -1,6 +1,9 @@
-function ICpairs=Barrido_Fino_Ic_B(Bvalues,varargin)
+function ICpairs=Barrido_fino_Ic_B(Bvalues,varargin)
 %%%Barrido Bfield Fino a 80mK
 k220=k220_init();
+mag=mag_init();
+nCH=2;%%%Canal de la fuente externa a usar.
+
 %B=[830:5:900 902:2:1300 1305:5:1400]*1e-6;
 %B=[1070:10:1400]*1e-6;
 B=Bvalues;
@@ -8,6 +11,8 @@ B=Bvalues;
 % ICvalues=[0:step:200];
 
 k220_setI(k220,B(1));
+
+mag_LoopResetCH(mag,nCH);
 
 if nargin==2
     step=varargin{1};
@@ -37,6 +42,8 @@ for i=1:length(B)
         plot(B(1:i),[ICpairs.p],'o-',B(1:i),[ICpairs.n],'o-'),hold off;
 end
 k220_setI(k220,0e-6);
+fclose(mag)
+fclose(k220)
 
 %%%Truco para que mande el dilución a Tbase si antes se ha lanzado el
 %%%programa de LabView adecuadamente.
