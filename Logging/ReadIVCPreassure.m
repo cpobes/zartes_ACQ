@@ -3,10 +3,11 @@
 %%%fichero Pivc. El IVC está en el COM5
 WS_variables=who;
 if(~sum(~cellfun('isempty',strfind(WS_variables,'IVC_values')))) IVC_values=[];end
-if(~sum(~cellfun('isempty',strfind(WS_variables,'IVC_values')))) boolplot=1;end
+if(~sum(~cellfun('isempty',strfind(WS_variables,'boolplot')))) boolplot=1;end
 %if isempty(instrfind('Port','COM5')), ivc=serial('com5');end %%%COM 5 en
 %PC viejo. COM 6 en PC nuevo
-if isempty(instrfind('Port','COM6')), ivc=serial('com6');end
+Puerto_IVC='COM6';%%%!!!-> ha cambiado en el nuevo también al COM5.
+if isempty(instrfind('Port',Puerto_IVC)), ivc=serial(Puerto_IVC);end
 if strcmp(ivc.status,'closed') fopen(ivc);end
 str=sprintf('%s\r\n','COM,1');
 query(ivc,str);

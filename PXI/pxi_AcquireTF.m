@@ -1,4 +1,4 @@
-function TF=pxi_AcquireTF(pxi)
+function TF=pxi_AcquireTF(pxi,varargin)
 %%%
 
     Options.TimeOut=10;
@@ -9,7 +9,7 @@ function TF=pxi_AcquireTF(pxi)
     ConfStructs.Trigger.Type=6;
     
     ConfStructs.Horizontal.SR = 2e5;%%%2e5
-    ConfStructs.Horizontal.RL=2e5;%2e6
+    ConfStructs.Horizontal.RL = 2e5;%2e6.2e5
     
     pxi_ConfigureChannels(pxi,ConfStructs.Vertical);
     pxi_ConfigureHorizontal(pxi,ConfStructs.Horizontal);
@@ -17,12 +17,28 @@ function TF=pxi_AcquireTF(pxi)
     
 dsa=hp_init(0);
 
+if nargin==0
+    excitacion=100;
+else
+    excitacion=varargin{1};
+end
 if(1)%%%White Noise version,
-hp_WhiteNoise(dsa,100);
+hp_WhiteNoise(dsa,excitacion);
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+sk=skewness(data);
+while abs(sk(3))>0.5
+    [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+    sk=skewness(data);
+end
 [txy,freqs]=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
-n_avg=50;
+n_avg=5;
 for i=1:n_avg-1
+    [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+    sk=skewness(data);
+    while abs(sk(3))>0.5
+        [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+        sk=skewness(data);
+    end
     aux=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
     txy=txy+aux;
 end
@@ -32,7 +48,7 @@ txy=medfilt1(txy,40);
     if(1) %%%plot. señales.
         %[psd,freq]=PSD(data);
             auxhandle_1=findobj('name','PXI_TF');
-            if isempty(auxhandle_1) figure('name','PXI_TF'); else figure(auxhandle_1);end
+            if isempty(auxhandle_1) figure('name','PXI_TF'); auxhandle_1=findobj('name','PXI_TF');else figure(auxhandle_1);end
         subplot(2,2,1)
         plot(data(:,1),data(:,2));
         grid on

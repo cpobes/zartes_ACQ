@@ -8,10 +8,15 @@ Options.TimeOut=5;
 Options.channelList='1';
 
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+rg=skewness(data)
 
+while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.004
+    [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+    rg=skewness(data)
+end
 [psd,freq]=PSD(data);
 
-if(1)%%%subsampleo?
+if(0)%%%subsampleo?
     if freq(1)==0, logfmin=log10(freq(2));end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
     logfmax=log10(freq(end));
     Ndec=logfmax-logfmin;

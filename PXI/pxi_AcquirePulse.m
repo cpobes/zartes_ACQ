@@ -16,9 +16,11 @@ Options.channelList='1';
 %end
 
 if(1) %%%plot?
+     auxhandle_pulsos=findobj('name','Pulsos');
+     if isempty(auxhandle_pulsos) figure('name','Pulsos'); auxhandle_pulsos=findobj('name','Pulsos'); else figure(auxhandle_pulsos);end
     [psd,freq]=PSD(data);
     subplot(2,1,1)
-    plot(data(:,1),data(:,2));
+    plot(data(:,1),data(:,2),'.-');
     grid on
     subplot(2,1,2)
     %loglog(freq,psd,'.-')

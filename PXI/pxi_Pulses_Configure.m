@@ -5,8 +5,8 @@ Confs=pxi_Init_ConfigStructs;
 
 HorizontalConf=Confs.Horizontal;%%%Aumentamos SR.
 %%%Ventana digitalizada= RL/SR.(a 5MS/S y 25KS son 5ms.)
-HorizontalConf.SR = 5e6;%%%def:5e6
-HorizontalConf.RL = 25e3; %%%def:25e3; 2e4 cubre los 2mseg a 10MS/S pero si pa RefPos=20% no se coge todo el pulso.
+HorizontalConf.SR = 4e5;%%%def:5e6
+HorizontalConf.RL = 4.e5; %%%def:25e3; 2e4 cubre los 2mseg a 10MS/S pero si pa RefPos=20% no se coge todo el pulso.
 pxi_ConfigureHorizontal(pxi,HorizontalConf)
 
 VerticalConf=Confs.Vertical;%%%El init ya esta bien.

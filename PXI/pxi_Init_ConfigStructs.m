@@ -5,7 +5,7 @@ function [ConfStructs,waveformInfo]=pxi_Init_ConfigStructs()
 %%%% Horizontal Configuration
 ConfStructs.Horizontal.SR = 2e5;
 ConfStructs.Horizontal.RL = 2e4;
-ConfStructs.Horizontal.RefPos = 20;
+ConfStructs.Horizontal.RefPos = 10;%%%
 
 %%%% Vertical Configuration
 ConfStructs.Vertical.ChannelList='0,1';

@@ -91,6 +91,8 @@ set(handles.dateHeader,'backg',[0.941 0.941 0.941]);
 set(handles.updatetext,'backg',[0.941 0.941 0.941]);
 set(handles.version,'backg',[0.941 0.941 0.941]);
 
+%%% Poder seleccionar la barra de las figuras
+set(handles.LOG,'ToolBar','figure');
 % Update handles structure
 guidata(hObject,handles);
 

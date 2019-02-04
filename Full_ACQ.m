@@ -32,7 +32,7 @@ for i=1:length(temps)
         %bucle para esperar a Tbath SET 
     end
 
-        if(0)%%%Para medir o no IVs finas
+        if(1)%%%Para medir o no IVs finas
         %%%acquireIVs. Automatizar definición de los IbiasValues.
         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
         %ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08:0.002:0.12]; 
@@ -46,15 +46,15 @@ for i=1:length(temps)
          cd IVs
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
-         IbiasValues=[500:-10:200 195:-5:150 148:-2:100 99:-1:0];
+         IbiasValues=[500:-10:100 99:-0.5:0];
          %IbiasValues=[200:-5:100 98:-2:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
          
-%          if temps(i)>100
-%              IbiasValues=[500:-10:50 49:-1:0];
-%          end
-         if temps(i)==0.120
+         if temps(i)==0.040 %%%%Buscamos PSL en la de 40mK.
+             IbiasValues=[500:-10:200 195:-5:150 148:-2:100 99:-1:70 69.9:-0.01:0];
+         end
+         if temps(i)>0.095
              IbiasValues=[500:-10:0];
          end
 %         if temps(i)<0.072
@@ -78,32 +78,38 @@ for i=1:length(temps)
         
         %%%Para medir Icriticas%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if(0) %%%temps(i)>0.080
+            auxarrayIC=[0.076 0.077:0.0005:0.0825];
+            if(~isempty(find(auxarrayIC==temps(i), 1)))
         mkdir ICs
         cd ICs
         Ivalues=[0:0.25:500];
         ic(i)=measure_Pos_Neg_Ic(Tstring,Ivalues);
         cd ..
+            end
         end
         
         if(0)%%%Para hacer barrido en campo
-        %auxarrayIC=[0.06 0.065 0.075];
+        auxarrayIC=[0.07 0.074 0.076 0.078 0.080 0.082];
         %auxarrayIC=temps;
-        auxarrayIC=temps(2:end);%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%
+        %auxarrayIC=temps(2:end);%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%
         if(~isempty(find(auxarrayIC==temps(i), 1)))
             %Bvalues=[0:40:2500]*1e-6;
-            Bvalues=[-3000:100:2000]*1e-6;
-            if temps(i)<85e-3
+            Bvalues=[1000:100:3500]*1e-6;%%%<-ojo, al medir con campo tengo que reponer el campo original para seguir midiendo.
+            if temps(i)<72e-3
                 step=5;
-            elseif temps(i)>=85e-3 &&temps(i)<88e-3
-                step=2;
-            elseif temps(i)<100e-3 && temps(i)>=88e-3
+%             elseif temps(i)>=85e-3 &&temps(i)<88e-3
+%                 step=2;
+            elseif temps(i)<79e-3 && temps(i)>=72e-3
                 step=0.5;
-            elseif temps(i)>=100e-3
+            elseif temps(i)>=79e-3
                 step=0.2;
             end
+            mkdir Barrido_Campo
+            cd Barrido_Campo
             ICpairs=Barrido_fino_Ic_B(Bvalues,step)
             icstring=strcat('ICpairs',Tstring,'.mat');
             save(icstring,'ICpairs');
+            cd ..
         end
         end%%% Barrido en campo
         
@@ -112,7 +118,7 @@ for i=1:length(temps)
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];    
     
     if(1) %%%Hacer o no Z(w)-Ruido.
-    auxarray=[0.05];
+    auxarray=[0.05 0.07];
     %auxarray=[0.05 0.055 0.070 0.075];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
@@ -147,16 +153,16 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.05:0.4 0.38:-0.02:0.06];
+            rpp=[0.9:-0.05:0.4 0.38:-0.02:0.3 0.29:-0.01:0.2];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
-            %rpn=[0.90:-0.02:0.04];
-            rpn=rpp;
+            rpn=[0.90:-0.05:0.2];
+            %rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             try
-                %hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
+                hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
                 cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%se sube tb un nivel
             catch
