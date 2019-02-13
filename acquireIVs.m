@@ -1,9 +1,13 @@
-function IV=acquireIVs(Temp,Ibvalues)
+function IV=acquireIVs(Temp,Ibvalues, varargin)
 %%%Funcion para adquirir IVs con matlab leyendo el HP3458A y con step de
 %%%corriente variable. Ojo, pasar Ibias values en uA.
 %%%Pasar Temp como 'xxmK' string
 %%%Version 17Oct17. Paso funciones CH.
 %%%Version 3Nov17. Incorporo refreshdata para pintar a la vez que adquiere.
+%%%Version 06Feb19. Incorporo condición para usar LNCS o fuente de CH sin
+%%%tener que comentar/descomentar código. Añado varargin para pasar como
+%%%una estructura nuevos parámetros de configuración. (ojo, hay que pasar
+%%%todos aunque se cambie sólo 1).
 
 %%%%%Check Dir
 f=dir;
@@ -15,14 +19,26 @@ q=regexp({f.name},'\d*.?\d*mK','match');
 %     if(strcmp(q{i},Temp)) error('Ojo:Ya hay un fichero con esa Temp');end
 % end
 
-%%%QUE FUENTE SE USA
-sourceCH=2;
-
-boolplot=1;%%%si queremos o no pintar la curva.
+if nargin==2
+    %%%QUE FUENTE SE USA
+    sourceCH=2;
+    boolplot=1;%%%si queremos o no pintar la curva.
+    Rf=3e3;%%%Rf
+    averages=5;
+    %%%%Fuente a usar: LNCS. Normal
+    sourceType='LNCS';%%% o 'Normal'.
+elseif nargin==3
+    opt=varargin{1};%%%%Pasar las opciones en una estructura!
+    sourceCH=opt.sourceCH;
+    boolplot=opt.boolplot;
+    Rf=opt.Rf;
+    sourceType=opt.sourceType;
+    averages=opt.averages;
+end
 
 mag=mag_init();
 multi=multi_init();
-Rf=3e3;
+
 mag_setRf_FLL_CH(mag,Rf,sourceCH);%3e3
 %%%Ponemos el máximo de corriente 
 signo=sign(Ibvalues(1));
@@ -50,18 +66,21 @@ end
 % 'Measure Start'
 
 %%%Reseteamos el lazo.
-mag_setAMP_CH(mag,sourceCH);
-mag_setFLL_CH(mag,sourceCH);
+% mag_setAMP_CH(mag,sourceCH);
+% mag_setFLL_CH(mag,sourceCH);
 pause(2)
 mag_LoopResetCH(mag,sourceCH);
 pause(2)
-slope=0;state=0;jj=1;
-averages=5;
 
+slope=0;state=0;jj=1;
+
+if strcmpi(sourceType,'LNCS')
  mag_ConnectLNCS(mag);%%%%
      mag_setLNCSImag(mag,signo*0.5e3);
      mag_setImag_CH(mag,0,sourceCH);%%%Fuente en Ch1
+end
 %%%
+
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
 psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 for i=1:length(Ibvalues)
@@ -69,9 +88,15 @@ for i=1:length(Ibvalues)
     if slope/Rf>slopeTHR && slope<Inf && ~psl
         state=1;
     end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
-    if state && mod(Ibvalues(i),10) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
-    mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
-    %mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
+    
+    %%%%Control de estado superconductor para cambiar Step.
+    if state && mod(Ibvalues(i),1*1) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
+    
+    if strcmpi(sourceType,'LNCS')
+        mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
+    else
+        mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
+    end
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
     if i==1, pause(2); end
     pause(1.)
@@ -89,8 +114,11 @@ for i=1:length(Ibvalues)
         %Vdc_array(i_av)=multi_read(multi);
     end
     Vdc=mean(Vdc_array);
-    Ireal=mag_readLNCSImag(mag);
-    %Ireal=mag_readImag_CH(mag,sourceCH);
+    if strcmpi(sourceType,'LNCS')
+        Ireal=mag_readLNCSImag(mag);
+    else
+        Ireal=mag_readImag_CH(mag,sourceCH);
+    end
     
     %%%Vout=mag_readVout(mag);
     data(jj,1)=now;
@@ -117,8 +145,10 @@ for i=1:length(Ibvalues)
     end
 end
 
- mag_setLNCSImag(mag,0);%%%%%
- mag_DisconnectLNCS(mag);%%%%%
+if strcmpi(sourceType,'LNCS')
+    mag_setLNCSImag(mag,0);%%%%%
+    mag_DisconnectLNCS(mag);%%%%%
+end
 
 IV=corregir1rama(data);
 % IV.ibias=data(:,2)*1e-6;
