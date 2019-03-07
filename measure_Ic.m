@@ -18,6 +18,7 @@ end
 
 Rf=mag_readRf_FLL_CH(mag,nCH);
 mag_setRf_FLL_CH(mag,7e2,nCH);%700
+Rfnew=mag_readRf_FLL_CH(mag,nCH);
 
 %%%Reseteamos el lazo.
 mag_setAMP_CH(mag,nCH);
@@ -82,9 +83,10 @@ else
         if (boolplot),refreshdata(1,'caller');end
         %if (abs(vout2*1e6)-abs(vout1*1e6))<0, break;end
         %vout2,vout1
-        Ivalues(2),Ivalues(1)
-        slope=(vout2-vout1)/((Ivalues(2)-Ivalues(1))*1e-6)
-        if slope<3000*700/3e3,break;end
+        Ivalues(i),Ivalues(i-1)
+        slope=(vout2-vout1)/((Ivalues(i)-Ivalues(i-1))*1e-6)/Rfnew
+        
+        if slope<1,break;end
         vout1=vout2;
     end
     mag_setImag_CH(mag,0,nCH);

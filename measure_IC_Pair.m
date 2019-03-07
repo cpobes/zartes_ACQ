@@ -15,10 +15,14 @@ mag=mag_init();
 nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
-if nargin==1
-    step=varargin{1};
-else
+if nargin==0
     step=0.20; %%% Aqui usamos un vector fijo en lugar de pasarlo como parametro.
+elseif nargin==1
+        step=varargin{1};
+        i0=[1 1];
+elseif nargin==2
+        step=varargin{1};
+        i0=varargin{2};%%%pasamos el índice para empezar el barrido.
 end
 
 
@@ -35,8 +39,8 @@ Rf=mag_readRf_FLL_CH(mag,nCH);%%%Guardamos el valor original (normalmente 3e3).
 %mag_setRf_FLL_CH(mag,700,nCH);%%%% Ponemos (o no) la Rf a 700Ohm para que no sature al medir Ics grandes. En realidad, cerca de Tc no hace falta
 
 Rfnew=mag_readRf_FLL_CH(mag,nCH);
-THR=3000*Rfnew/Rf; %%% Tenemos medido que las pendientes en estado superconductor cuando la Rf=3e3 están sobre 800 y las de estado N sobre 8000. Se toma 3000 como valor de separacion.
-
+%THR=3000*Rfnew/Rf; %%% Tenemos medido que las pendientes en estado superconductor cuando la Rf=3e3 están sobre 800 y las de estado N sobre 8000. Se toma 3000 como valor de separacion.
+THR=1;
     if jj==2 Ivalues=-Ivalues;IV=[];end %%%Metemos a pelo el barrido negativo asi.
 %%%Reseteamos el lazo.
 %mag_setAMP_CH(mag,nCH);
@@ -52,7 +56,7 @@ if(abs(Ivalues(end)))>500
     pause(0.5)%%%
     vout1=multi_read(multi)
     IV.vc(1)=vout1;  
-        for i=2:length(Ivalues)
+        for i=i0(jj)+1:length(Ivalues)
         
         Ivalues(i)
         mag_setLNCSImag(mag,Ivalues(i));
@@ -66,9 +70,9 @@ if(abs(Ivalues(end)))>500
         %if (abs(vout2*1e6)-abs(vout1*1e6))<0, break;end
         %vout2,vout1
         %Ivalues(2),Ivalues(1)
-        slope=(vout2-vout1)/((Ivalues(2)-Ivalues(1))*1e-6)
+        slope=(vout2-vout1)/((Ivalues(i)-Ivalues(i-1))*1e-6)/Rf;%%%normalizamos
         if slope<THR,break;end  %%%
-        [slope, THR]
+        %[slope, THR]
         vout1=vout2;
     end
     mag_setLNCSImag(mag,0);
@@ -115,11 +119,12 @@ else
                 %linkdata(1);
                 set(h,'xdatasource','x','ydatasource','y','linestyle','-');
             end
-    for i=2:length(Ivalues)
+    for i=i0(jj)+1:length(Ivalues)
         
         Ivalues(i)
-        mag_setImag_CH(mag,Ivalues(i),nCH);
-        pause(0.5)%0.5
+            mag_setImag_CH(mag,Ivalues(i),nCH);
+            pause(0.5)%0.5
+        
         vout2=multi_read(multi);
         IV.ic(i)=mag_readImag_CH(mag,nCH);
         IV.vc(i)=vout2
@@ -129,7 +134,7 @@ else
         %if (abs(vout2*1e6)-abs(vout1*1e6))<0, break;end
         %vout2,vout1
         %Ivalues(2),Ivalues(1)
-        slope=(vout2-vout1)/((Ivalues(2)-Ivalues(1))*1e-6)
+        slope=(vout2-vout1)/((Ivalues(i)-Ivalues(i-1))*1e-6)/Rf %%%normalizamos
         if slope<THR,break;end  %%%
         [slope, THR]
         vout1=vout2;

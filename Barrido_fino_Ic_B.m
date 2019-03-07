@@ -6,7 +6,7 @@ nCH=2;%%%Canal de la fuente externa a usar.
 
 %B=[830:5:900 902:2:1300 1305:5:1400]*1e-6;
 %B=[1070:10:1400]*1e-6;
-B=Bvalues;
+B=Bvalues;%%%Realmente son valores de corriente en la bobina.
 % step=0.5; %%% El step para medir la Ic
 % ICvalues=[0:step:200];
 
@@ -26,11 +26,26 @@ for i=1:length(B)
     pause(1);
     %str=strcat('80mK_',num2str(B(i)*1e6),'uA');
     %measure_Pos_Neg_Ic(str,ICvalues);
+    if i<4
+        i0=[1 1];
+    else
+        mmp=(ICpairs(i-1).p-ICpairs(i-3).p)/(B(i-1)-B(i-3));
+        mmn=(ICpairs(i-1).n-ICpairs(i-3).n)/(B(i-1)-B(i-3));
+        icnext_p=ICpairs(i-1).p+mmp*(B(i)-B(i-1));
+        icnext_n=ICpairs(i-1).n+mmn*(B(i)-B(i-1));
+        ic0_p=0.9*icnext_p;
+        ic0_n=0.9*icnext_n;
+        tempvalues=[0:step:500];%%%array de barrido en corriente
+        ind_p=find(tempvalues<=abs(ic0_p));
+        ind_n=find(tempvalues<=abs(ic0_n));
+        i0=[ind_p(end) ind_n(end)];%%%Calculamos el índice que corresponde a la corriente para empezar el barrido
+    end
     try 
-        aux=measure_IC_Pair(step);
+        aux=measure_IC_Pair(step,i0);
         ICpairs(i).p=aux.p;
         ICpairs(i).n=aux.n;
         ICpairs(i).B=B(i);
+        step=max(varargin{1},aux.p/20);%por si es cero.
     catch
         warning('error de lectura')
         pause(1)
@@ -41,7 +56,7 @@ for i=1:length(B)
         save('ICpairs','ICpairs');
         plot(B(1:i),[ICpairs.p],'o-',B(1:i),[ICpairs.n],'o-'),hold off;
 end
-k220_setI(k220,2500e-6);%%%%
+k220_setI(k220,0e-6);%%%%
 fclose(mag)
 fclose(k220)
 

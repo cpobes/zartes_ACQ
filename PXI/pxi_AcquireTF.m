@@ -17,7 +17,7 @@ function TF=pxi_AcquireTF(pxi,varargin)
     
 dsa=hp_init(0);
 
-if nargin==0
+if nargin==1
     excitacion=100;
 else
     excitacion=varargin{1};
@@ -31,7 +31,9 @@ while abs(sk(3))>0.5
     sk=skewness(data);
 end
 [txy,freqs]=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
-n_avg=5;
+
+n_avg=10;
+
 for i=1:n_avg-1
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
     sk=skewness(data);

@@ -90,7 +90,7 @@ for i=1:length(Ibvalues)
     end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
     
     %%%%Control de estado superconductor para cambiar Step.
-    if state && mod(Ibvalues(i),1*1) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
+    if state && mod(Ibvalues(i),10) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
     
     if strcmpi(sourceType,'LNCS')
         mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3

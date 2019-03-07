@@ -24,7 +24,7 @@ ConfStructs.Trigger.Coupling=1;%%%DC=1; AC=0;?. '0' da error.
 ConfStructs.Trigger.Holdoff=0;
 ConfStructs.Trigger.Delay=0; 
 
-if length(ConfStructs.Vertical.ChannelList)==1 nchannels=1;else nchannels=2;end
+if length(ConfStructs.Vertical.ChannelList)==1, nchannels=1;else nchannels=2;end
 for i = 1:nchannels
     waveformInfo(i).absoluteInitialX = 0;
     waveformInfo(i).relativeInitialX = 0;
