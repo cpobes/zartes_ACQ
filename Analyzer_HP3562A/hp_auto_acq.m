@@ -74,7 +74,7 @@ for i=1:length(IbValues)
     %mide TF
     if(1)
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
-        porcentaje=0.02;%%%%<-Porcentaje!
+        porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=IbValues(i)*1e-6*porcentaje;
     datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
     file=strcat('TF_',Itxt,'uA','.txt');

@@ -33,8 +33,8 @@ for i=1:length(B)
         mmn=(ICpairs(i-1).n-ICpairs(i-3).n)/(B(i-1)-B(i-3));
         icnext_p=ICpairs(i-1).p+mmp*(B(i)-B(i-1));
         icnext_n=ICpairs(i-1).n+mmn*(B(i)-B(i-1));
-        ic0_p=0.9*icnext_p;
-        ic0_n=0.9*icnext_n;
+        ic0_p=0.8*icnext_p;
+        ic0_n=0.8*icnext_n;
         tempvalues=[0:step:500];%%%array de barrido en corriente
         ind_p=find(tempvalues<=abs(ic0_p));
         ind_n=find(tempvalues<=abs(ic0_n));

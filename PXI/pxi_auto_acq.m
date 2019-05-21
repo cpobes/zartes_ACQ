@@ -70,7 +70,7 @@ for i=1:length(IbValues)
     mag_LoopResetCH(mag,sourceCH);
     if(1)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
-        porcentaje=0.02;
+        porcentaje=0.05;
         excitacion=IbValues(i)*(1e1)*porcentaje;%%%amplitud en mV para la fuente.
         TF=pxi_AcquireTF(pxi,excitacion);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
