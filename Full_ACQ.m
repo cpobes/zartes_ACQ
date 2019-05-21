@@ -15,11 +15,7 @@ fclose(fid)
 basedir=pwd;
 
 if nargin>2
-    if isstruct(varargin{1})
-        optIV=varargin{1};
-    else
-        ivauxP=varargin{1};
-    end
+    ivauxP=varargin{1};
 end
 if nargin>3
     ivauxN=varargin{2};
@@ -36,21 +32,21 @@ for i=1:length(temps)
         %bucle para esperar a Tbath SET 
     end
 
-        if(1)%%%Para medir o no IVs finas
+        if(0)%%%Para medir o no IVs finas
         %%%acquireIVs. Automatizar definición de los IbiasValues.
         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
         %ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08:0.002:0.12]; 
         %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
         %ivsarray=[0.04 0.045 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.106 0.108 0.110 0.112 0.114 0.115 0.12 0.125];
         %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
-        ivsarray=temps(1:end-1);%[0.07 0.05];
+        ivsarray=temps;%[0.07 0.05];
         %ivsarray=[];
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
          cd IVs
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
-         IbiasValues=[500:-10:200 195:-5:150 148:-2:100 99:-1:0];
+         IbiasValues=[500:-10:250 245:-5:200 199:-1:0];
          %IbiasValues=[200:-5:100 98:-2:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
@@ -58,9 +54,9 @@ for i=1:length(temps)
 %          if temps(i)==0.040 %%%%Buscamos PSL en la de 40mK.
 %              IbiasValues=[500:-10:200 195:-5:150 148:-2:100 99:-1:70 69.9:-0.01:0];
 %          end
-%          if temps(i)<0.075
-%              IbiasValues=[500:-10:300 295:-5:250 249:-1:0];
-%          end
+         if temps(i)<0.075
+             IbiasValues=[500:-10:300 295:-5:250 249:-1:0];
+         end
 %         if temps(i)<0.072
 %             IbiasValues=[500:-20:200 195:-5:150 149.5:-0.5:0]; %%%Debería saltar al detectar el estado S.
 %         elseif temps(i)<0.08
@@ -69,13 +65,11 @@ for i=1:length(temps)
 %             IbiasValues=[500:-20:100 95:-5:60 59.5:-0.5:0];
 %         end
         
-if nargin==2
-optIV.Rf=3e3;
+optIV.Rf=1e3;
 optIV.sourceCH=2;
 optIV.sourceType='normal';
 optIV.boolplot=1;
 optIV.averages=5;
-end
 
         try  %%%A veces dan error las IVs. pq?
              IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
@@ -100,14 +94,13 @@ end
             end
         end
         
-        if(0)%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %auxarrayIC=[0.08:0.002:0.094];
+        if(1)%%%Para hacer barrido en campo
+        %auxarrayIC=[0.07 0.074 0.076 0.078 0.080 0.082];
         auxarrayIC=temps;%(1:4);
         %auxarrayIC=temps(2:end);%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%
         if(~isempty(find(auxarrayIC==temps(i), 1)))
             %Bvalues=[0:40:2500]*1e-6;
-            Bvalues=[-5000:50:5000]*1e-6;%%%<-ojo, al medir con campo tengo que reponer el campo original para seguir midiendo.
+            Bvalues=[-6000:50:8000]*1e-6;%%%<-ojo, al medir con campo tengo que reponer el campo original para seguir midiendo.
 %             if temps(i)<72e-3
 %                 step=5;
 % %             elseif temps(i)>=85e-3 &&temps(i)<88e-3
@@ -131,8 +124,8 @@ end
 %%%puede ser un subconjunto de las Tbath a las que se mida IV.
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];    
     
-    if(1) %%%Hacer o no Z(w)-Ruido.
-    auxarray=[0.05 0.06 0.07 0.08];
+    if(0) %%%Hacer o no Z(w)-Ruido.
+    auxarray=[0.04 0.05 0.06 0.07];
     %auxarray=[0.05 0.055 0.070 0.075];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
@@ -167,11 +160,11 @@ end
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.1:0.3 0.28:-0.02:0.04];% 0.38:-0.02:0.3 0.29:-0.01:0.2];
+            rpp=[0.9:-0.05:0.4];% 0.38:-0.02:0.3 0.29:-0.01:0.2];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
-            rpn=[0.90:-0.1:0.3 0.25:-0.05:0.1];
+            rpn=[0.90:-0.05:0.4];
             %rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag
