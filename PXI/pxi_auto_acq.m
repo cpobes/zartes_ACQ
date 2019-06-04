@@ -51,7 +51,7 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 %questdlg('TES normal?')
 
 for i=1:length(IbValues)
-    
+    try
     %resetea lazo de realimentacion del squid.
     mag_setAMP_CH(mag,sourceCH);
     mag_setFLL_CH(mag,sourceCH);
@@ -70,7 +70,7 @@ for i=1:length(IbValues)
     mag_LoopResetCH(mag,sourceCH);
     if(1)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
-        porcentaje=0.02;
+        porcentaje=0.05;
         excitacion=IbValues(i)*(1e1)*porcentaje;%%%amplitud en mV para la fuente.
         TF=pxi_AcquireTF(pxi,excitacion);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
@@ -82,7 +82,7 @@ for i=1:length(IbValues)
     %mide ruido
     mag_LoopResetCH(mag,sourceCH);
     if(1)
-        pxi_Noise_Configure(pxi);
+        %pxi_Noise_Configure(pxi); no necesario. esta dentro de AcqPSD.
         pause(1)
         aux=pxi_AcquirePSD(pxi);
         datos=aux;
@@ -136,7 +136,9 @@ for i=1:length(IbValues)
         cd ..
         %pause(1)
     end
-    
+    catch
+        strcat('error pxi Ib: ',num2str(i))
+    end
 end
 
 %mag_setLNCSImag(mag,0);%%%Ponemos la corriente a cero.

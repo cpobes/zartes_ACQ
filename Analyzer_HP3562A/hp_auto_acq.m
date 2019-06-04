@@ -9,7 +9,7 @@ function hp_auto_acq(IbValues)
 %if checkDirb4Acq() error('ponte en el directorio correcto');end
 
 %instrreset();
-dsa=hp_init(0);%inicializa el HP.
+dsa=hp_init();%inicializa el HP.
 
 %hp_ss_config(dsa);%configura el HP para medir Función de
 %Transferencia.Pero aqui sobra.
@@ -17,7 +17,7 @@ dsa=hp_init(0);%inicializa el HP.
 mag=mag_init();
 %multi=multi_init();
 fprintf(dsa,'SNGC');%%%Calibramos el HP.
-pause(25);
+pause(35);
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
@@ -57,6 +57,7 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 
 for i=1:length(IbValues)
     
+    try
     %resetea lazo de realimentacion del squid.
     mag_setAMP_CH(mag,sourceCH);
     mag_setFLL_CH(mag,sourceCH);
@@ -74,7 +75,7 @@ for i=1:length(IbValues)
     %mide TF
     if(1)
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
-        porcentaje=0.02;%%%%<-Porcentaje!
+        porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=IbValues(i)*1e-6*porcentaje;
     datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
     file=strcat('TF_',Itxt,'uA','.txt');
@@ -87,6 +88,9 @@ for i=1:length(IbValues)
     file=strcat('HP_noise_',Itxt,'uA','.txt');
     save(file,'datos','-ascii');%salva los datos a fichero.
     end
+    catch
+        strcat('error HP Ib: ',num2str(i))
+    end %%%try catch
 end
 
 %mag_setLNCSImag(mag,0);%%%Ponemos la corriente a cero.

@@ -99,7 +99,8 @@ for i=1:length(Ibvalues)
     end
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
     if i==1, pause(2); end
-    pause(1.)
+    
+    pause(1.5)
     
     for i_av=1:averages
         aux=multi_read(multi);

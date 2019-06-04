@@ -2,7 +2,7 @@ function multi=multi_init(varargin)
 %Función para inicializar una sesión con el multimetro HP.
 % 
 if nargin == 0
-    gpib_dir=0;
+    gpib_dir=1;%%%antes default = 0.
 else
     gpib_dir=varargin{1};
 end

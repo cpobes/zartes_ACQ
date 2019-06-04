@@ -7,7 +7,11 @@ function pxi_ConfigureChannels(pxi,ConfigureOptions)
 ChannelList=ConfigureOptions.ChannelList;
 Range=ConfigureOptions.Range;
 offset=ConfigureOptions.offset;
-if strcmpi(ConfigureOptions.Coupling,'AC') Coupling=0;elseif strcmpi(ConfigureOptions.Coupling,'DC') Coupling=1;end
+if strcmpi(ConfigureOptions.Coupling,'AC')
+    Coupling=0;
+elseif strcmpi(ConfigureOptions.Coupling,'DC') 
+    Coupling=1;
+end
 ProbeAttenuation=ConfigureOptions.ProbeAttenuation;
 Enabled=ConfigureOptions.Enabled;
 

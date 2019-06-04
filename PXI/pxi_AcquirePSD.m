@@ -4,6 +4,8 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
+pxi_Noise_Configure(pxi);
+
 Options.TimeOut=5;
 Options.channelList='1';
 

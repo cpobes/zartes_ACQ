@@ -15,7 +15,7 @@ function TF=pxi_AcquireTF(pxi,varargin)
     pxi_ConfigureHorizontal(pxi,ConfStructs.Horizontal);
     pxi_ConfigureTrigger(pxi,ConfStructs.Trigger)
     
-dsa=hp_init(0);
+dsa=hp_init();
 
 if nargin==1
     excitacion=100;
@@ -26,18 +26,20 @@ if(1)%%%White Noise version,
 hp_WhiteNoise(dsa,excitacion);
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 sk=skewness(data);
-while abs(sk(3))>0.5
+skTHR=0.5;
+while abs(sk(3))>skTHR
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
     sk=skewness(data);
 end
-[txy,freqs]=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+[txy,freqs]=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
 
-n_avg=10;
+n_avg=5;
 
 for i=1:n_avg-1
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+    i
     sk=skewness(data);
-    while abs(sk(3))>0.5
+    while abs(sk(3))>skTHR
         [data,WfmI]=pxi_GetWaveForm(pxi,Options);
         sk=skewness(data);
     end
