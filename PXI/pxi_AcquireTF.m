@@ -8,8 +8,8 @@ function TF=pxi_AcquireTF(pxi,varargin)
     ConfStructs.Vertical.channelList='0,1';
     ConfStructs.Trigger.Type=6;
     
-    ConfStructs.Horizontal.SR = 2e5;%%%2e5
-    ConfStructs.Horizontal.RL = 2e5;%2e6.2e5
+    ConfStructs.Horizontal.SR = 4e5;%%%2e5
+    ConfStructs.Horizontal.RL = 4e5;%2e6.2e5
     
     pxi_ConfigureChannels(pxi,ConfStructs.Vertical);
     pxi_ConfigureHorizontal(pxi,ConfStructs.Horizontal);
@@ -31,7 +31,9 @@ while abs(sk(3))>skTHR
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
     sk=skewness(data);
 end
-[txy,freqs]=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+wind = hann(5000);
+nov = 2500;
+[txy,freqs]=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
 
 n_avg=5;
 
@@ -43,7 +45,7 @@ for i=1:n_avg-1
         [data,WfmI]=pxi_GetWaveForm(pxi,Options);
         sk=skewness(data);
     end
-    aux=tfestimate(data(:,2),data(:,3),[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+    aux=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
     txy=txy+aux;
 end
 txy=txy/n_avg;

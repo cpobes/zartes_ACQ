@@ -24,7 +24,7 @@ if nargin>3
     ivauxN=varargin{2};
 end
 
-optIV.Rf=3e3;
+optIV.Rf=1e4;
 optIV.sourceCH=2;
 optIV.sourceType='normal';
 optIV.boolplot=1;
@@ -41,7 +41,7 @@ for i=1:length(temps)
         %bucle para esperar a Tbath SET 
     end
 
-        if(1)%%%Para medir o no IVs finas
+        if(0)%%%Para medir o no IVs finas
         %%%acquireIVs. Automatizar definición de los IbiasValues.
         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
         %ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08:0.002:0.12]; 
@@ -55,8 +55,8 @@ for i=1:length(temps)
          cd IVs
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
-         %IbiasValues=[500:-10:250 245:-5:200 199:-1:0];
-         IbiasValues=[500:-10:300 295:-5:250 249:-1:0 -0.05:-0.05:-1];
+         IbiasValues=[500:-10:250 245:-5:200 199:-1:0];
+         %IbiasValues=[500:-10:300 295:-5:250 249:-1:0 -0.05:-0.05:-1];
          %IbiasValues=[200:-5:100 98:-2:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
@@ -130,8 +130,8 @@ for i=1:length(temps)
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];    
     
     if(1) %%%Hacer o no Z(w)-Ruido.
-    auxarray=[0.05 0.06 0.07];
-    %auxarray=[0.05 0.055 0.070 0.075];
+    %auxarray=temps(1:end-1);
+    auxarray=[0.06];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -165,7 +165,7 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.05:0.4 0.38:-0.02:0.2];
+            rpp=[0.9:-0.02:0.2];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
@@ -176,9 +176,9 @@ for i=1:length(temps)
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             IZvaluesN=IZvaluesN(abs(IZvaluesN)<500);%%%%Para evitar error fte normal si el spline no esta bien.
             try
-                hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
-                'HP done'
-                cd(Tstring)
+                %hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
+                %'HP done'
+                %cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%se sube tb un nivel
                 'PXI done'
             catch
