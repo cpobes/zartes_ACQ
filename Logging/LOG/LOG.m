@@ -59,7 +59,7 @@ handles.output = hObject;
 % START USER CODE
 % Create a timer object to fire at 1/10 sec intervals
 % Specify function handles for its start and run callbacks
-Period = 30;
+Period = 20;
 handles.timer = timer(...
     'ExecutionMode', 'fixedRate', ...       % Run timer repeatedly
     'Period', Period, ...                        % Initial period is 1 sec.
@@ -523,6 +523,11 @@ parameterNames = evalin('base','parameterNames');
 data = evalin('base','dataTemp');
 timeAxis = evalin('base','timeAxis');
 dataPlot = cell2mat(data(:,parameterSelect+2));
+%ind= dataPlot>=0;
+%%%A veces Tm/c da lectura anómala en 1 punto y estropea el autorange.
+ind=find(abs(diff(diff(dataPlot)))>3)+1;
+dataPlot(ind)=[];%=dataPlot(ind);
+timeAxis(ind)=[];%=timeAxis(ind);
 set(handles.plot,'XData',timeAxis,'YData',dataPlot);
 axes(handles.graph1);
 axis(handles.graph1,'auto y');
@@ -729,6 +734,11 @@ parameterSelect = get(handles.parameterlist,'Value');
 data = evalin('base','dataTemp');
 timeAxis = evalin('base','timeAxis');
 dataPlot = cell2mat(data(:,parameterSelect+2));
+%ind= dataPlot>=0;
+%%%A veces Tm/c da lectura anómala en 1 punto y estropea el autorange.
+ind=find(abs(diff(diff(dataPlot)))>3)+1;
+dataPlot(ind)=[];%=dataPlot(ind);
+timeAxis(ind)=[];%=timeAxis(ind);
 set(handles.plot,'XData',timeAxis,'YData',dataPlot);
 set(handles.updatetext,'String',datestr(now));
 
