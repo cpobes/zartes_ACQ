@@ -8,7 +8,7 @@ else
 end
 
 %dsa=instrfind('Status','open');%ojo! puede haber otros devices abiertos!
-k220=instrfind('type','gpib','boardindex',1,'primaryaddress',2);
+k220=instrfind('type','gpib','boardindex',gpib_dir,'primaryaddress',2);
 if isempty(k220)    
     k220=gpib('ni',gpib_dir,2);%dir:1 puede cambiar
     fopen(k220); %cerrar al final.

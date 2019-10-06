@@ -25,7 +25,7 @@ if boolplot
     xlabel('hora','fontsize',12,'fontweight','bold')
     ylabel('IVC Preassure (bar)','fontsize',12,'fontweight','bold')
     title('Presión de la IVC','fontsize',12,'fontweight','bold')
-    set(gca,'fontsize',12,'fontweight','bold');
+    set(gca,'fontsize',12,'fontweight','bold','yscale','log');
     h=get(gca,'children');set(h,'linewidth',3,'marker','.','markersize',20)
 end
 IVCfile=strcat(datadir,'\Pivc')

@@ -34,6 +34,7 @@ set(get(pxi,'triggering'),'trigger_source','NISCOPE_VAL_EXTERNAL');%%%%Hacerlo a
 
 if TriggerConf.Type==1003.0
     HighLevel=TriggerConf.Level;
+    %HighLevel=-0.03
     LowLevel=HighLevel-0.1;
     set(pxi.Triggeringtriggerwindow,'High_Window_Level',HighLevel);
     set(pxi.Triggeringtriggerwindow,'Low_Window_Level',LowLevel);

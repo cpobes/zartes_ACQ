@@ -1,6 +1,6 @@
 function ICpairs=Barrido_fino_Ic_B(Bvalues,varargin)
 %%%Barrido Bfield Fino a 80mK
-k220=k220_init();
+k220=k220_init(0);
 mag=mag_init();
 nCH=2;%%%Canal de la fuente externa a usar.
 
@@ -11,7 +11,7 @@ B=Bvalues;%%%Realmente son valores de corriente en la bobina.
 % ICvalues=[0:step:200];
 
 k220_setI(k220,B(1));
-
+k220_Start(k220);
 mag_LoopResetCH(mag,nCH);
 
 if nargin==2
@@ -45,7 +45,7 @@ for i=1:length(B)
         ICpairs(i).p=aux.p;
         ICpairs(i).n=aux.n;
         ICpairs(i).B=B(i);
-        step=max(varargin{1},aux.p/20);%por si es cero.
+        step=max(varargin{1},aux.p/20);%por si es cero. Cogemos el máximo entre el step inicial o el 5% de la Icritica.
     catch
         warning('error de lectura')
         pause(1)

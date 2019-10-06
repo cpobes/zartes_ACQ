@@ -1,5 +1,5 @@
 %function ReadHeLevel(ilm,Level)
-%%% read Level. El ILM está en el COM4.
+%%% read Level. El ILM está en el COM6.
 %%%Definimos los valores en la variable 'Level' y los salvamos
 %%% en el fichero HeLevel
 WS_variables=who;

@@ -99,27 +99,28 @@ for i=1:length(IbValues)
     pause(1)
     %mide pulsos
     if (0)
-        
+        if(0)
         %%%%Pulsos de corriente
-%         mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA).Ojo, el canal no se pasa como parametro.
-%         %%%Resetea lazo para anular la componente DC del CH1. OJO: lo
-%         %%%robusto es sacar señal de trigger y meterla por Trigger EXT.
-%         mag_LoopResetCH(mag,sourceCH);
-%         %vdc=mean(multi_read(multi))
-%         %opt.Level=vdc-0.04;%%%Amplitude dependent trigger above DC level.
-%         %pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos.
-%         %pause(1)
-%         mag_setCalPulseON_CH(mag,2);%%activamos la fuente
-%         vdc=-mode(multi_read(multi));%%%OJO! el valor en el HP es opuesto en signo al de la PXI!!!
-%         %%%'NISCOPE_VAL_VOLTAGE_BASE'=26
-%         %invoke(pxi.Measurement,'addwaveformprocessing','1',26);
-%         %vdc=pxi_getMeasurement(pxi,'1',26)
-%         opt.Level=vdc-0.005;%%%Amplitude dependent trigger above DC level.
+        mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA).Ojo, el canal no se pasa como parametro.
+        %%%Resetea lazo para anular la componente DC del CH1. OJO: lo
+        %%%robusto es sacar señal de trigger y meterla por Trigger EXT.
+        mag_LoopResetCH(mag,sourceCH);
+        %vdc=mean(multi_read(multi))
+        %opt.Level=vdc-0.04;%%%Amplitude dependent trigger above DC level.
+        %pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos.
+        %pause(1)
         
+        vdc=-mode(multi_read(multi));%%%OJO! el valor en el HP es opuesto en signo al de la PXI!!!
+        mag_setCalPulseON_CH(mag,2);%%activamos la fuente
+        %%%'NISCOPE_VAL_VOLTAGE_BASE'=26
+        %invoke(pxi.Measurement,'addwaveformprocessing','1',26);
+        %vdc=pxi_getMeasurement(pxi,'1',26)
+        opt.Level=vdc-0.005;%%%Amplitude dependent trigger above DC level.
+        end
 
     %%%%Pulsos de Fe55
     %%%%%
-        pxi_Pulses_Configure(pxi);%%%configuramos la pxi para adquirir pulsos. Con modulo trigger no pasamos Level.
+        pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos. Con modulo trigger no pasamos Level.
         pause(1)
         try
             datos=pxi_AcquirePulse(pxi);
@@ -127,7 +128,7 @@ for i=1:length(IbValues)
             datos=[];
             pxi_AbortAcquisition(pxi);
         end
-        %mag_setCalPulseOFF_CH(mag,2);%%desactivamos la fuente
+        %mag_setCalPulseOFF_CH(mag,2);%%desactivamos la fuente.
         
         mkdir Pulsos
         cd Pulsos
