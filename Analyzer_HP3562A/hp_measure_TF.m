@@ -6,7 +6,7 @@ hp_ss_config(dsa);
         V=round(varargin{1}*1e4*1e3);%%%Expresado en mV
         str=strcat('SRLV ',' ',num2str(V),'mV')%%amplitud de excitación*10
     else
-        str=strcat('SRLV 20mV');
+        str=strcat('SRLV 50mV');
     end
     
     fprintf(dsa,str);

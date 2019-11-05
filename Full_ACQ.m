@@ -99,7 +99,7 @@ for i=1:length(temps)
             end
         end
         
-        if(1)%%%Para hacer barrido en campo
+        if(0)%%%Para hacer barrido en campo
         auxarrayIC=[0.07 0.075 0.08 0.082 0.084 0.086 0.088 0.09 0.092 0.094 0.096 0.098 0.1];
         %auxarrayIC=temps;%(1:4);
         %auxarrayIC=temps(2:end);%%%Para hacer barrido en campo%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ for i=1:length(temps)
     
     if(1) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.05 0.06 0.07 0.08];
+    auxarray=[0.04 0.05 0.06 0.07 ];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
