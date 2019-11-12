@@ -41,7 +41,7 @@ for i=1:length(temps)
         %bucle para esperar a Tbath SET 
     end
 
-        if(1)%%%Para medir o no IVs finas
+        if(0)%%%Para medir o no IVs finas
         %%%acquireIVs. Automatizar definición de los IbiasValues.
         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
         %ivsarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08:0.002:0.12]; 
@@ -131,14 +131,15 @@ for i=1:length(temps)
     
     if(1) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.04 0.05 0.06 0.07 ];
+    auxarray=[0.05];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
 
-            if(0) %%%adquirir o no una IV coarse. nargin==2
+            if(1) %%%adquirir o no una IV coarse. nargin==2
                 %imin=90-5*(i);%%%ojo si se reejecuta. Asume 50,55,70,75 i=1:4.
-                IbiasCoarseValues=[500:-1:0];
+                %IbiasCoarseValues=[500:-1:0];
+                IbiasCoarseValues=[500:-10:200 195:-5:150 149:-1:0];
                 mkdir IVcoarse
                 cd IVcoarse
                 try  %%%A veces dan error las IVs. pq?
@@ -165,7 +166,7 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.1:0.4 0.35:-0.05:0.15];
+            rpp=[0.9:-0.1:0.4 0.35:-0.05:0.2 0.18:-0.02:0.04];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
@@ -176,9 +177,9 @@ for i=1:length(temps)
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             IZvaluesN=IZvaluesN(abs(IZvaluesN)<500);%%%%Para evitar error fte normal si el spline no esta bien.
             try
-                hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
-                'HP done'
-                cd(Tstring)
+                %hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%ojo, se sube un nivel
+                %'HP done'
+                %cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN);%%%se sube tb un nivel
                 'PXI done'
             catch

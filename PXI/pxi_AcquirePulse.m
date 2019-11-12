@@ -4,7 +4,13 @@ function data=pxi_AcquirePulse(pxi,varargin)
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
-pxi_Pulses_Configure(pxi);
+if nargin==3
+    conf=varargin{2};
+    pxi_Pulses_Configure(pxi,conf);
+else
+    pxi_Pulses_Configure(pxi);
+end
+%pxi_Pulses_Configure(pxi);
 
 Options.TimeOut=5;
 Options.channelList='1';
@@ -28,7 +34,7 @@ if(1) %%%plot?
     grid on
 end
 
-if nargin==2
+if nargin>1
     comment=varargin{1};
     file=strcat('PXI_TimeSample_',comment,'.txt');
     save(file,'data','-ascii');%salva los datos a fichero.

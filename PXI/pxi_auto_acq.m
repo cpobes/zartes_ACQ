@@ -98,7 +98,7 @@ for i=1:length(IbValues)
     
     pause(1)
     %mide pulsos
-    if (0)
+    if (1)
         if(0)
         %%%%Pulsos de corriente
         mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA).Ojo, el canal no se pasa como parametro.

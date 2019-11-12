@@ -12,9 +12,14 @@ Options.channelList='1';
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 rg=skewness(data)
 
+if nargin==3 circuit=varargin{2};end
+
+ix=0;
 while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.004
+    if ix>10, break;end
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
     rg=skewness(data)
+    ix=ix+1;
 end
 [psd,freq]=PSD(data);
 
@@ -34,15 +39,21 @@ if(1) %%%plot?
     plot(data(:,1),data(:,2));
     grid on
     subplot(2,1,2)
-    %loglog(freq,psd,'.-')
-    semilogx(freq,10*log10(psd),'.-')
+    hold off
+    loglog(freq,sqrt(psd),'.-')
+    %semilogx(freq,10*log10(psd),'.-')
     grid on
+    %%%
+    noisemodel=NnoiseModel(circuit,0.12);
+    hold on
+    loglog(logspace(0,6),I2V(noisemodel,circuit),'r')
+    %semilogx(logspace(0,6),20*log10(I2V(noisemodel,circuit)),'r')
 end
 
 datos(:,1)=freq;
 datos(:,2)=sqrt(psd);
 
-if nargin==2
+if nargin>1
     comment=varargin{1};
     file=strcat('PXI_noise_',comment,'.txt');
     save(file,'datos','-ascii');%salva los datos a fichero.

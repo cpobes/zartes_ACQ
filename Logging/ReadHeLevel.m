@@ -4,13 +4,13 @@
 %%% en el fichero HeLevel
 WS_variables=who;
 if(~sum(~cellfun('isempty',strfind(WS_variables,'Level')))) Level=[];end
-Puerto_HeL='COM4';
+Puerto_HeL='COM4';%%%COM4.
 if isempty(instrfind('Port',Puerto_HeL)), ilm=serial(Puerto_HeL);end
 if strcmp(ilm.status,'closed') fopen(ilm);end
 if(~sum(~cellfun('isempty',strfind(WS_variables,'boolplot')))) boolplot=1;end
 str2=sprintf('%s\r','R1');
 set(ilm,'terminator','CR');%%%Ponemos el terminador a CR.
-HeL=query(ilm,'R1');
+HeL=query(ilm,'R1')
 Level(end+1,:)=[now sscanf(HeL,'R%f')];
 Level=Level(Level(:,2)<1000,:);%%%No hace nada salvo cuando hay lectura errónea.
 

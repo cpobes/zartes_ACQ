@@ -27,9 +27,12 @@ hp_WhiteNoise(dsa,excitacion);
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 sk=skewness(data);
 skTHR=0.5;
+ix=0
 while abs(sk(3))>skTHR
+    if ix>10, break;end
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
     sk=skewness(data);
+    ix=ix+1;
 end
 wind = hann(1e5);%%%5000
 nov = 5e4;%%%2500
@@ -41,9 +44,12 @@ for i=1:n_avg-1
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
     i
     sk=skewness(data);
+    ix=0;
     while abs(sk(3))>skTHR
+        if ix>10, break;end
         [data,WfmI]=pxi_GetWaveForm(pxi,Options);
         sk=skewness(data);
+        ix=ix+1;
     end
     aux=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
     txy=txy+aux;
