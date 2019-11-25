@@ -14,4 +14,6 @@ if isempty(lks)
     fopen(lks); %cerrar al final.
 end
 
+set(lks,'timeout',1)
+
 device=query(lks,'*IDN?');%esta instruccion es más directa.

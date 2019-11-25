@@ -68,7 +68,7 @@ for i=1:length(IbValues)
     
     %mide TF
     mag_LoopResetCH(mag,sourceCH);
-    if(1)
+    if(0)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         porcentaje=0.05;
         excitacion=IbValues(i)*(1e1)*porcentaje;%%%amplitud en mV para la fuente.
@@ -98,7 +98,7 @@ for i=1:length(IbValues)
     
     pause(1)
     %mide pulsos
-    if (1)
+    if (0)
         if(0)
         %%%%Pulsos de corriente
         mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA).Ojo, el canal no se pasa como parametro.

@@ -44,7 +44,7 @@ if(1) %%%plot?
     %semilogx(freq,10*log10(psd),'.-')
     grid on
     %%%
-    noisemodel=NnoiseModel(circuit,0.12);
+    noisemodel=NnoiseModel(circuit,0.125);
     hold on
     loglog(logspace(0,6),I2V(noisemodel,circuit),'r')
     %semilogx(logspace(0,6),20*log10(I2V(noisemodel,circuit)),'r')
