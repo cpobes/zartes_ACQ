@@ -10,7 +10,8 @@ if strcmp(ilm.status,'closed') fopen(ilm);end
 if(~sum(~cellfun('isempty',strfind(WS_variables,'boolplot')))) boolplot=1;end
 str2=sprintf('%s\r','R1');
 set(ilm,'terminator','CR');%%%Ponemos el terminador a CR.
-HeL=query(ilm,'R1')
+%HeL=query(ilm,'R1')
+HeL=query(ilm,str2)
 Level(end+1,:)=[now sscanf(HeL,'R%f')];
 Level=Level(Level(:,2)<1000,:);%%%No hace nada salvo cuando hay lectura errónea.
 
@@ -24,6 +25,6 @@ if boolplot
     set(gca,'fontsize',12,'fontweight','bold');
     h=get(gca,'children');set(h,'linewidth',3,'marker','.','markersize',20)
 end
-Hefile=strcat(datadir,'\HeLevel')
+Hefile=strcat(datadir,'\HeLevel');
 save(Hefile,'Level');
 fclose(ilm);
