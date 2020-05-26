@@ -21,9 +21,10 @@ if boolplot
     auxhandle=findobj('name','IVC Preasure');
     if isempty(auxhandle) figure('name','IVC Preasure'); else figure(auxhandle);end
     figure(findobj('name','IVC Preasure'));
-    plot(IVC_values(:,1),IVC_values(:,2)*1e-1,'o-'),dateaxis('X',15);grid on
+    scale=1;
+    plot(IVC_values(:,1),IVC_values(:,2)*scale,'o-'),dateaxis('X',15);grid on
     xlabel('hora','fontsize',12,'fontweight','bold')
-    ylabel('IVC Preassure (bar)','fontsize',12,'fontweight','bold')
+    ylabel('IVC Preassure (mbar)','fontsize',12,'fontweight','bold')
     title('Presión de la IVC','fontsize',12,'fontweight','bold')
     set(gca,'fontsize',12,'fontweight','bold','yscale','log');
     h=get(gca,'children');set(h,'linewidth',3,'marker','.','markersize',20)

@@ -18,7 +18,7 @@ q=regexp({f.name},'\d*.?\d*mK','match');
 % for i=1:length(q)
 %     if(strcmp(q{i},Temp)) error('Ojo:Ya hay un fichero con esa Temp');end
 % end
-
+format long
 if nargin==2
     %%%QUE FUENTE SE USA
     sourceCH=2;
@@ -82,7 +82,7 @@ end
 %%%
 
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
-psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
+psl=1;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 for i=1:length(Ibvalues)
     strcat('Ibias:',num2str(Ibvalues(i)))
     if slope/Rf>slopeTHR && slope<Inf && ~psl
@@ -100,7 +100,7 @@ for i=1:length(Ibvalues)
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
     if i==1, pause(2); end
     
-    pause(1.5)
+    %pause(1.5)
     
     for i_av=1:averages
         aux=multi_read(multi);
@@ -122,7 +122,10 @@ for i=1:length(Ibvalues)
     end
     
     %%%Vout=mag_readVout(mag);
-    data(jj,1)=now;
+%     t0=datetime('now');
+%     t0.Format='dd-MMM-yyyy HH:mm:ss.SSSSSSSSS';
+    t0=(now-737834.48)*1e5;
+    data(jj,1)=t0;
     data(jj,2)=Ireal;%*1e-6;
     data(jj,3)=0;%%%Vout
     data(jj,4)=Vdc;
