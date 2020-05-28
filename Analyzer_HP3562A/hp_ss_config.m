@@ -4,9 +4,11 @@ fprintf(dsa,'AUTO 0')
 
 fprintf(dsa,'SSIN')
 fprintf(dsa,'LGSW')
-fprintf(dsa,'RES 20P/DC');%%%He usado normalmente 5P/DC
-fprintf(dsa,'SF 1Hz')
-fprintf(dsa,'FRS 5Dec')
+%fprintf(dsa,'RES 20P/DC');%%%He usado normalmente 5P/DC
+fprintf(dsa,'SF 10Hz')
+fprintf(dsa,'FRS 4Dec')
+fprintf(dsa,'RES 10P/DC')
+fprintf(dsa,'SWRT 4sec/DC')
 fprintf(dsa,'SWUP') %%%puede quedar en manual sweep y entonces no sube la frecuencia.
 fprintf(dsa,'SRLV 100mV')%%amplitud de excitación*10
 fprintf(dsa,'C2AC 0') %CH2 coupling DC.

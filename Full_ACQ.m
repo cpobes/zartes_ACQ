@@ -131,7 +131,7 @@ for i=1:length(temps)
     
     if(1) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.05 0.55 0.7];
+    auxarray=[0.045 0.05 0.55 0.60 0.65 0.7 0.75 0.8];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -166,12 +166,12 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.1:0.4 0.35:-0.05:0.2 0.18:-0.02:0.04];
+            rpp=[0.9:-0.1:0.4 0.35:-0.05:0.1];% 0.18:-0.02:0.04];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
-            %rpn=[0.90:-0.05:0.2];
-            rpn=rpp;
+            rpn=[0.90:-0.1:0.1];
+            %rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);

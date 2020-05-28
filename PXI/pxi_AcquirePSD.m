@@ -34,19 +34,22 @@ if(0)%%%subsampleo?
     freq=xx;
 end
 
-if(1) %%%plot?
+if(0) %%%plot?
     subplot(2,1,1)
     plot(data(:,1),data(:,2));
     grid on
     subplot(2,1,2)
     hold off
-    loglog(freq,sqrt(psd),'.-')
+    vrhz=medfilt1(sqrt(psd),1);
+    loglog(freq,vrhz,'.-')
     %semilogx(freq,10*log10(psd),'.-')
     grid on
     %%%
-    noisemodel=NnoiseModel(circuit,0.125);
+    noisemodel=SnoiseModel(circuit,0.04);
+    noisemodel=NnoiseModel(circuit,0.18);
     hold on
-    loglog(logspace(0,6),I2V(noisemodel,circuit),'r')
+    f=logspace(0,6,1000);
+    loglog(f,I2V(noisemodel,circuit),'r')
     %semilogx(logspace(0,6),20*log10(I2V(noisemodel,circuit)),'r')
 end
 

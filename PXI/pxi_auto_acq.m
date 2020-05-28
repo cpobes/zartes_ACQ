@@ -68,7 +68,7 @@ for i=1:length(IbValues)
     
     %mide TF
     mag_LoopResetCH(mag,sourceCH);
-    if(0)
+    if(1)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         porcentaje=0.05;
         excitacion=IbValues(i)*(1e1)*porcentaje;%%%amplitud en mV para la fuente.
