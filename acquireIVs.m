@@ -83,8 +83,10 @@ end
 
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
 psl=1;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
+verbose=0;
+t0start=now;
 for i=1:length(Ibvalues)
-    strcat('Ibias:',num2str(Ibvalues(i)))
+    if verbose strcat('Ibias:',num2str(Ibvalues(i))),end
     if slope/Rf>slopeTHR && slope<Inf && ~psl
         state=1;
     end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
@@ -124,7 +126,7 @@ for i=1:length(Ibvalues)
     %%%Vout=mag_readVout(mag);
 %     t0=datetime('now');
 %     t0.Format='dd-MMM-yyyy HH:mm:ss.SSSSSSSSS';
-    t0=(now-737834.48)*1e5;
+    t0=(now-t0start)*1e5;%%%t0 en segundos desde inicio del loop. %%%t0_start=737834.48
     data(jj,1)=t0;
     data(jj,2)=Ireal;%*1e-6;
     data(jj,3)=0;%%%Vout
