@@ -10,7 +10,7 @@ Options.TimeOut=5;
 Options.channelList='1';
 
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
-rg=skewness(data)
+rg=skewness(data);
 
 if nargin==3 circuit=varargin{2};end
 
@@ -18,7 +18,7 @@ ix=0;
 while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.004
     if ix>10, break;end
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
-    rg=skewness(data)
+    rg=skewness(data);
     ix=ix+1;
 end
 [psd,freq]=PSD(data);

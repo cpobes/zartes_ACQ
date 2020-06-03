@@ -1,4 +1,4 @@
-function pxi_auto_acq(IbValues)
+function pxi_auto_acq(IbValues,varargin)
 %%%Versión de la hp_auto_acq para la PXI
 
 %%%Comentar cuando se quiera ejecutar sobre directorio con ficheros
@@ -47,8 +47,13 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%questdlg('TES normal?')
+if nargin==2
+    PXIopt=varargin{1};
+else
+    PXIopt.TF=1;
+    PXIopt.Noise=1;
+    PXIopt.Pulses=0;
+end
 
 for i=1:length(IbValues)
     try
@@ -68,7 +73,7 @@ for i=1:length(IbValues)
     
     %mide TF
     mag_LoopResetCH(mag,sourceCH);
-    if(1)
+    if(PXIopt.TF)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         porcentaje=0.05;
         excitacion=IbValues(i)*(1e1)*porcentaje;%%%amplitud en mV para la fuente.
@@ -81,7 +86,7 @@ for i=1:length(IbValues)
     pause(1)
     %mide ruido
     mag_LoopResetCH(mag,sourceCH);
-    if(1)
+    if(PXIopt.Noise)
         %pxi_Noise_Configure(pxi); no necesario. esta dentro de AcqPSD.
         pause(1)
         aux=pxi_AcquirePSD(pxi);
@@ -98,7 +103,7 @@ for i=1:length(IbValues)
     
     pause(1)
     %mide pulsos
-    if (0)
+    if (PXIopt.Pulses)
         if(0)
         %%%%Pulsos de corriente
         mag_Configure_CalPulse(mag);%%%configuramos la fuente(AMP por defecto 20uA).Ojo, el canal no se pasa como parametro.

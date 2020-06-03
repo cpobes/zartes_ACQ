@@ -48,7 +48,7 @@ for i=1:length(temps)
         %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
         %ivsarray=[0.04 0.045 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.106 0.108 0.110 0.112 0.114 0.115 0.12 0.125];
         %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
-        ivsarray=temps(1:end-1);%[0.07 0.05];
+        ivsarray=temps(1:end);%[0.07 0.05];
         %ivsarray=[];
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
@@ -166,12 +166,12 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.5:0.3 0.28:-0.02:0.1];% 0.18:-0.02:0.04];
+            rpp=[0.9:-0.05:0.3 0.28:-0.02:0.1];% 0.18:-0.02:0.04];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
-            rpn=[0.90:-0.05:0.1];
-            %rpn=rpp;
+            %rpn=[0.90:-0.05:0.1];
+            rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);

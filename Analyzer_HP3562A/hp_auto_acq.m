@@ -1,4 +1,4 @@
-function hp_auto_acq(IbValues)
+function hp_auto_acq(IbValues,varargin)
 %%%Funcion para automatizar la toma de funciones de transferencia a una T
 %%%dada. Hay que pasarle los valores de Ib en un array y guarda las
 %%%funciones medidas en ficheros separados. Hay que implementar la función
@@ -55,6 +55,12 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 
 %questdlg('TES normal?')
 
+if nargin==2
+    HPopt=varargin{1};
+else
+    HPopt.TF=1;
+    HPopt.Noise=1;
+end
 for i=1:length(IbValues)
     
     try
@@ -73,21 +79,24 @@ for i=1:length(IbValues)
     Itxt=num2str(ix);
     
     %mide TF
-    if(1)
+    x=query(dsa,'AVG?');
+    if(HPopt.TF)
+        if(x==5) hp_ss_config(dsa);end
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=IbValues(i)*1e-6*porcentaje;
-    datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
-    %datos=hp_measure_TF(dsa);
-    file=strcat('TF_',Itxt,'uA','.txt');
-    save(file,'datos','-ascii');%salva los datos a fichero.
+        datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
+        %datos=hp_measure_TF(dsa);
+        file=strcat('TF_',Itxt,'uA','.txt');
+        save(file,'datos','-ascii');%salva los datos a fichero.
     end
     
     %mide ruido
-    if(1)
-    datos=hp_measure_noise(dsa);
-    file=strcat('HP_noise_',Itxt,'uA','.txt');
-    save(file,'datos','-ascii');%salva los datos a fichero.
+    if(HPopt.Noise)
+        if(x==1) hp_noise_config(dsa);end
+        datos=hp_measure_noise(dsa);
+        file=strcat('HP_noise_',Itxt,'uA','.txt');
+        save(file,'datos','-ascii');%salva los datos a fichero.
     end
     catch
         strcat('error HP Ib: ',num2str(i))

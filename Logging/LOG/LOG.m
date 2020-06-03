@@ -23,6 +23,7 @@ function varargout = LOG(varargin)
 % Edit the above text to modify the response to help LOG
 
 % Last Modified by GUIDE v2.5 25-Nov-2015 13:58:08
+% CP update. Go to Lines 740 para filtrado de datos a mostrar.
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -735,10 +736,13 @@ data = evalin('base','dataTemp');
 timeAxis = evalin('base','timeAxis');
 dataPlot = cell2mat(data(:,parameterSelect+2));
 %ind= dataPlot>=0;
+%%%%%%% Filtrado de datos.
 %%%A veces Tm/c da lectura anómala en 1 punto y estropea el autorange.
+%%%%%%%
+if (parameterSelect+2==39) indTmc=find(dataPlot<=0);else indTmc=[];end%%%39:TMC.
 ind=find(abs(diff(diff(dataPlot)))>3)+1;
-dataPlot(ind)=[];%=dataPlot(ind);
-timeAxis(ind)=[];%=timeAxis(ind);
+dataPlot([ind(:); indTmc(:)])=[];%=dataPlot(ind);
+timeAxis([ind(:); indTmc(:)])=[];%=timeAxis(ind);
 set(handles.plot,'XData',timeAxis,'YData',dataPlot);
 set(handles.updatetext,'String',datestr(now));
 
