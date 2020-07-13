@@ -10,4 +10,4 @@ limit=curveHDR.limit;%%%limite en temperatura
 coeff=curveHDR.coeff;%%%1:neg,2:Pos
 
 str=strcat('CRVHDR ',[' ' num2str(curve)],',',name,',',num2str(serial),',',num2str(format),',',num2str(limit),',',num2str(coeff),'\n')
-query(lks,str);
+fprintf(lks,str);

@@ -1,6 +1,6 @@
 function K=LKS_readKelvinFromInput(lks,input)
-
-
+%%%Devuelve el valor de temperatura en Kelvin para un input. Debe tener
+%%%asignada una curva calibrada. Si no, puede dar K=0.
 if ~any(strcmp(input,{'A' 'B' 'C' 'D'}))
     error('Wrong input selected')
 end

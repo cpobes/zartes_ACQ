@@ -1,6 +1,6 @@
 function datos=hp_measure_TF(dsa,varargin)
 %%funcion para medir una TF.
-%hp_ss_config(dsa);
+hp_ss_config(dsa);
     
     if nargin==2
         V=round(varargin{1}*1e4*1e3);%%%Expresado en mV

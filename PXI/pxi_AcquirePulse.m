@@ -4,9 +4,16 @@ function data=pxi_AcquirePulse(pxi,varargin)
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
+boolplot=1;
+boolsave=1;
 if nargin==3
     conf=varargin{2};
-    pxi_Pulses_Configure(pxi,conf);
+    if isfield(conf,'options')
+        longrun=conf.options.longrun;
+        boolplot=conf.options.boolplot;
+        boolsave=~longrun;%%%Si es run largo, no guardamos el temp.
+    end
+    if ~longrun pxi_Pulses_Configure(pxi,conf);end  %%%si es longrun no reconfiguramos cada vez, pero hay que hacerlo 1 vez al principio.
 else
     pxi_Pulses_Configure(pxi);
 end
@@ -21,7 +28,7 @@ Options.channelList='1';
 %stdpulso=std(data(1:2500,2));%%%%
 %end
 
-if(1) %%%plot?
+if(boolplot) %%%plot?
      auxhandle_pulsos=findobj('name','Pulsos');
      if isempty(auxhandle_pulsos) figure('name','Pulsos'); auxhandle_pulsos=findobj('name','Pulsos'); else figure(auxhandle_pulsos);end
     [psd,freq]=PSD(data);
@@ -34,7 +41,7 @@ if(1) %%%plot?
     grid on
 end
 
-if nargin>1
+if nargin>1 & boolsave
     comment=varargin{1};
     file=strcat('PXI_TimeSample_',comment,'.txt');
     save(file,'data','-ascii');%salva los datos a fichero.

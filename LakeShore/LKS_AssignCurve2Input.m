@@ -8,10 +8,13 @@ if curve<21 || curve>59
     error('Wrong Curve number')
 end
 str=strcat('INCRV',[' ' input],',',num2str(curve));
-query(lks,str)
+fprintf(lks,str);
 
 str2=strcat('INCRV?',[' ' input]);
-str2num(query(lks,str2))
-if str2num(query(lks,str2))~=curve
+setcurve=str2num(query(lks,str2))%%%NOTA: al intentar asignar la curva25 a 'A', este comando devuelve correctamente '25', 
+%%%pero en realidad no se ha asignado bien la curva. Se ve en el display y
+%%%si se hace >>query(lks,str2) en la línea de comandos. PQ?
+%
+if setcurve~=curve
     error('Curve not properly assigned')
 end

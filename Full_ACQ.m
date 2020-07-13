@@ -48,15 +48,15 @@ for i=1:length(temps)
         %ivsarray=[0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.077 0.078 0.079 0.08 0.081 0.082 0.09 0.095 0.1 0.105 0.11];
         %ivsarray=[0.04 0.045 0.055 0.06 0.065 0.07 0.075 0.080 0.085 0.09 0.095 0.1 0.102 0.104 0.106 0.108 0.110 0.112 0.114 0.115 0.12 0.125];
         %ivsarray=[0.04 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.076 0.077 0.078 0.079 0.080 0.081 0.082 0.085 0.090 0.1];
-        ivsarray=temps(1:end);%[0.07 0.05];
+        ivsarray=temps(1:end-1);%[0.07 0.05];
         %ivsarray=[];
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
          cd IVs
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
-         IbiasValues=[500:-10:200 195:-5:150 149:-1:0 -0.05:-0.05:-1];
-         %IbiasValues=[500:-10:300 295:-5:250 249:-1:0 -0.05:-0.05:-1];
+         %IbiasValues=[500:-10:200 195:-5:150 149:-1:0 -0.05:-0.05:-1];
+         IbiasValues=[500:-10:300 295:-5:200 249:-1:0 -0.05:-0.05:-1];
          %IbiasValues=[200:-5:100 98:-2:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
@@ -131,7 +131,7 @@ for i=1:length(temps)
     
     if(1) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.05 0.07];
+    auxarray=[0.05 0.07 0.1 0.12];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -170,7 +170,7 @@ for i=1:length(temps)
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
-            %rpn=[0.90:-0.05:0.1];
+            %rpn=[0.90:-0.1:0.1];
             rpn=rpp;
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag

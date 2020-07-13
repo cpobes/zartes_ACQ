@@ -12,5 +12,5 @@ end
 for i=1:length(Rrange)
     %str=strcat('CRVPT ',[' ' num2str(CurveNum)],num2str(i),num2str(Rrange(i)),num2str(Trange(i)),'\n')
     str=strcat('CRVPT ',[' ' num2str(CurveNum)], ',' ,num2str(i), ',', num2str(Rrange(i)), ',', num2str(Trange(i)),'\n')
-    query(lks,str);
+    fprintf(lks,str);
 end

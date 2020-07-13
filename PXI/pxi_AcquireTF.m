@@ -58,7 +58,7 @@ end
 txy=txy/n_avg;
 txy=medfilt1(txy,40);
  TF=[freqs real(txy) imag(txy)];
-    if(1) %%%plot. señales.
+    if(0) %%%plot. señales.
         %[psd,freq]=PSD(data);
             auxhandle_1=findobj('name','PXI_TF');
             if isempty(auxhandle_1) figure('name','PXI_TF'); auxhandle_1=findobj('name','PXI_TF');else figure(auxhandle_1);end
@@ -107,11 +107,11 @@ for i=1:length(freq)
     %TFamp=range(X2)/range(X1); %%approximate estimate of amplitude ratio
     %TFang=acos(dot(X1,X2)/(norm(X1)*norm(X2)));%%%aprox estimate of phase difference
 
-    [ps1(2) ps2(2)]/(2*pi)
+    %[ps1(2) ps2(2)]/(2*pi)
     Re(i)=TFamp*cos(TFang);
     Imag(i)=TFamp*sin(TFang);
     
-    if(1) %%%plot?
+    if(0) %%%plot?
         %[psd,freq]=PSD(data);
             auxhandle_1=findobj('name','PXI_TF');
             if isempty(auxhandle_1) figure('name','PXI_TF'); else figure(auxhandle_1);end
