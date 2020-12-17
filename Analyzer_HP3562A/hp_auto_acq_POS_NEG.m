@@ -1,6 +1,10 @@
 function hp_auto_acq_POS_NEG(IZvaluesP,varargin)
 %%%%Pasar los IZvalues positivos y negativos
-hp_auto_acq(IZvaluesP);
+
+HPopt.TF=1;
+HPopt.Noise=0;
+
+%hp_auto_acq(IZvaluesP,HPopt);
 
 if nargin==1 IZvaluesN=-IZvaluesP; else IZvaluesN=varargin{1};end
 d=pwd;
@@ -8,5 +12,10 @@ d=pwd;
 temp=regexp(d,'\d*.?\d*mK','match');%%%Regexp correcta para reconocer tanto 50mK como 50.0mK
 mkdir(strcat('../Negative Bias/',temp{1}));%%%Crea el directorio para las Z(w) con Ibias negativa.
 cd(strcat('../Negative Bias/',temp{1}));
-hp_auto_acq(IZvaluesN);
+hp_auto_acq(IZvaluesN,HPopt);
 cd('../..')
+
+%%%Para ejecutar primero las negativas.
+cd(temp{1})
+hp_auto_acq(IZvaluesP,HPopt);
+cd('..')

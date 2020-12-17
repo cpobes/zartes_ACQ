@@ -26,7 +26,7 @@ if(1)%%%White Noise version,
 hp_WhiteNoise(dsa,excitacion);
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 sk=skewness(data);
-skTHR=0.5;
+skTHR=Inf;%%%value para eliminar pulsos skTHR=0.5;
 ix=0
 while abs(sk(3))>skTHR
     if ix>10, break;end
@@ -58,7 +58,7 @@ end
 txy=txy/n_avg;
 txy=medfilt1(txy,40);
  TF=[freqs real(txy) imag(txy)];
-    if(0) %%%plot. señales.
+    if(1) %%%plot. señales.
         %[psd,freq]=PSD(data);
             auxhandle_1=findobj('name','PXI_TF');
             if isempty(auxhandle_1) figure('name','PXI_TF'); auxhandle_1=findobj('name','PXI_TF');else figure(auxhandle_1);end

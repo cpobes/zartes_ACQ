@@ -76,7 +76,7 @@ for i=1:length(IbValues)
     if(PXIopt.TF)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         porcentaje=0.05;
-        excitacion=IbValues(i)*(1e1)*porcentaje;%%%amplitud en mV para la fuente.
+        excitacion=round(abs(IbValues(i)*(1e1)*porcentaje));%%%amplitud en mV para la fuente.
         TF=pxi_AcquireTF(pxi,excitacion);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         file=strcat('PXI_TF_',Itxt,'uA','.txt');

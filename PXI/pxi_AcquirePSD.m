@@ -34,7 +34,7 @@ if(0)%%%subsampleo?
     freq=xx;
 end
 
-if(0) %%%plot?
+if(1) %%%plot?
     subplot(2,1,1)
     plot(data(:,1),data(:,2));
     grid on
@@ -45,11 +45,11 @@ if(0) %%%plot?
     %semilogx(freq,10*log10(psd),'.-')
     grid on
     %%%
-    noisemodel=SnoiseModel(circuit,0.04);
-    noisemodel=NnoiseModel(circuit,0.18);
-    hold on
-    f=logspace(0,6,1000);
-    loglog(f,I2V(noisemodel,circuit),'r')
+%     noisemodel=SnoiseModel(circuit,0.04);
+%     noisemodel=NnoiseModel(circuit,0.18);
+%     hold on
+%     f=logspace(0,6,1000);
+%     loglog(f,I2V(noisemodel,circuit),'r')
     %semilogx(logspace(0,6),20*log10(I2V(noisemodel,circuit)),'r')
 end
 

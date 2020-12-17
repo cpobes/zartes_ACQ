@@ -79,9 +79,7 @@ for i=1:length(IbValues)
     Itxt=num2str(ix);
     
     %mide TF
-    x=query(dsa,'AVG?');
     if(HPopt.TF)
-        if(x==5) hp_ss_config(dsa);end
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=IbValues(i)*1e-6*porcentaje;
@@ -93,7 +91,6 @@ for i=1:length(IbValues)
     
     %mide ruido
     if(HPopt.Noise)
-        if(x==1) hp_noise_config(dsa);end
         datos=hp_measure_noise(dsa);
         file=strcat('HP_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
