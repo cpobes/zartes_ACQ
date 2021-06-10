@@ -2,9 +2,9 @@ function hp_auto_acq_POS_NEG(IZvaluesP,varargin)
 %%%%Pasar los IZvalues positivos y negativos
 
 HPopt.TF=1;
-HPopt.Noise=0;
+HPopt.Noise=1;
 
-%hp_auto_acq(IZvaluesP,HPopt);
+hp_auto_acq(IZvaluesP,HPopt);
 
 if nargin==1 IZvaluesN=-IZvaluesP; else IZvaluesN=varargin{1};end
 d=pwd;
@@ -16,6 +16,6 @@ hp_auto_acq(IZvaluesN,HPopt);
 cd('../..')
 
 %%%Para ejecutar primero las negativas.
-cd(temp{1})
-hp_auto_acq(IZvaluesP,HPopt);
-cd('..')
+% cd(temp{1})
+% hp_auto_acq(IZvaluesP,HPopt);
+% cd('..')

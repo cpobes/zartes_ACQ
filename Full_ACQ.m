@@ -131,7 +131,7 @@ for i=1:length(temps)
     
     if(1) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.04];
+    auxarray=[0.05 0.06 0.07 0.08];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -167,7 +167,7 @@ for i=1:length(temps)
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
             %rpp=[0.9:-0.05:0.3 0.28:-0.02:0.1];% 0.18:-0.02:0.04];
-            rpp=[ 0.8 0.6 0.4 0.3:-0.02:0.1];
+            rpp=[ 0.8 0.7 0.6 0.5 0.4 0.3:-0.01:0.1];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end

@@ -82,15 +82,19 @@ for i=1:length(IbValues)
     if(HPopt.TF)
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
         porcentaje=0.05;%%%%<-Porcentaje!
-        Excitacion=IbValues(i)*1e-6*porcentaje;
-        datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
-        %datos=hp_measure_TF(dsa);
+        Excitacion=abs(IbValues(i)*1e-6*porcentaje);
+        hp_ss_config(dsa);
+        %datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
+        datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
     end
     
     %mide ruido
     if(HPopt.Noise)
+        hp_single_CAL(dsa);
+        pause(35); %%%(el CAl tarda entre 29-32seg). 
+        hp_noise_config(dsa);
         datos=hp_measure_noise(dsa);
         file=strcat('HP_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.

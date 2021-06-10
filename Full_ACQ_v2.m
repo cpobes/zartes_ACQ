@@ -49,9 +49,9 @@ for i=1:length(temps)
         %%%Para medir o no IVs finas  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        if(0)
+        if(1)
         %%%acquireIVs. Automatizar definición de los IbiasValues.
-        ivsarray=temps(1:end);%[0.07 0.05];
+        ivsarray=temps(1:end-1);%[0.07 0.05];
         
         if(~isempty(find(ivsarray==temps(i), 1)))
          mkdir IVs
@@ -92,7 +92,7 @@ for i=1:length(temps)
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        if(1)%%%Para hacer barrido en campo
+        if(0)%%%Para hacer barrido en campo
             %auxarrayIC=[0.07 0.075 0.08 0.082 0.084 0.086 0.088 0.09 0.092 0.094 0.096 0.098 0.1];
             auxarrayIC=temps(2:end-1);
             if(~isempty(find(auxarrayIC==temps(i), 1)))
@@ -116,8 +116,8 @@ for i=1:length(temps)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
     
-    if(0) %%%Hacer o no Z(w)-Ruido.
-     auxarray=[0.05 0.07];%%%Las Temperaturas atomar TF-Ruido.
+    if(1) %%%Hacer o no Z(w)-Ruido.
+     auxarray=[0.04 0.05 0.06 0.07 0.08];%%%Las Temperaturas a tomar TF-Ruido.
      
         if(~isempty(find(auxarray==temps(i), 1)))
 
@@ -151,9 +151,9 @@ for i=1:length(temps)
             end
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
-            rpp=[0.9:-0.05:0.3 0.28:-0.02:0.1];% 0.18:-0.02:0.04];
-            rpn=[0.90:-0.05:0.1];
-            %rpn=rpp;
+            rpp=[0.8 0.7 0.6 0.5 0.4 0.3:-0.02:0.1];% 0.18:-0.02:0.04];
+            %rpn=[0.90:-0.05:0.1];
+            rpn=rpp;
             
             IZvaluesP=unique(BuildIbiasFromRp(IVsetP,rpp));%Si hay Ib<Ibmin se pone a cero, no queremos que repita.
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag
@@ -164,7 +164,7 @@ for i=1:length(temps)
                 
                 %%%TFacq
                 dsa=hp_init();%%%necesitamos una instancia al dsa para poder configurar.
-                HPopt.TF=0;HPopt.Noise=0;
+                HPopt.TF=1;HPopt.Noise=0;
                 hp_ss_config(dsa);
                 hp_auto_acq(IZvaluesP,HPopt)
                 
@@ -178,7 +178,7 @@ for i=1:length(temps)
                 cd(Tstring)
                 
                 %%%TF PXI
-                PXIopt.TF=1;PXIopt.Npise=0;
+                PXIopt.TF=1;PXIopt.Noise=0;
                 pxi_auto_acq(IZvaluesP,PXIopt);
                 cd(strcat('../Negative Bias/',temp{1}));
                 pxi_auto_acq(IZvaluesN,PXIopt);
@@ -186,7 +186,7 @@ for i=1:length(temps)
                 cd(Tstring)
                 
                 %%%Noiseacq
-                HPopt.TF=0;HPopt.Noise=0;
+                HPopt.TF=0;HPopt.Noise=1;
                 dsa=hp_init();%%%El hp_auto y pxi_auto cierran comunicación con el dsa. Necesitamos recuperarla para reconfigurar.
                 hp_noise_config(dsa);
                 hp_auto_acq(IZvaluesP,HPopt)

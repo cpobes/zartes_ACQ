@@ -37,7 +37,7 @@ elseif nargin==3
 end
 
 mag=mag_init();
-multi=multi_init();
+multi=multi_init(0);%
 
 mag_setRf_FLL_CH(mag,Rf,sourceCH);%3e3
 %%%Ponemos el máximo de corriente 
