@@ -11,7 +11,7 @@ function pxi_auto_acq(IbValues,varargin)
 %Transferencia.Pero aqui sobra.
 
 mag=mag_init();
-multi=multi_init();
+multi=multi_init(0);
 pxi=PXI_init();
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%

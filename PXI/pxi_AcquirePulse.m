@@ -15,7 +15,7 @@ if nargin==3
     end
     if ~longrun pxi_Pulses_Configure(pxi,conf);end  %%%si es longrun no reconfiguramos cada vez, pero hay que hacerlo 1 vez al principio.
 else
-    pxi_Pulses_Configure(pxi);
+    %pxi_Pulses_Configure(pxi);%%%!configuraba por defecto !BUG.
 end
 %pxi_Pulses_Configure(pxi);
 

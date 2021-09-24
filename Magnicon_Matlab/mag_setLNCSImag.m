@@ -15,7 +15,7 @@ range='0';
 
 str=sprintf('%s%s%s','<03q0',DAC,range);%%%
 chk=mod(sum(double(str)),256);
-str=sprintf('%s%02X\r',str,chk)
+str=sprintf('%s%02X\r',str,chk);
 out=query(s,str,'%s','%s');
 
 if strcmp(out,'|0AC')

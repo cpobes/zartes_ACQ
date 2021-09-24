@@ -6,7 +6,7 @@ out=query(s,str,'%s','%s');
 
 dac=hex2dec(out(2:5));
 
-new=dec2hex(bitand(dac,65279),4) %%%El bit para desconectar es el 1º del 2º char.
+new=dec2hex(bitand(dac,65279),4); %%%El bit para desconectar es el 1º del 2º char.
 %%%65279=hex2dec('FEFF')
 
 str=sprintf('%s%s','<03a0',new);%%%
