@@ -6,5 +6,5 @@ Imax= 20e-3;
 if abs(Ivalue)>Imax
     error('Cuidado, Ivalue demasiado alto');
 end
-str=strcat('I',num2str(Ivalue),'X','\n')
-query(k220,str)
+str=strcat('I',num2str(Ivalue),'X','\n');
+query(k220,str);

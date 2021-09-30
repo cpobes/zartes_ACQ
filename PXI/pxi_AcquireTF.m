@@ -9,13 +9,13 @@ function TF=pxi_AcquireTF(pxi,varargin)
     ConfStructs.Trigger.Type=6;
     
     ConfStructs.Horizontal.SR = 2.5e5;%%%4e5.2e5
-    ConfStructs.Horizontal.RL = 1e6;%2e6.2e5
+    ConfStructs.Horizontal.RL = 2.5e5;%1e6;%2e6.2e5
     
     pxi_ConfigureChannels(pxi,ConfStructs.Vertical);
     pxi_ConfigureHorizontal(pxi,ConfStructs.Horizontal);
     pxi_ConfigureTrigger(pxi,ConfStructs.Trigger)
     
-dsa=hp_init();
+dsa=hp_init(0);
 
 if nargin==1
     excitacion=50;%100.
@@ -26,7 +26,7 @@ if(1)%%%White Noise version,
 hp_WhiteNoise(dsa,excitacion);
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 sk=skewness(data);
-skTHR=Inf;%%%value para eliminar pulsos skTHR=0.5;
+skTHR=0.5;%Inf;%%%value para eliminar pulsos skTHR=0.5;
 ix=0
 while abs(sk(3))>skTHR
     if ix>10, break;end
@@ -111,7 +111,7 @@ for i=1:length(freq)
     Re(i)=TFamp*cos(TFang);
     Imag(i)=TFamp*sin(TFang);
     
-    if(0) %%%plot?
+    if(1) %%%plot?
         %[psd,freq]=PSD(data);
             auxhandle_1=findobj('name','PXI_TF');
             if isempty(auxhandle_1) figure('name','PXI_TF'); else figure(auxhandle_1);end

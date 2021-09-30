@@ -1,4 +1,4 @@
-function out=Put_TES_toNormal_State_CH(mag,Imax,nch)
+function out=Put_TES_toNormal_State_CH(mag,Imax,nch,k220)
 %%%%Función para poner el TES en estado Normal aumentando corriente con la
 %%%%LNCS. La Imax es simplemente el signo para ponerlo con corrientes
 %%%%positivas o negativas.
@@ -28,8 +28,10 @@ mag_setLNCSImag(mag,0);
 mag_DisconnectLNCS(mag);
 
 %%%%K220
-k220=k220_init(0);
-k220_setI(k220,signo*10e-3);
-pause(0.5);
-k220_setI(k220,1.24e-3);
+%k220=k220_init(0)
+
+% k220_setI(k220,signo*10e-3);
+% pause(0.5);
+% Bopt=1.20e-3;
+% k220_setI(k220,Bopt);
 out=1;%Ojo, esto devuelve siempre '1'.

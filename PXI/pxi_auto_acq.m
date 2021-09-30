@@ -1,4 +1,4 @@
-function pxi_auto_acq(IbValues,varargin)
+function pxi_auto_acq(IbValues,k220,varargin)
 %%%Versión de la hp_auto_acq para la PXI
 
 %%%Comentar cuando se quiera ejecutar sobre directorio con ficheros
@@ -16,8 +16,8 @@ pxi=PXI_init();
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
-sourceCH=2;
-Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
+sourceCH=1;
+Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH,k220);%%%%
 
 %Check_TES_State(mag,multi)
 %if strcmp(Check_TES_State(mag,multi),'S'),'SState',return;end
@@ -47,12 +47,12 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin==2
+if nargin==3 %%%%%%%OJO!k220.
     PXIopt=varargin{1};
 else
     PXIopt.TF=1;
     PXIopt.Noise=1;
-    PXIopt.Pulses=0;
+    PXIopt.Pulses=1;
 end
 
 for i=1:length(IbValues)
@@ -125,8 +125,11 @@ for i=1:length(IbValues)
 
     %%%%Pulsos de Fe55
     %%%%%
+        opt.RL=1e4;
+        opt.SR=2e5;
         pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos. Con modulo trigger no pasamos Level.
         pause(1)
+        mag_LoopResetCH(mag,sourceCH);
         try
             datos=pxi_AcquirePulse(pxi);
         catch
