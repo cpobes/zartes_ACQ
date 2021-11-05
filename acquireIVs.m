@@ -34,7 +34,7 @@ elseif nargin==3
     Rf=opt.Rf;
     sourceType=opt.sourceType;
     averages=opt.averages;
-    k220=opt.k220;%%%
+    %k220=opt.k220;%%%
 end
 
 mag=mag_init();
@@ -44,7 +44,7 @@ mag_setRf_FLL_CH(mag,Rf,sourceCH);%3e3
 %%%Ponemos el máximo de corriente 
 signo=sign(Ibvalues(1));
 
-if ~Put_TES_toNormal_State_CH(mag,signo,sourceCH,k220)
+if ~Put_TES_toNormal_State_CH(mag,signo,sourceCH)%%%,k220.
     %instrreset;
     error('El TES no se ha podido poner en estado normal');
 end
