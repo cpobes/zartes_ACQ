@@ -27,3 +27,4 @@ end
 
 %R=218.679249;%%%Para rango 25mA!
 IuA=(10.934*(dac-8192)*1e6)/(16384*R);
+%%% I STEP: 61.2536nA (rango 500uA) 15.3064nA (rango 125uA).
