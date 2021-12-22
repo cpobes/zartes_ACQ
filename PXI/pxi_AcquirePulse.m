@@ -19,6 +19,7 @@ else
 end
 %pxi_Pulses_Configure(pxi);
 
+Options.TimeOut=12;
 Options.channelList='1';
 
 %stdpulso=0;
