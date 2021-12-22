@@ -39,9 +39,10 @@ if(1) %%%plot?
     plot(data(:,1),data(:,2));
     grid on
     subplot(2,1,2)
-    hold off
-    vrhz=medfilt1(sqrt(psd),1);
+    %hold off
+    vrhz=medfilt1(sqrt(psd),10);
     loglog(freq,vrhz,'.-')
+    ylim([1e-7 1e-4]),hold on
     %semilogx(freq,10*log10(psd),'.-')
     grid on
     %%%

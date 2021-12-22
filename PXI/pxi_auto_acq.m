@@ -1,4 +1,4 @@
-function pxi_auto_acq(IbValues,k220,varargin)
+function pxi_auto_acq(IbValues,varargin)
 %%%Versión de la hp_auto_acq para la PXI
 
 %%%Comentar cuando se quiera ejecutar sobre directorio con ficheros
@@ -17,7 +17,7 @@ pxi=PXI_init();
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
 sourceCH=1;
-Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH,k220);%%%%
+Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 
 %Check_TES_State(mag,multi)
 %if strcmp(Check_TES_State(mag,multi),'S'),'SState',return;end

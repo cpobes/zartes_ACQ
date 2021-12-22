@@ -9,7 +9,7 @@ function hp_auto_acq(IbValues,varargin)
 %if checkDirb4Acq() error('ponte en el directorio correcto');end
 
 %instrreset();
-dsa=hp_init();%inicializa el HP.
+dsa=hp_init(0);%inicializa el HP.
 
 %hp_ss_config(dsa);%configura el HP para medir Función de
 %Transferencia.Pero aqui sobra.
@@ -21,7 +21,7 @@ pause(35);
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
-sourceCH=2;
+sourceCH=1;
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 
 %Check_TES_State(mag,multi)
@@ -84,8 +84,8 @@ for i=1:length(IbValues)
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=abs(IbValues(i)*1e-6*porcentaje);
         hp_ss_config(dsa);
-        %datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
-        datos=hp_measure_TF(dsa);
+        datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
+        %datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
     end

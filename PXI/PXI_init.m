@@ -7,7 +7,8 @@ device_name='PXI1Slot3';%%%Es el nombre que aparece en el Ni-MAX
 %pxi=icdevice('pxi5922.mdd',device_name);
 %connect(pxi)
 
- pxiCards=instrfind('type','IVIInstrument'); %%%OJO! da error!!! pq?!
+pxiCards=instrfind('type','IVIInstrument'); %%%OJO! da error si existe ya una tarjeta!!! pq?!
+
 % 30-Sept-2021 no sé que error daba, pero corregido. Version para dejar
 % sólo una instancia de la tarjeta PXI.
  switch length(pxiCards)

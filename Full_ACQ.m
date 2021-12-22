@@ -25,19 +25,20 @@ if nargin>3
 end
 
 optIV.Rf=1e4;
-optIV.sourceCH=2;
+optIV.sourceCH=1;
 optIV.sourceType='normal';
 optIV.boolplot=1;
 optIV.averages=5;
 
 for i=1:length(temps)
-
+    %BFsetPoint(temps(i));
+    
     %SETstr=strcat('tmp\T',num2str(1e3*temps(i)),'mK.stb')
     Tstring=sprintf('%0.1fmK',temps(i)*1e3)
     SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!
     
     
-    while(~exist(SETstr,'file'))
+    while(~exist(SETstr,'file') & ~exist('stop.txt','file'))
         %bucle para esperar a Tbath SET 
     end
 
@@ -56,7 +57,9 @@ for i=1:length(temps)
         
          %IbiasValues=[500:-10:150 145:-5:130 129:-1:80 79.9:-0.1:0];%%%!!!!Crear funcion!!!!
          %IbiasValues=[500:-10:200 195:-5:150 149:-1:0 -0.05:-0.05:-1];
+         
          IbiasValues=[500:-10:300 295:-5:200 199:-1:-10];
+         
          %IbiasValues=[200:-5:100 98:-2:50 49.5:-0.5:0];
          %imin=10+4*(i-1);
          %IbiasValues=[500:-10:300 295:-5:200 198:-2:100 99:-0.5:imin 10:-1:0];%%%!!!!Crear funcion!!!!
@@ -131,7 +134,7 @@ for i=1:length(temps)
     
     if(1) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.05 0.06 0.07 0.08];
+    auxarray=[0.08 ];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido

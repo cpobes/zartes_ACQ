@@ -19,7 +19,6 @@ else
 end
 %pxi_Pulses_Configure(pxi);
 
-Options.TimeOut=5;
 Options.channelList='1';
 
 %stdpulso=0;
