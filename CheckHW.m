@@ -12,6 +12,7 @@ Instruments={'Multimetro' 'DSA' 'K220' 'LKS' 'AVS47' 'Magnicon' 'PXI'}';
 if nargin==1
     %AdressFile=varargin{1};%%%%Pdte de implementar
 else
+    %%%GPIB Primary Addresses.
     multiPA=4;
     dsaPA=11;
     k220PA=2;

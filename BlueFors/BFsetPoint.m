@@ -9,7 +9,7 @@ wscWrite=SimpleClient(Writeurl);
 message=strcat('{"heater_nr":4,"setpoint":',Tstr,'}');
 wscWrite.send(message)
 wscWrite.close()
-pause(1200);%%%Stab Algorithm.
+pause(1800);%%%Stab Algorithm.
 Tstring=sprintf('%0.1fmK',Temp*1e3)
 SETstr=strcat('tmp\T',Tstring,'.stb')
 mkdir tmp

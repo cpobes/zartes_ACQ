@@ -3,7 +3,7 @@ function pxi_auto_acq_POS_NEG(IZvaluesP,varargin)
 
     PXIopt.TF=1;
     PXIopt.Noise=1;
-    PXIopt.Pulses=1;
+    PXIopt.Pulses=0;
     
 pxi_auto_acq(IZvaluesP,PXIopt);
 

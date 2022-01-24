@@ -1,7 +1,7 @@
 function hp_auto_acq_POS_NEG(IZvaluesP,varargin)
 %%%%Pasar los IZvalues positivos y negativos
 
-HPopt.TF=0;
+HPopt.TF=1;
 HPopt.Noise=0;
 
 hp_auto_acq(IZvaluesP,HPopt);
