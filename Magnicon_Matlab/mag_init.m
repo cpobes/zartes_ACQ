@@ -1,6 +1,12 @@
-function s=mag_init()
+function s=mag_init(varargin)
 %Funcion para inicializar la comunicacion con la electronica magnicon.
-COM='COM5';%puerto serie.
+if nargin == 0
+    COM='COM5';
+else
+    COM=varargin{1};
+end
+
+%COM='COM5';%puerto serie.
 s=instrfind('type','serial','Port',COM);
 %s=[];
 

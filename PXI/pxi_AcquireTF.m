@@ -8,8 +8,8 @@ function TF=pxi_AcquireTF(pxi,varargin)
     ConfStructs.Vertical.channelList='0,1';
     ConfStructs.Trigger.Type=6;
     
-    ConfStructs.Horizontal.SR = 2.5e5;%%%4e5.2e5
-    ConfStructs.Horizontal.RL = 2.5e5;%1e6;%2e6.2e5
+    ConfStructs.Horizontal.SR = 1e5;%%%4e5.%2e5
+    ConfStructs.Horizontal.RL = 10e5;%1e6;%2e6.%2e5
     
     pxi_ConfigureChannels(pxi,ConfStructs.Vertical);
     pxi_ConfigureHorizontal(pxi,ConfStructs.Horizontal);

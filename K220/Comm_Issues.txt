@@ -1,0 +1,35 @@
+Creo unas funciones básicas para inicializr y controlar la K220, pero a veces, aunque algunos
+comandos funcionan, otros dan error 'ldd' y no se ejecutan correctamente. Al abrir el NiMax a 
+veces se solucionan. Por cierto, al ejecutar en NiMax Communicate with instrument, se resetea 
+totalmente el instrumento (p.e., si había una corriente puesta, se pone a cero). Sin embargo,
+al ejecutar Open Visa Test Panel no se resetea nada. Desde ahí se puede probar a controlar las
+líneas y enviar comandos. Parecía que en COnfiguración I/O settings, activar el Enable Termination
+Character (que suele estar deshabilitado) funcionaba. Pongo una instrucción en el k220:init para
+poner k220.EOSMode='write'. Pero parece que no es esta la clave. Observo que los comandos fallan 
+cuando está activado el LED 'Talk' del instrumento. Desde el Test Panel puedo reseetear esto
+activando en I/Omenu Line Control 'AssertREN/Address Dev' (haciendo AsserRen sólo no funciona). 
+De esta forma se pone en modo remoto y resetea la linea talk si estaba activada. Al hacerlo ha 
+funcionado en primera instancia, pero luego observo otro error 're'. Vuelvo a ejecutar lo mismo y 
+esta vez, no aparece el 're' y sí funciona.
+Se puede consultar el estado de las líneas gpib con:
+k220.busmanagementstatus
+Allí se puede ver si la remoteEnable está on/off. Curiosamente si desde el test panel se hace
+assert REN, aunque el LED no se encienda, el estado sí cambia. Parece que el led 'talk' va asociado
+a la línea EOI. Haciendo Go to local se puede resetear. Desde modo local, si ejecuto algo, sí da 
+error 're' y se enciende el led 'talk' y activa la EOI. Vuelvo a ejecutar AssertREN;AddressDev y la 
+primera vez da error 're' y la segunda ya no. El goto local activa la línea attention. Tras volver
+a activar el modo remoto, consigo ejecutar correctmente los comandos aunque esté activado el talk.
+No consigo reproducir y entender el error 'ldd'. Pruebo a alternar el EOImode=on/off. Parece que cuando
+está 'off' sí da el error 'ldd' miestras que cuando está 'on' no lo da. (salvo en una de las ejecuciones!).
+Encuentro un programmers manual (en algún momento lo he tenido que tener para poder hacer los drivers). 
+Ahí describe el 'ldd' error cuando se pasa un comando que no reconoce, y 'ldd0' cuando el comando lo
+reconoce, pero el parámetro numérico está fuera del rango para ese comando. El 'rem' error se da
+cuando no está habilitada la rem line.
+Con el comando M(0-31) se puede habilitar que active la SRL cuando hay algún error, por ejemplo con los idd.
+Para interpretarlo, hay que leer el starus register byte STB con *STB?, pero ese comando no devuelve 
+lo que debería. Sin embargo sí hay en el test panel un boton especifico de Read Status Byte que 
+cuando se convierte en binario sí parece dar un resultado coherente. Además está la status word que se
+lee con U0 y cuyo significado está en el manual (220DFGJKPRTMMY). Esto puede dar una forma de verificar si
+se ha activado correctamente la salida comprobando el Char(5). Creo k220_CheckOUTPUT. 
+Sigue dando a veces el error 'idd' p.e. con setVmax fwrite(k220,'V5X\n'). Tras el error, el status byte es 97
+que parece indicar en binario error de byffer y over voltage limit. TAmbién se activa la ATN line. pq?

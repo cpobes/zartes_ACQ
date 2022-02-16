@@ -4,9 +4,9 @@ function out=Put_TES_toNormal_State_CH(mag,Imax,nch)
 %%%%positivas o negativas.
 
 Ilimite=3e3;%%%Corriente limite a no sobrepasar.
+signo=sign(Imax);
 
 % step=200;%%%Step para ir aumentando la corriente en uA.
- signo=sign(Imax);
 % rfold=mag_readRf_FLL(mag);
 % mag_setRf_FLL(mag,1e3);
 % pause(1)
@@ -19,19 +19,48 @@ Ilimite=3e3;%%%Corriente limite a no sobrepasar.
 % 
 % mag_setRf_FLL(mag,rfold);
 
-mag_ConnectLNCS(mag);
-mag_setLNCSImag(mag,signo*Ilimite);
-mag_setLNCSImag(mag,signo*0.5e3);
-%%%Si queremos usar la fte en Ch1 hay que quitar la LNCS.
-mag_setImag_CH(mag,signo*500,nch);
-mag_setLNCSImag(mag,0);
-mag_DisconnectLNCS(mag);
+useLNCS=1;
+usek220=0;
+if (useLNCS)
+    mag_ConnectLNCS(mag);
+    mag_setLNCSImag(mag,signo*Ilimite);
+    mag_setLNCSImag(mag,signo*0.5e3);
+    %%%Si queremos usar la fte en Ch1 hay que quitar la LNCS.
+    mag_setImag_CH(mag,signo*500,nch);
+    mag_setLNCSImag(mag,0);
+    mag_DisconnectLNCS(mag);
+else
+    mag_setImag_CH(mag,signo*500,nch);
+end
 
-%%%%K220
-%k220=k220_init(0)
-
-% k220_setI(k220,signo*10e-3);
-% pause(0.5);
-% Bopt=1.20e-3;
-% k220_setI(k220,Bopt);
+if usek220
+    %%%%K220
+    k220=k220_init(0);
+    Ibob=k220_readI(k220);
+    k220_setVlimit(k220,5);
+    try
+        k220_Start(k220);
+    catch
+        k220_Start(k220);
+    end
+    try
+        k220_setI(k220,10e-3);
+    catch
+        k220_setI(k220,10e-3);
+    end
+    pause(0.5);
+    mag_setImag_CH(mag,signo*500,nch);
+    try
+        k220_setI(k220,Ibob);
+    catch
+        try 
+            k220_Stop(k220);
+        catch
+            k220_Stop(k220);
+            k220_Start(k220);
+        end
+        k220_setI(k220,Ibob);    
+    end
+    %fclose(k220);delete(k220)
+end
 out=1;%Ojo, esto devuelve siempre '1'.

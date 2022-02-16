@@ -1,8 +1,12 @@
-function pxi=PXI_init()
+function pxi=PXI_init(varargin)
 %%%función para inicializar una sesión de comunicación con la tarjeta PXI
 
 %makemid('niScope','pxi5922.mdd')
-device_name='PXI1Slot3';%%%Es el nombre que aparece en el Ni-MAX
+if nargin==0
+    device_name='PXI1Slot3';%%%Es el nombre que aparece en el Ni-MAX
+else
+    device_name=varargin{1};
+end
 
 %pxi=icdevice('pxi5922.mdd',device_name);
 %connect(pxi)

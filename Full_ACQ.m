@@ -132,9 +132,9 @@ for i=1:length(temps)
 %%%puede ser un subconjunto de las Tbath a las que se mida IV.
     %auxarray=[0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09];    
     
-    if(1) %%%Hacer o no Z(w)-Ruido.
+    if(0) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.05 0.07 0.08];
+    auxarray=[0.05];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -170,7 +170,7 @@ for i=1:length(temps)
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
             %rpp=[0.9:-0.05:0.3 0.28:-0.02:0.1];% 0.18:-0.02:0.04];
-            rpp=[ 0.8 0.7 0.6 0.5 0.4 0.3:-0.01:0.1];
+            rpp=[ 0.9:-0.05:0.3 0.29:-0.01:0.04];
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
@@ -202,6 +202,7 @@ for i=1:length(temps)
     cd ..
 end
 
+%BFsetPoint(0.02);
 
 
 %%%%Versión cero con fichero de intercambio

@@ -118,6 +118,14 @@ for i=1:length(Ibvalues)
         %Vdc_array(i_av)=multi_read(multi);
     end
     Vdc=mean(Vdc_array);
+    if abs(Vdc)>10 
+        mag_LoopResetCH(mag,sourceCH);
+        for i_av=1:averages
+            aux=multi_read(multi);
+            Vdc_array(i_av)=mode(aux);
+        end
+    Vdc=mean(Vdc_array);
+    end
     if strcmpi(sourceType,'LNCS')
         Ireal=mag_readLNCSImag(mag);
     else

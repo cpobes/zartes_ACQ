@@ -1,5 +1,5 @@
-function out=mag_reset(s)
-%Funcion para enviar un reset a la electrinica
+function out=mag_reset_CH(s,nch)
+%Funcion para enviar un reset a la electronica
 
 if nch==1
     ch='1';

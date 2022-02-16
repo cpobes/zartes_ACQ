@@ -15,5 +15,7 @@ if isempty(k220)
 elseif strcmp(k220(1).Status,'closed')
     fopen(k220(1));
 end
-
-device=query(k220,'*IDN?');%esta instruccion es más directa.
+k220.EOSMode='write'; %%%Esta instruccion parece necesaria 
+%%%%antes de eso, aunque se establece comunicación, no responde 
+%%%% a los comandos y da error o bien de 'rem' o 'ldd'.
+%device=query(k220,'*IDN?');%esta instruccion es más directa.

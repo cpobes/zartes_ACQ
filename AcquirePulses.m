@@ -4,7 +4,7 @@ function AcquirePulses(options)
 %%%%antes la pxi, porque si no da error el writeCol.
 
 %%Hay que pasar la configuración en options. Recordar incluir:
-%% Npulsos, RL, SR, multi, mag, pxi, filename,comment, longrun y boolplot
+%%% Npulsos, RL, SR, multi, mag, pxi, filename,comment, longrun y boolplot
 import matlab.io.*
 
 uri='http://192.168.2.121:5001/channel/measurement/latest';

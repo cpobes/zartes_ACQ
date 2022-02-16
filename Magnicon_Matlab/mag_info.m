@@ -3,4 +3,4 @@ function out=mag_info(s)
 %Ojo, solo Ch1.
 
 str=sprintf('%s\r','<01T829');
-out=query(s,str,'%s','%s')
+out=query(s,str,'%s','%s');

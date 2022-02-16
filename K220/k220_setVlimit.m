@@ -8,5 +8,5 @@ else
     Vmax=varargin{1};
 end
     
-str=strcat('V',num2str(Vmax),'X','\n')
+str=strcat('V',num2str(Vmax),'X','\n');
 query(k220,str)

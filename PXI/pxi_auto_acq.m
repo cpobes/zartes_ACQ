@@ -47,7 +47,7 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin==3 %%%%%%%OJO!k220.
+if nargin==2 %%%%%%%OJO!con k220 nargin=3.
     PXIopt=varargin{1};
 else
     PXIopt.TF=1;

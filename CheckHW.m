@@ -7,7 +7,7 @@ function CheckHW(varargin)
 %%% la posibilidad de leer las direcciones primarias de fichero (no
 %%% prioritario).
 
-Instruments={'Multimetro' 'DSA' 'K220' 'LKS' 'AVS47' 'Magnicon' 'PXI'}';
+Instruments={'Multimetro' 'DSA' 'K220' 'LKS' 'AVS47' 'Magnicon' 'PXI' 'BlueFors'}';
 
 if nargin==1
     %AdressFile=varargin{1};%%%%Pdte de implementar
@@ -60,6 +60,34 @@ for i=1:length(info.ObjectConstructorName)
 %     if ~isempty(magStatus{1})&&strcmp(magString,'NOT FOUND') magString='OK';end
 end
 
-Status={multiString dsaString k220String LKSString AVSString magString pxiString}';
+%%%%Magnicon electronics Check
+mag=mag_init(strcat('COM',num2str(magCOM)));
+aux=mag_info(mag);
+if isempty(aux) magString=nofound; else magString='OK';end
+fclose(mag)
+delete(mag)
+clear mag %solo lo usamos para chequear si está la electronica conectada.
+
+%%%%PXI card Check
+try 
+    pxi=PXI_init();
+    pxiString='OK';
+    disconnect(pxi)
+    delete(pxi)
+    clear pxi
+catch
+    pxiString=nofound;
+end
+
+%%%BF check
+uri='http://192.168.2.121:5001/channel/measurement/latest';
+try
+    x=webread(uri);
+    BFString=x.status;
+catch
+    BFString=nofound;
+end
+
+Status={multiString dsaString k220String LKSString AVSString magString pxiString BFString}';
 
 table(Instruments,Status)

@@ -8,3 +8,5 @@ if abs(Ivalue)>Imax
 end
 str=strcat('I',num2str(Ivalue),'X','\n');
 query(k220,str);
+iaux=k220_readI(k220);
+if Ivalue-iaux, error('Error Fijando la corriente');end
