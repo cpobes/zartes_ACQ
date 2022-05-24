@@ -6,7 +6,10 @@ Imax= 20e-3;
 if abs(Ivalue)>Imax
     error('Cuidado, Ivalue demasiado alto');
 end
-str=strcat('I',num2str(Ivalue),'X','\n');
-query(k220,str);
+%query(k220,'*CLS\n');
+%query(k220,'*RST\n');
+%query(k220,'*WAI\n');
+str=strcat('I',num2str(Ivalue*1e6),'e-6X','\n');
+fwrite(k220,str);
 iaux=k220_readI(k220);
-if Ivalue-iaux, error('Error Fijando la corriente');end
+if abs(Ivalue-iaux)>1e-6, error('Error Fijando la corriente');end

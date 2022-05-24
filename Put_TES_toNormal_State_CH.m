@@ -19,8 +19,8 @@ signo=sign(Imax);
 % 
 % mag_setRf_FLL(mag,rfold);
 
-useLNCS=1;
-usek220=0;
+useLNCS=0;
+usek220=1;
 if (useLNCS)
     mag_ConnectLNCS(mag);
     mag_setLNCSImag(mag,signo*Ilimite);
@@ -44,9 +44,9 @@ if usek220
         k220_Start(k220);
     end
     try
-        k220_setI(k220,10e-3);
+        k220_setI(k220,4e-3);
     catch
-        k220_setI(k220,10e-3);
+        k220_setI(k220,4e-3);
     end
     pause(0.5);
     mag_setImag_CH(mag,signo*500,nch);

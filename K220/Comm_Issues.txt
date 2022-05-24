@@ -3,11 +3,12 @@ comandos funcionan, otros dan error 'ldd' y no se ejecutan correctamente. Al abr
 veces se solucionan. Por cierto, al ejecutar en NiMax Communicate with instrument, se resetea 
 totalmente el instrumento (p.e., si había una corriente puesta, se pone a cero). Sin embargo,
 al ejecutar Open Visa Test Panel no se resetea nada. Desde ahí se puede probar a controlar las
-líneas y enviar comandos. Parecía que en COnfiguración I/O settings, activar el Enable Termination
-Character (que suele estar deshabilitado) funcionaba. Pongo una instrucción en el k220:init para
+líneas y enviar comandos. 
+Parecía que en Configuración I/O settings, activar el Enable Termination Character 
+(que suele estar deshabilitado) funcionaba. Pongo una instrucción en el k220_init para
 poner k220.EOSMode='write'. Pero parece que no es esta la clave. Observo que los comandos fallan 
 cuando está activado el LED 'Talk' del instrumento. Desde el Test Panel puedo reseetear esto
-activando en I/Omenu Line Control 'AssertREN/Address Dev' (haciendo AsserRen sólo no funciona). 
+activando en I/Omenu Line Control 'AssertREN/Address Dev' (haciendo AssertRen sólo no funciona). 
 De esta forma se pone en modo remoto y resetea la linea talk si estaba activada. Al hacerlo ha 
 funcionado en primera instancia, pero luego observo otro error 're'. Vuelvo a ejecutar lo mismo y 
 esta vez, no aparece el 're' y sí funciona.
@@ -18,7 +19,7 @@ assert REN, aunque el LED no se encienda, el estado sí cambia. Parece que el le
 a la línea EOI. Haciendo Go to local se puede resetear. Desde modo local, si ejecuto algo, sí da 
 error 're' y se enciende el led 'talk' y activa la EOI. Vuelvo a ejecutar AssertREN;AddressDev y la 
 primera vez da error 're' y la segunda ya no. El goto local activa la línea attention. Tras volver
-a activar el modo remoto, consigo ejecutar correctmente los comandos aunque esté activado el talk.
+a activar el modo remoto, consigo ejecutar correctamente los comandos aunque esté activado el talk.
 No consigo reproducir y entender el error 'ldd'. Pruebo a alternar el EOImode=on/off. Parece que cuando
 está 'off' sí da el error 'ldd' miestras que cuando está 'on' no lo da. (salvo en una de las ejecuciones!).
 Encuentro un programmers manual (en algún momento lo he tenido que tener para poder hacer los drivers). 
@@ -32,4 +33,24 @@ cuando se convierte en binario sí parece dar un resultado coherente. Además es
 lee con U0 y cuyo significado está en el manual (220DFGJKPRTMMY). Esto puede dar una forma de verificar si
 se ha activado correctamente la salida comprobando el Char(5). Creo k220_CheckOUTPUT. 
 Sigue dando a veces el error 'idd' p.e. con setVmax fwrite(k220,'V5X\n'). Tras el error, el status byte es 97
-que parece indicar en binario error de byffer y over voltage limit. TAmbién se activa la ATN line. pq?
+que parece indicar en binario error de buffer y over voltage limit. También se activa la ATN line. pq?
+
+Al crear el objeto k220 se puede inspeccionar con k220.(TAB) los métodos accesibles. Hay algunos que pueden dar
+información:
+>> k220.HandshakeStatus
+
+ans = 
+
+          DataValid: 'off'
+    NotDataAccepted: 'on'
+    NotReadyForData: 'on'
+
+Observo que aunque a veces de error el k220_Stop y k220_Start, si se ejecuta una segunda vez, funciona, y al 
+ejecutar k220_setI después, funciona también. Intento poner un for en el scriptB con try k220_Start antes del
+k220_setI. Funciona para unas pocas corrientes, pero termina dando error. Si parto p.e. de B=-10mA con step=400uA
+da error de forma reproducible en -8.8mA. Si parto de -5mA da error en -2.2mA. En un caso es el 4º paso, en el 
+otro el 8º paso. PQ?!!!!wtf!!! Parto de B=-3mA y da error tb en -2.2mA (tanto con step=400 como step=200). Con B=-5mA
+step=200 salta en -4.4. Hay un patrón algo aleatorio, pero totalmente reproducible! Miro el HandshakeStatus en cada
+paso y no cambia (off,on,on). YA!!! Desecubro que en realidad el equipo no daba error, sino la función. Había puesto 
+una condición para que diese error si Ivalue!=k220_read pero en ocasiones, la diferencia era de 1e-19! un problema de
+representación numérica!!! Relajo esa condición y ejecuta ya correctamente el scriptB!!!!

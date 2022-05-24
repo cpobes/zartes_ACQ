@@ -70,7 +70,9 @@ end
 % mag_setAMP_CH(mag,sourceCH);
 % mag_setFLL_CH(mag,sourceCH);
 pause(2)
-mag_LoopResetCH(mag,sourceCH);
+%mag_LoopResetCH(mag,sourceCH);
+mag_LoopResetCH(mag,1);
+mag_LoopResetCH(mag,2);
 pause(2)
 
 slope=0;state=0;jj=1;
@@ -119,7 +121,9 @@ for i=1:length(Ibvalues)
     end
     Vdc=mean(Vdc_array);
     if abs(Vdc)>10 
-        mag_LoopResetCH(mag,sourceCH);
+        %mag_LoopResetCH(mag,sourceCH);
+        mag_LoopResetCH(mag,1);
+        mag_LoopResetCH(mag,2);
         for i_av=1:averages
             aux=multi_read(multi);
             Vdc_array(i_av)=mode(aux);

@@ -25,7 +25,7 @@ if nargin>3
 end
 
 optIV.Rf=1e4;
-optIV.sourceCH=1;
+optIV.sourceCH=2;
 optIV.sourceType='normal';
 optIV.boolplot=1;
 optIV.averages=5;
@@ -134,7 +134,7 @@ for i=1:length(temps)
     
     if(0) %%%Hacer o no Z(w)-Ruido.
     %auxarray=temps(1:end-1);
-    auxarray=[0.05];
+    auxarray=[0.05 0.06 0.07 0.08];
         if(~isempty(find(auxarray==temps(i), 1)))
 %             mkdir Z(w)-Ruido
 %             cd Z(w)-Ruido
@@ -170,7 +170,9 @@ for i=1:length(temps)
             
             %rpp=[0.9:-0.05:0.02 0.19:-0.01:0.05]; %%%Vector con los puntos donde tomar Z(w).
             %rpp=[0.9:-0.05:0.3 0.28:-0.02:0.1];% 0.18:-0.02:0.04];
+            
             rpp=[ 0.9:-0.05:0.3 0.29:-0.01:0.04];
+            %rpp=0.8;%%%debug.
 %             if temps(i)==0.050 %%% || temps(i)==0.07 
 %                 rpp=[0.21:-0.01:0.01];
 %             end
@@ -201,39 +203,3 @@ for i=1:length(temps)
     fclose(f);
     cd ..
 end
-
-%BFsetPoint(0.02);
-
-
-%%%%Versión cero con fichero de intercambio
-% fid=fopen(file,'rt+')
-% 
-% while (~feof(fid))
-%     ftell(fid)%
-%     s=fgetl(fid)
-%     Temp=sscanf(s,'%f')
-%     Tstring=sprintf('%dmK',Temp*1e3)
-%     setbool=isempty(strfind(s,'SET'))
-%     while setbool
-%         %%%bucle de espera al SET temperature.
-%         
-%     end
-%     if strfind(s,'SET')
-%         mkdir IVs
-%         cd IVs
-%         %%%acquireIVs. Automatizar definición de los IbiasValues.
-%         %%%Ibias.Ib130=[500:-20:240 235:-5:135 134:-0.5:90 80:-20:0]
-%         %%%acquire_Pos_Neg_Ivs('130mK',Ibias.Ib130)
-%         cd ..
-%         mkdir Z(w)-Ruido
-%         cd Z(w)-Ruido
-%         mkdir(Tstring)
-%         %%%acquire Z(w). Automatizar definición de los IZvalues
-%         %%%IZvalues.i135=BuildIbiasFromRp(IVset(18),[0.9:-0.1:0.1])
-%         %%%hp_auto_acq_POS_NEG(IZvalues.i135)
-%         cd ..
-%         %fprintf(fid,'%s','DONE')
-%     end
-% end
-% 
-% fclose(fid)

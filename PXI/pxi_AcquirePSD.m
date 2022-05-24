@@ -6,6 +6,9 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 
 pxi_Noise_Configure(pxi);
 
+%get(get(pxi,'horizontal'),'Actual_Sample_Rate')
+%get(get(pxi,'horizontal'),'actual_record_length')
+
 Options.TimeOut=5;
 Options.channelList='1';
 
@@ -22,6 +25,8 @@ while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.00
     ix=ix+1;
 end
 [psd,freq]=PSD(data);
+
+%size(freq), size(psd)
 
 if(0)%%%subsampleo?
     if freq(1)==0, logfmin=log10(freq(2));end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
@@ -41,7 +46,7 @@ if(1) %%%plot?
     subplot(2,1,2)
     %hold off
     vrhz=medfilt1(sqrt(psd),10);
-    loglog(freq,vrhz,'.-')
+    loglog(freq(:),vrhz(:),'.-')
     ylim([1e-7 1e-4]),hold on
     %semilogx(freq,10*log10(psd),'.-')
     grid on

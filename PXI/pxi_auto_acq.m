@@ -146,7 +146,7 @@ for i=1:length(IbValues)
         %pause(1)
     end
     catch
-        strcat('error pxi Ib: ',num2str(i))
+        strcat('error pxi Ib: ',num2str(IbValues(i)))
     end
 end
 
@@ -157,3 +157,4 @@ mag_setImag_CH(mag,0,sourceCH);%%%Ponemos la corriente a cero.
 fclose(mag);delete(mag);
 disconnect(pxi);delete(pxi);
 fclose(multi);delete(multi);
+instrreset;
