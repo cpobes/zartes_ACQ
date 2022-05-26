@@ -217,4 +217,4 @@ for i=1:length(temps)
     cd ..
 end
 options.acqInfo.Stop=datestr(now);
-save(strcat('AcqOptions_',num2str(now)),options)
+save(strcat('AcqOptions_',num2str(round(now*86400))),'options')

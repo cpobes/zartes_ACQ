@@ -43,10 +43,11 @@ if usek220
     catch
         k220_Start(k220);
     end
+    i_N=8e-3;
     try
-        k220_setI(k220,4e-3);
+        k220_setI(k220,i_N);
     catch
-        k220_setI(k220,4e-3);
+        k220_setI(k220,i_N);
     end
     pause(0.5);
     mag_setImag_CH(mag,signo*500,nch);
