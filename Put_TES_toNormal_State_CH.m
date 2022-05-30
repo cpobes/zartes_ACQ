@@ -56,6 +56,7 @@ if usek220
     catch
         try 
             k220_Stop(k220);
+            k220_Start(k220);
         catch
             k220_Stop(k220);
             k220_Start(k220);

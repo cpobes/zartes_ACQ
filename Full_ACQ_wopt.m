@@ -55,23 +55,30 @@ end
 
 if isfield(options,'IVset')
     ivauxP=options.IVset;
-    ivauxN=IVauxP;
+    ivauxN=ivauxP;
 end
 if isfield(options,'IVsetN')
     ivauxN=options.IVsetN;
 end
 
+if isfield(options,'Ibobina')
+    options.acqInfo.ActualIbobina=SetBoptimo(options.Ibobina);
+end
 options.acqInfo.Start=datestr(now);
 optiond.acqInfo.dir=pwd;
 %empezamos buble de medida
 for i=1:length(temps)
     
+    if  exist('stop.txt','file')
+        varargout{1}=options;
+        return
+    end
     %%%BF set temp
     BFsetPoint(temps(i));
     Tstring=sprintf('%0.1fmK',temps(i)*1e3)
     SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!   
     
-    while(~exist(SETstr,'file') & ~exist('stop.txt','file'))
+    while(~exist(SETstr,'file'))
         %bucle para esperar a Tbath SET 
     end
 
@@ -80,7 +87,8 @@ for i=1:length(temps)
         if isfield(options.IVs,'TempsArray')
            ivsarray=options.IVs.TempsArray;
         else
-           ivsarray=temps(1:end-1);%[0.07 0.05]; 
+           %ivsarray=temps(1:end-1);%[0.07 0.05];
+           ivsarray=temps(temps~=0);
         end
         
         if(~isempty(find(ivsarray==temps(i), 1)))
@@ -175,7 +183,7 @@ for i=1:length(temps)
             mkdir(Tstring)
             cd(Tstring)           
             %%%acquire Z(w). Automatizar definición de los IZvalues
-            if nargin==2 || (nargin==3 && isstruct(varargin{1}))
+            if nargin==2 || (nargin==3 && (isstruct(varargin{1})&& ~isfield(varargin{1},'IVset')))
                 IVsetP=GetIVTES(circuit,IVaux.ivp);%%%nos quedamos con la IV de bias positivo.
                 IVsetN=GetIVTES(circuit,IVaux.ivn);
             else
@@ -195,6 +203,7 @@ for i=1:length(temps)
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             IZvaluesN=IZvaluesN(abs(IZvaluesN)<500);%%%%Para evitar error fte normal si el spline no esta bien.
+            %return;
             try
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'

@@ -21,7 +21,7 @@ pause(35);
 
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
-sourceCH=1;
+sourceCH=2;
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 
 %Check_TES_State(mag,multi)
