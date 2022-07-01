@@ -13,20 +13,21 @@ else
     P=0.05;
     I=100;
 end
+P=0.3;I=747;%%%prueba
 %message=strcat('{"heater_nr":4,"setpoint":',Tstr,'}')
 message=strcat('{"heater_nr":4,"setpoint":',Tstr,',"control_algorithm_settings":{"proportional":',num2str(P),',"integral":',num2str(I),',"derivative":0','}}')
 wscWrite.send(message)
 wscWrite.close()
-
+return %debug
 %if Temp>0.07 pause(1000);end%%%extra wait for high temps.
 Tstring=sprintf('%0.1fmK',Temp*1e3)
 SETstr=strcat('tmp\T',Tstring,'.stb')
 if exist(SETstr,'file')
     %do nothing
 else
-    pause(900);%%%Stab Algorithm.
+    pause(1000);%%%Stab Algorithm.
+    mkdir tmp
+    f = fopen(SETstr, 'w' )
+    fclose(f);
 end
-mkdir tmp
-f = fopen(SETstr, 'w' )
-fclose(f);
 ok=1

@@ -74,7 +74,13 @@ pause(2)
 mag_LoopResetCH(mag,1);
 mag_LoopResetCH(mag,2);
 pause(2)
-
+rango=1e3;
+%%%Si la salida es estable, la fluctación en la
+%%%salida es menor de 1mV.
+while rango>5e-4
+    rango=multi_monitor(multi)
+    'monitoring...'
+end
 slope=0;state=0;jj=1;
 
 if strcmpi(sourceType,'LNCS')
@@ -124,6 +130,12 @@ for i=1:length(Ibvalues)
         %mag_LoopResetCH(mag,sourceCH);
         mag_LoopResetCH(mag,1);
         mag_LoopResetCH(mag,2);
+        %%%cuando salta el squid, hay una deriva larguisima en el Vout.
+        rango=1e3;
+        while rango>5e-4
+            rango=multi_monitor(multi);
+            strcat('monitoring',' ',num2str(i))
+        end
         for i_av=1:averages
             aux=multi_read(multi);
             Vdc_array(i_av)=mode(aux);

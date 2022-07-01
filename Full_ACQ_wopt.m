@@ -11,7 +11,7 @@ if nargin==0 %show options prototype
     options.ICs.TempsArray=[];
     options.Bscan.boolacq=0;
     options.Bscan.TempsArray=[];
-    options.ZsNoise.boolacq=1;
+    options.ZsNoise.boolacq=0;
     options.ZsNoise.TempsArray=[];
     options.ZsNoise.HPopt.TF=1;
     options.ZsNoise.HPopt.Noise=1;
@@ -75,10 +75,11 @@ for i=1:length(temps)
     end
     %%%BF set temp
     BFsetPoint(temps(i));
-    Tstring=sprintf('%0.1fmK',temps(i)*1e3)
-    SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!   
+    %%%El BFsetPoint ya hace una espera-> no hace falta ficheros.
+%    Tstring=sprintf('%0.1fmK',temps(i)*1e3)
+%    SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!   
     
-    while(~exist(SETstr,'file'))
+%    while(~exist(SETstr,'file'))
         %bucle para esperar a Tbath SET 
     end
 
@@ -166,17 +167,21 @@ for i=1:length(temps)
         
         if isfield(options.ZsNoise,'HPopt')
             HPopt=options.ZsNoise.HPopt;
+            HPopt.sourceCH=optIV.sourceCH;
         else
             HPopt.TF=1;
             HPopt.Noise=1;
+            HPopt.sourceCH=optIV.sourceCH;
         end
         
         if isfield(options.ZsNoise,'PXIopt')
             PXIopt=options.ZsNoise.PXIopt;
+            PXIopt.sourceCH=optIV.sourceCH;
         else
             PXIopt.TF=1;
             PXIopt.Noise=1;
             PXIopt.Pulses=0;
+            PXIopt.sourceCH=optIV.sourceCH;
         end
         
         if(~isempty(find(auxarray==temps(i), 1)))           
@@ -219,11 +224,12 @@ for i=1:length(temps)
         end
     end%%%%if Z(w)-Ruido.
     
-    DONEstr=strcat('T',Tstring,'.end')  
-    cd tmp
-    f = fopen(DONEstr, 'w' );  
-    fclose(f);
-    cd ..
+    %%%esto en realidad ya no es necesario.
+%     DONEstr=strcat('T',Tstring,'.end')  
+%     cd tmp
+%     f = fopen(DONEstr, 'w' );  
+%     fclose(f);
+%     cd ..
 end
 options.acqInfo.Stop=datestr(now);
 save(strcat('AcqOptions_',num2str(round(now*86400))),'options')

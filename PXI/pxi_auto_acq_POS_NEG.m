@@ -4,6 +4,7 @@ function pxi_auto_acq_POS_NEG(IZvaluesP,varargin)
 PXIopt.TF=1;
 PXIopt.Noise=1;
 PXIopt.Pulses=0;
+PXIopt.sourceCH=2;
 IZvaluesN=-IZvaluesP;
 for i=1:nargin-1
     if isstruct(varargin{i}) PXIopt=varargin{i};end

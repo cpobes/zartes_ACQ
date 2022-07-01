@@ -4,6 +4,7 @@ function hp_auto_acq_POS_NEG(IZvaluesP,varargin)
 %default
 HPopt.TF=1;
 HPopt.Noise=1;
+HPopt.sourceCH=2;
 IZvaluesN=-IZvaluesP;
 for i=1:nargin-1
     if isstruct(varargin{i}) HPopt=varargin{i};end

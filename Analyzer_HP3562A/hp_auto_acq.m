@@ -19,9 +19,16 @@ mag=mag_init();
 fprintf(dsa,'SNGC');%%%Calibramos el HP.
 pause(35);
 
-%%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 
-sourceCH=2;
+if nargin==2
+    HPopt=varargin{1};
+else
+    HPopt.TF=1;
+    HPopt.Noise=1;
+    HPopt.sourceCH=2;
+end
+sourceCH=HPopt.sourceCH;
+%%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 
 %Check_TES_State(mag,multi)
@@ -52,15 +59,8 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %questdlg('TES normal?')
 
-if nargin==2
-    HPopt=varargin{1};
-else
-    HPopt.TF=1;
-    HPopt.Noise=1;
-end
 for i=1:length(IbValues)
     
     try
@@ -84,6 +84,9 @@ for i=1:length(IbValues)
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=abs(IbValues(i)*1e-6*porcentaje);
         hp_ss_config(dsa);
+        if Excitacion==0
+            Excitacion=50;
+        end
         datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         %datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');

@@ -14,9 +14,16 @@ mag=mag_init();
 multi=multi_init(0);
 pxi=PXI_init();
 
+if nargin==2 %%%%%%%OJO!con k220 nargin=3.
+    PXIopt=varargin{1};
+else
+    PXIopt.TF=1;
+    PXIopt.Noise=1;
+    PXIopt.Pulses=1;
+    PXIopt.sourceCH=2;
+end
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
-
-sourceCH=2;
+sourceCH=PXIopt.sourceCH;
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 
 %Check_TES_State(mag,multi)
@@ -47,13 +54,6 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin==2 %%%%%%%OJO!con k220 nargin=3.
-    PXIopt=varargin{1};
-else
-    PXIopt.TF=1;
-    PXIopt.Noise=1;
-    PXIopt.Pulses=1;
-end
 
 for i=1:length(IbValues)
     try
@@ -77,6 +77,13 @@ for i=1:length(IbValues)
         %%%configure HP Fixed SINE y hacer barrido en frecuencia.
         porcentaje=0.05;
         excitacion=round(abs(IbValues(i)*(1e1)*porcentaje));%%%amplitud en mV para la fuente.
+        if excitacion==0 %%%cuando Ibias=0, exc=0 y al usar White Noise
+            %%%%en HP source se pone cero. Por algun motivo (hay bubles en
+            %%%%skw) esas capturas tardan muchisimo y alargan la medida de
+            %%%%2min a 12min cuando en realidad esa TF ni siquiera es
+            %%%%necesaria.
+            excitacion=50;
+        end
         TF=pxi_AcquireTF(pxi,excitacion);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         file=strcat('PXI_TF_',Itxt,'uA','.txt');
