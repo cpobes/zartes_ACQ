@@ -10,15 +10,10 @@ function hp_auto_acq(IbValues,varargin)
 
 %instrreset();
 dsa=hp_init(0);%inicializa el HP.
-
-%hp_ss_config(dsa);%configura el HP para medir Función de
-%Transferencia.Pero aqui sobra.
-
 mag=mag_init();
 %multi=multi_init();
 fprintf(dsa,'SNGC');%%%Calibramos el HP.
 pause(35);
-
 
 if nargin==2
     HPopt=varargin{1};
@@ -62,15 +57,19 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 %questdlg('TES normal?')
 
 for i=1:length(IbValues)
+    %check if stop.txt exists at every OP
+    if IbValues(1) > 0
+        if  exist('../stop.txt','file') 'run stopped';return;end
+    elseif IbValues(1) > 0
+        if  exist('../../stop.txt','file') 'run stopped';return;end
+    end
     
     try
     %resetea lazo de realimentacion del squid.
-    mag_setAMP_CH(mag,sourceCH);
-    mag_setFLL_CH(mag,sourceCH);
+    mag_LoopResetCH(mag,sourceCH);
 
     strcat('Ibias:',num2str(IbValues(i)))
     %Set Magnicon Ib value here
-    %SetIb(IbValues(i));
     mag_setImag_CH(mag,IbValues(i),sourceCH);
     %mag_setLNCSImag(mag,IbValues(i));
     %ix=mag_readLNCSImag(mag);
@@ -113,5 +112,3 @@ mag_setImag_CH(mag,0,sourceCH);%%%Ponemos la corriente a cero.
 fclose(dsa);delete(dsa);%cierra la comunicación con el HP y borra el obj.
 fclose(mag);delete(mag);
 %fclose(multi);delete(multi);
-
-%instrreset();

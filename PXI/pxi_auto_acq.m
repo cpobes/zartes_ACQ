@@ -5,11 +5,6 @@ function pxi_auto_acq(IbValues,varargin)
 %%%existentes.
 %if checkDirb4Acq() error('ponte en el directorio correcto');end
 
-
-
-%hp_ss_config(dsa);%configura el HP para medir Función de
-%Transferencia.Pero aqui sobra.
-
 mag=mag_init();
 multi=multi_init(0);
 pxi=PXI_init();
@@ -19,7 +14,7 @@ if nargin==2 %%%%%%%OJO!con k220 nargin=3.
 else
     PXIopt.TF=1;
     PXIopt.Noise=1;
-    PXIopt.Pulses=1;
+    PXIopt.Pulses=0;
     PXIopt.sourceCH=2;
 end
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
@@ -56,14 +51,19 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 for i=1:length(IbValues)
+    %check if stop.txt exists at every OP
+    if IbValues(1) > 0
+        if  exist('../stop.txt','file') 'run stopped';return;end
+    elseif IbValues(1) > 0
+        if  exist('../../stop.txt','file') 'run stopped';return;end
+    end
+    
     try
     %resetea lazo de realimentacion del squid.
-    mag_setAMP_CH(mag,sourceCH);
-    mag_setFLL_CH(mag,sourceCH);
+    mag_LoopResetCH(mag,sourceCH);
 
     strcat('Ibias:',num2str(IbValues(i)))
     %Set Magnicon Ib value here
-    %SetIb(IbValues(i));
     mag_setImag_CH(mag,IbValues(i),sourceCH);
     %mag_setLNCSImag(mag,IbValues(i));
     %ix=mag_readLNCSImag(mag);

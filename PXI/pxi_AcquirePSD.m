@@ -6,6 +6,12 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 
 pxi_Noise_Configure(pxi);
 
+%%%configuracion subsampleo. Pasar como opcion
+subsampling.bool=0;
+subsampling.NpointDec=100;
+
+boolsubsampling=subsampling.bool;
+NpointsDec=subsampling.NpointsDec;
 %get(get(pxi,'horizontal'),'Actual_Sample_Rate')
 %get(get(pxi,'horizontal'),'actual_record_length')
 
@@ -15,7 +21,7 @@ Options.channelList='1';
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 rg=skewness(data);
 
-if nargin==3 circuit=varargin{2};end
+if nargin==3 circuit=varargin{2};end%%%para que si no lo uso?
 
 ix=0;
 while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.004
@@ -28,11 +34,11 @@ end
 
 %size(freq), size(psd)
 
-if(0)%%%subsampleo?
+if(boolsubsampling)%%%subsampleo?
     if freq(1)==0, logfmin=log10(freq(2));end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
     logfmax=log10(freq(end));
     Ndec=logfmax-logfmin;
-    NpointsDec=200;%%%
+    %NpointsDec=200;%%%
     N=NpointsDec*Ndec;%%%numero de puntos.
     xx=logspace(logfmin,logfmax,N+1);%%%subsampleamos entre 1Hz y 100KHz.
     psd=interp1(freq,psd,xx);

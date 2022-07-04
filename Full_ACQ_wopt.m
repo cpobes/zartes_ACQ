@@ -76,12 +76,12 @@ for i=1:length(temps)
     %%%BF set temp
     BFsetPoint(temps(i));
     %%%El BFsetPoint ya hace una espera-> no hace falta ficheros.
-%    Tstring=sprintf('%0.1fmK',temps(i)*1e3)
+    Tstring=sprintf('%0.1fmK',temps(i)*1e3)
 %    SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!   
     
 %    while(~exist(SETstr,'file'))
         %bucle para esperar a Tbath SET 
-    end
+%    end
 
         if(options.IVs.boolacq)%%%Para medir o no IVs finas
         %%%acquireIVs. Automatizar definición de los IbiasValues.
