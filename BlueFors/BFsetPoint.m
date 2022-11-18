@@ -6,14 +6,16 @@ if Temp>0.2 error('ojo a la set Temp');end
 Tstr=num2str(Temp);
 %wscRead=SimpleClient(Readurl);
 
-if Temp<=0.050
+if Temp<=0.110 %0.050
     P=0.01;
     I=250;
 else
     P=0.05;
     I=100;
 end
-%P=0.3;I=747;%%%prueba
+%%%runs PID
+%P=0.3;I=40;%%%pruebas PID. run001:P,I=(0.1,80).r2:(0.05,150).
+%r003:(0.01,250). r004:(3,750).r5:(0.3,40).
 %message=strcat('{"heater_nr":4,"setpoint":',Tstr,'}')
 message=strcat('{"heater_nr":4,"setpoint":',Tstr,',"control_algorithm_settings":{"proportional":',num2str(P),',"integral":',num2str(I),',"derivative":0','}}')
 
@@ -28,7 +30,8 @@ else
     wscWrite=SimpleClient(Writeurl);
     wscWrite.send(message)
     wscWrite.close()
-    pause(1200);%%%Stab Algorithm.
+    if Temp>0 pause(1800);end%%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
+    
     mkdir tmp
     f = fopen(SETstr, 'w' )
     fclose(f);

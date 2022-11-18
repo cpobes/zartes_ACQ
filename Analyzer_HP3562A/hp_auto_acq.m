@@ -59,9 +59,9 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 for i=1:length(IbValues)
     %check if stop.txt exists at every OP
     if IbValues(1) > 0
-        if  exist('../stop.txt','file') 'run stopped';return;end
+        if  exist('../stop.txt','file') 'run stopped',return;end
     elseif IbValues(1) > 0
-        if  exist('../../stop.txt','file') 'run stopped';return;end
+        if  exist('../../stop.txt','file') 'run stopped',return;end
     end
     
     try

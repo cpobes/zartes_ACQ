@@ -77,7 +77,7 @@ pause(2)
 rango=1e3;
 %%%Si la salida es estable, la fluctación en la
 %%%salida es menor de 1mV.
-while rango>5e-4
+while rango>2e-3%5e-4
     rango=multi_monitor(multi)
     'monitoring...'
 end

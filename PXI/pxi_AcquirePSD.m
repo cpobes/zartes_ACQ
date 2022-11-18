@@ -8,7 +8,7 @@ pxi_Noise_Configure(pxi);
 
 %%%configuracion subsampleo. Pasar como opcion
 subsampling.bool=0;
-subsampling.NpointDec=100;
+subsampling.NpointsDec=100;
 
 boolsubsampling=subsampling.bool;
 NpointsDec=subsampling.NpointsDec;
@@ -35,7 +35,11 @@ end
 %size(freq), size(psd)
 
 if(boolsubsampling)%%%subsampleo?
-    if freq(1)==0, logfmin=log10(freq(2));end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
+    if freq(1)==0, 
+        logfmin=log10(freq(2));
+    else
+        logfmin=log10(freq(1));
+    end%%%%Ojo, pq PSD hace fmin=0 siempre.?!
     logfmax=log10(freq(end));
     Ndec=logfmax-logfmin;
     %NpointsDec=200;%%%

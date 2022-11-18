@@ -18,7 +18,7 @@ else
     k220PA=2;
     LKSPA=12;
     AVS47PA=21;
-    magCOM=5;%serial.
+    magCOM=4;%serial.usually COM5; 
 end
 
 nofound='NOT FOUND';
@@ -61,13 +61,16 @@ for i=1:length(info.ObjectConstructorName)
 end
 
 %%%%Magnicon electronics Check
-mag=mag_init(strcat('COM',num2str(magCOM)));
-aux=mag_info(mag);
-if isempty(aux) magString=nofound; else magString='OK';end
-fclose(mag)
-delete(mag)
-clear mag %solo lo usamos para chequear si está la electronica conectada.
-
+try
+    mag=mag_init(strcat('COM',num2str(magCOM)));
+    aux=mag_info(mag);
+    if isempty(aux) magString=nofound; else magString='OK';end
+    fclose(mag)
+    delete(mag)
+    clear mag %solo lo usamos para chequear si está la electronica conectada.
+catch
+    magString=nofound;
+end
 %%%%PXI card Check
 try 
     pxi=PXI_init();

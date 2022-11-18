@@ -3,10 +3,10 @@ function varargout=Full_ACQ_wopt(file,circuit,varargin)
 %%%automática. versión sacando opciones a struct
 if nargin==0 %show options prototype
     options.IVs.boolacq=1;
-    options.IVs.IbiasValues=[];
-    options.IVs.TempsArray=[];
-    options.IVset=[];
-    options.IVsetN=[];
+    %options.IVs.IbiasValues=[];
+    %options.IVs.TempsArray=[];
+    %options.IVset=[];
+    %options.IVsetN=[];
     options.ICs.boolacq=0;
     options.ICs.TempsArray=[];
     options.Bscan.boolacq=0;
