@@ -6,7 +6,7 @@ if Temp>0.2 error('ojo a la set Temp');end
 Tstr=num2str(Temp);
 %wscRead=SimpleClient(Readurl);
 
-if Temp<=0.110 %0.050
+if Temp<=0.080 %0.050
     P=0.01;
     I=250;
 else
@@ -17,20 +17,25 @@ end
 %P=0.3;I=40;%%%pruebas PID. run001:P,I=(0.1,80).r2:(0.05,150).
 %r003:(0.01,250). r004:(3,750).r5:(0.3,40).
 %message=strcat('{"heater_nr":4,"setpoint":',Tstr,'}')
-message=strcat('{"heater_nr":4,"setpoint":',Tstr,',"control_algorithm_settings":{"proportional":',num2str(P),',"integral":',num2str(I),',"derivative":0','}}')
+message=strcat('{"heater_nr":4,"pid_mode":1,"setpoint":',Tstr,',"control_algorithm_settings":{"proportional":',num2str(P),',"integral":',num2str(I),',"derivative":0','}}')
 
 %return %debug
 %if Temp>0.07 pause(1000);end%%%extra wait for high temps.
 Tstring=sprintf('%0.1fmK',Temp*1e3)
 SETstr=strcat('tmp\T',Tstring,'.stb')
-if exist(SETstr,'file')
+T0=BFreadMCTemp();
+if exist(SETstr,'file')&&(abs(T0-Temp)<1e-3)
     %do nothing. Es para no esperar ni cambiar conf cuando el BF esta ya a
     %la temp deseada. Ojo si no lo está.
 else
     wscWrite=SimpleClient(Writeurl);
     wscWrite.send(message)
     wscWrite.close()
-    if Temp>0 pause(1800);end%%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
+    if Temp>0 
+        %pause(1800);
+        %%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
+        BFmonitorMCTemp(Temp)
+    end
     
     mkdir tmp
     f = fopen(SETstr, 'w' )

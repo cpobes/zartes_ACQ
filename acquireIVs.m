@@ -27,6 +27,7 @@ if nargin==2
     averages=5;
     %%%%Fuente a usar: LNCS. Normal
     sourceType='LNCS';%%% o 'Normal'.
+    softpolarity=1;
 elseif nargin==3
     opt=varargin{1};%%%%Pasar las opciones en una estructura!
     sourceCH=opt.sourceCH;
@@ -34,6 +35,11 @@ elseif nargin==3
     Rf=opt.Rf;
     sourceType=opt.sourceType;
     averages=opt.averages;
+    if isfield(opt,'softpolarity')
+        softpolarity=opt.softpolarity;
+    else
+        softpolarity=1;
+    end
     %k220=opt.k220;%%%
 end
 
@@ -77,9 +83,12 @@ pause(2)
 rango=1e3;
 %%%Si la salida es estable, la fluctación en la
 %%%salida es menor de 1mV.
+rangoindx=1;
 while rango>2e-3%5e-4
     rango=multi_monitor(multi)
     'monitoring...'
+    rangoindx=rangoindx+1;
+    if rangoindx>25 break;end
 end
 slope=0;state=0;jj=1;
 
@@ -92,7 +101,7 @@ end
 
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
 psl=1;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
-verbose=0;
+verbose=1;
 t0start=now;
 for i=1:length(Ibvalues)
     if verbose strcat('Ibias:',num2str(Ibvalues(i))),end
@@ -155,9 +164,9 @@ for i=1:length(Ibvalues)
     data(jj,1)=t0;
     data(jj,2)=Ireal;%*1e-6;
     data(jj,3)=0;%%%Vout
-    data(jj,4)=Vdc;
-    x(jj)=Ireal*1e-6;
-    y(jj)=Vdc;
+    data(jj,4)=softpolarity*Vdc;
+    x(jj)=data(jj,2)*1e-6;
+    y(jj)=data(jj,4);
     jj=jj+1;
     if i>1 && ~state
         slope= (data(i,4)-data(i-1,4))/((data(i,2)-data(i-1,2))*1e-6);
@@ -166,13 +175,17 @@ for i=1:length(Ibvalues)
             auxhandle_1=findobj('name','IV_raw');
             if isempty(auxhandle_1) figure('name','IV_raw'); auxhandle_1=findobj('name','IV_raw'); else figure(auxhandle_1);end
         if i==1
-            h=plot(x,y,'o-k','linewidth',3);hold on;grid on
+            figure(auxhandle_1)
+            hold off
+            plot(x,y,'o-k','linewidth',3);hold on;grid on
             %plot(Ireal*1e-6,Vdc,'ok','linewidth',3);hold on;grid on
             %linkdata(1);
-            set(h,'xdatasource','x','ydatasource','y','linestyle','-');
+            %set(h,'xdatasource','x','ydatasource','y','linestyle','-');
+            %set(get(gca,'children'),'Xdata',x,'Ydata',y);
         end
-        
-        refreshdata(auxhandle_1,'caller');
+        set(get(gca,'children'),'Xdata',x,'Ydata',y);
+        drawnow
+        %refreshdata(auxhandle_1,'caller');
     end
 end
 
@@ -180,6 +193,10 @@ if strcmpi(sourceType,'LNCS')
     mag_setLNCSImag(mag,0);%%%%%
     mag_DisconnectLNCS(mag);%%%%%
 end
+mag_setAMP_CH(mag,1);
+mag_setAMP_CH(mag,2);
+%%%Deshabilitamos el modo FLL para evitar
+%%%calentar el sistema si salta la salida a 10V.
 
 IV=corregir1rama(data);
 % IV.ibias=data(:,2)*1e-6;
