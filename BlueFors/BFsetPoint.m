@@ -1,4 +1,4 @@
-function ok=BFsetPoint(Temp)
+function ok=BFsetPoint(Temp,varargin)
 %%%basic function para fijar T bath.
 Writeurl='ws://192.168.2.121:5002/heater/update';
 %Readurl='ws://192.168.2.121:5002/heater';
@@ -13,11 +13,17 @@ else
     P=0.05;
     I=100;
 end
+if nargin>1
+    pid=varargin{1};
+    P=pid.P;
+    I=pid.I;
+    D=pid.D;
+end
 %%%runs PID
 %P=0.3;I=40;%%%pruebas PID. run001:P,I=(0.1,80).r2:(0.05,150).
 %r003:(0.01,250). r004:(3,750).r5:(0.3,40).
 %message=strcat('{"heater_nr":4,"setpoint":',Tstr,'}')
-message=strcat('{"heater_nr":4,"pid_mode":1,"setpoint":',Tstr,',"control_algorithm_settings":{"proportional":',num2str(P),',"integral":',num2str(I),',"derivative":0','}}')
+message=strcat('{"heater_nr":4,"pid_mode":1,"active":true,"setpoint":',Tstr,',"control_algorithm_settings":{"proportional":',num2str(P),',"integral":',num2str(I),',"derivative":0','}}')
 
 %return %debug
 %if Temp>0.07 pause(1000);end%%%extra wait for high temps.

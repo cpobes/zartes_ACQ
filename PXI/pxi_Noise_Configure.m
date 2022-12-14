@@ -2,8 +2,8 @@ function pxi_Noise_Configure(pxi,varargin)
 %%%%Función para configurar la pxi para adquirir ruido en 1Hz-100KHz window
 
 if nargin==1
-    opt.RL=2e5;
-    opt.SR=2e5;
+    opt.RL=2e5;%8192;
+    opt.SR=2e5;%156250;
 else
     opt=varargin{1};
 end
