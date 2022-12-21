@@ -4,7 +4,15 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
-pxi_Noise_Configure(pxi);
+%default config
+opt.RL=2e5;
+opt.SR=2e5;
+for i=1:length(varargin)
+    if isstruct(varargin{i}) opt=varargin{i};end
+    if ischar(varargin{i}) comment=varargin{i};end%
+end
+
+pxi_Noise_Configure(pxi,opt);
 
 %%%configuracion subsampleo. Pasar como opcion
 subsampling.bool=0;
@@ -21,7 +29,7 @@ Options.channelList='1';
 [data,WfmI]=pxi_GetWaveForm(pxi,Options);
 rg=skewness(data);
 
-if nargin==3 circuit=varargin{2};end%%%para que si no lo uso?
+%if nargin==3 circuit=varargin{2};end%%%para que si no lo uso?
 
 ix=0;
 while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.004
