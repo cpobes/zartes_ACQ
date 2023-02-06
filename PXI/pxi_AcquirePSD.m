@@ -1,4 +1,4 @@
-function datos=pxi_AcquirePSD(pxi,varargin)
+function data=pxi_AcquirePSD(pxi,varargin)
 %%%Función para adquirir y salvar en fichero un espectro PSD con la
 %%%PXI. Asume que la tarjeta está ya correctamente configurada. Se pasa
 %%%como argumento el handle al instrumento y un string para identificar el
@@ -7,6 +7,7 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 %default config
 opt.RL=2e5;
 opt.SR=2e5;
+comment='test';
 for i=1:length(varargin)
     if isstruct(varargin{i}) opt=varargin{i};end
     if ischar(varargin{i}) comment=varargin{i};end%
@@ -80,8 +81,5 @@ end
 datos(:,1)=freq;
 datos(:,2)=sqrt(psd);
 
-if nargin>1
-    comment=varargin{1};
-    file=strcat('PXI_noise_',comment,'.txt');
-    save(file,'datos','-ascii');%salva los datos a fichero.
-end
+file=strcat('PXI_noise_',comment,'.txt');
+save(file,'datos','-ascii');%salva los datos a fichero.

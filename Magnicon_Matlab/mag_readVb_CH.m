@@ -1,5 +1,5 @@
-function Phib=mag_readPhib_CH(s,nch)
-%Funcion para leer Phib
+function Vb=mag_readVb_CH(s,nch)
+%Funcion para leer Vb
 
 if nch==1
     ch='1';
@@ -9,7 +9,7 @@ else
     error('wrong Channel number');
 end
 
-str=sprintf('%s%s%s','<0',ch,'j8');%%%
+str=sprintf('%s%s%s','<0',ch,'f8');%%%
 chk=mod(sum(double(str)),256);
 str=sprintf('%s%02X\r',str,chk);
 out=query(s,str,'%s','%s');
@@ -19,4 +19,4 @@ out=query(s,str,'%s','%s');
 
 dac=hex2dec(out(2:4));
 
-Phib=5*(dac-2048)*1e6/(4096*20071);%%%ojo, está mal el manual!!!
+Vb=2.5*dac*1e6/(4096*1470);

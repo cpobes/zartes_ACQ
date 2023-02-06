@@ -1,4 +1,4 @@
-Creo unas funciones básicas para inicializr y controlar la K220, pero a veces, aunque algunos
+Creo unas funciones básicas para inicializar y controlar la K220, pero a veces, aunque algunos
 comandos funcionan, otros dan error 'ldd' y no se ejecutan correctamente. Al abrir el NiMax a 
 veces se solucionan. Por cierto, al ejecutar en NiMax Communicate with instrument, se resetea 
 totalmente el instrumento (p.e., si había una corriente puesta, se pone a cero). Sin embargo,
