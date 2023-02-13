@@ -1,48 +1,41 @@
 function TF=pxi_AcquireTF(pxi,varargin)
-%%%
-
+%%%Función para adquirir la TF con la pxi. Se usa por
+%%%defecto el modo WhiteNoise y la función tfestimate con cierta ventana
+%%%para hacer la estimación. Se usa también un promedio de 5capturas (de
+%%%10seg) y promediado de 40 puntos. Salen bastante bien, pero tardan
+%%%parecido al HP.
+    %%%Esto debería poder pasarse como configuración.
     Options.TimeOut=12;
-    Options.channelList='0,1';
-    
+    Options.channelList='0,1';    
     [ConfStructs,waveformInfo]=pxi_Init_ConfigStructs();
     ConfStructs.Vertical.channelList='0,1';
     ConfStructs.Trigger.Type=6;
-    
+    %%%Con SR=1e5,RL=10e5 se capturan 10seg y se puede llegar a freq bajas.
     ConfStructs.Horizontal.SR = 1e5;%%%4e5.%2e5
     ConfStructs.Horizontal.RL = 10e5;%1e6;%2e6.%2e5
-    
+    excitacion=50;%100.
+for i=1:length(varargin)
+    if isnumeric(varargin{i})
+        excitacion=varargin{1};
+    end
+    if isstruct(varargin{i}) 
+        %opt=varargin{i};%<-Falta Asignar opt.
+    end
+end
     pxi_ConfigureChannels(pxi,ConfStructs.Vertical);
     pxi_ConfigureHorizontal(pxi,ConfStructs.Horizontal);
     pxi_ConfigureTrigger(pxi,ConfStructs.Trigger)
     
 dsa=hp_init(0);
 
-if nargin==1
-    excitacion=50;%100.
-else
-    excitacion=varargin{1};
-end
-if(1)%%%White Noise version,
-hp_WhiteNoise(dsa,excitacion);
-[data,WfmI]=pxi_GetWaveForm(pxi,Options);
-sk=skewness(data);
+boolWhiteNoise=1;
+boolplot=1;
+n_avg=5;%5<-move to configuration!!!
 skTHR=0.5;%Inf;%%%value para eliminar pulsos skTHR=0.5;
-ix=0
-while abs(sk(3))>skTHR
-    if ix>10, break;end
+filtWindow=40;
+if(boolWhiteNoise)%%%White Noise version,
+    hp_WhiteNoise(dsa,excitacion);
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
-    sk=skewness(data);
-    ix=ix+1;
-end
-wind = hann(1e5);%%%5000
-nov = 5e4;%%%2500
-[txy,freqs]=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
-
-n_avg=5;%5
-%pause(10)
-for i=1:n_avg-1
-    [data,WfmI]=pxi_GetWaveForm(pxi,Options);
-    i
     sk=skewness(data);
     ix=0;
     while abs(sk(3))>skTHR
@@ -51,17 +44,37 @@ for i=1:n_avg-1
         sk=skewness(data);
         ix=ix+1;
     end
-    aux=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
-    txy=txy+aux;
+    wind = hann(1e5);%%%5000
+    nov = 5e4;%%%2500
+    [txy,freqs]=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+
     %pause(10)
-end
-txy=txy/n_avg;
-txy=medfilt1(txy,40);
- TF=[freqs real(txy) imag(txy)];
-    if(1) %%%plot. señales.
+    for i=1:n_avg-1
+        [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+        if i==n_avg-1
+            fprintf(1,'%d.\n',i);
+        else
+            fprintf(1,'%d,',i);
+        end
+        sk=skewness(data);
+        ix=0;
+        while abs(sk(3))>skTHR
+            if ix>10, break;end
+            [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+            sk=skewness(data);
+            ix=ix+1;
+        end%endWhile
+        aux=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+        txy=txy+aux;
+        %pause(10)
+    end%%5endFor
+    txy=txy/n_avg;
+    txy=medfilt1(txy,filtWindow);
+    TF=[freqs real(txy) imag(txy)];
+    if(boolplot) %%%plot. señales.
         %[psd,freq]=PSD(data);
-            auxhandle_1=findobj('name','PXI_TF');
-            if isempty(auxhandle_1) figure('name','PXI_TF'); auxhandle_1=findobj('name','PXI_TF');else figure(auxhandle_1);end
+        auxhandle_1=findobj('name','PXI_TF');
+        if isempty(auxhandle_1) figure('name','PXI_TF'); auxhandle_1=findobj('name','PXI_TF');else figure(auxhandle_1);end
         subplot(2,2,1)
         plot(data(:,1),data(:,2));
         grid on
@@ -71,15 +84,14 @@ txy=medfilt1(txy,40);
         grid on
         subplot(1,2,2)
         plot(txy,'o-')
-    end
-   
-end
+    end%%%end plot
+end%%%EndWhiteNoise
 
 if(0)%%%Sine SWEEP
     freq=logspace(4,5,21);%%%201
     hp_Source_ON(dsa);
     hp_sin_config(dsa,freq(1))
-for i=1:length(freq)
+    for i=1:length(freq)
     hp_sin_config(dsa,freq(i),1)
     
     if freq(i)>1e3, 
@@ -130,24 +142,11 @@ for i=1:length(freq)
         grid on
         subplot(1,2,2)
         plot(Re,Imag,'o-')
-    end
-    
-
-    
+    end%%%Endplot
     %TF(i)=TFamp*(cos(TFang)+1i*sin(TFang));
-end
-TF=[freq' Re' Imag'];
-end
+    end%%%EndFor
+    TF=[freq' Re' Imag'];
+end%%%Sine sweep
+
 hp_Source_OFF(dsa);
-
-
-% RL=pxi.Horizontal.Actual_Record_Length;
-% SR=pxi.Horizontal.Actual_Sample_Rate;
-% DF=SR/RL;
-%freq=DF:DF:SR/2;
-%freq=1:length(txy);
-
-%size(freq),size(txy),size(data)
-%TF=[freq' real(txy) imag(txy)];
-
 fclose(dsa);delete(dsa);

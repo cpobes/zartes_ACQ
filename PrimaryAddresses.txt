@@ -1,0 +1,12 @@
+GPIB:
+ multi:	4
+ dsa:	11
+ k220:	2
+ LKS:	12
+ AVS47:	21
+
+SERIAL:
+ mag:	COM4
+
+PXI:
+ pxi5922:	PXI1Slot3

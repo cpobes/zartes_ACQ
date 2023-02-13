@@ -8,8 +8,10 @@ diary 'MCdata.log'
 ws.send(message);
 diary off
 ws.close();
+
 urlH='ws://192.168.2.121:5002/heater/historical-data';
-messH=['{"heater_nr":6,"start_time":','"',fstart,'",','"stop_time":','"',fstop,'",','"fields":["power"]}']
+ws=SimpleClient(urlH);
+messH=['{"heater_nr":4,"start_time":','"',fstart,'",','"stop_time":','"',fstop,'",','"fields":["power"]}']
 diary 'Hdata.log'
 ws.send(messH);
 diary off

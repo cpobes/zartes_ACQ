@@ -12,8 +12,6 @@ function hp_auto_acq(IbValues,varargin)
 dsa=hp_init(0);%inicializa el HP.
 mag=mag_init();
 %multi=multi_init();
-fprintf(dsa,'SNGC');%%%Calibramos el HP.
-pause(35);
 
 if nargin==2
     HPopt=varargin{1};
@@ -25,6 +23,14 @@ end
 sourceCH=HPopt.sourceCH;
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
+
+%resetea lazo de realimentacion del squid.
+mag_LoopResetCH(mag,sourceCH);%ojo.LoopReset resetea ambos canales.
+mag_setAMP_CH(mag,mod((-1)^sourceCH,3));%mejor poner en AMP el otro.
+
+%%%Calibramos el HP después de Put y Reset.
+fprintf(dsa,'SNGC');
+pause(35);
 
 %Check_TES_State(mag,multi)
 %if strcmp(Check_TES_State(mag,multi),'S'),'SState',return;end
@@ -60,13 +66,11 @@ for i=1:length(IbValues)
     %check if stop.txt exists at every OP
     if IbValues(1) > 0
         if  exist('../stop.txt','file') 'run stopped',return;end
-    elseif IbValues(1) > 0
+    elseif IbValues(1) < 0
         if  exist('../../stop.txt','file') 'run stopped',return;end
     end
     
     try
-    %resetea lazo de realimentacion del squid.
-    mag_LoopResetCH(mag,sourceCH);
 
     strcat('Ibias:',num2str(IbValues(i)))
     %Set Magnicon Ib value here
@@ -94,15 +98,21 @@ for i=1:length(IbValues)
     
     %mide ruido
     if(HPopt.Noise)
+        %resetea lazo de realimentacion del squid.
+        mag_LoopResetCH(mag,sourceCH);%ojo.LoopReset resetea ambos canales.
+        mag_setAMP_CH(mag,mod((-1)^sourceCH,3));%mejor poner en AMP el otro.
+
         hp_single_CAL(dsa);
-        pause(35); %%%(el CAl tarda entre 29-32seg). 
+        pause(35); %%%(el CAl tarda entre 29-32seg).
+        
         hp_noise_config(dsa);
         datos=hp_measure_noise(dsa);
         file=strcat('HP_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
     end
-    catch
+    catch Error
         strcat('error HP Ib: ',num2str(i))
+        fprintf(2,'%s\n',Error.message);
     end %%%try catch
 end
 

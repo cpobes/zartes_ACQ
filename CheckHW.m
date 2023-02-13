@@ -1,4 +1,4 @@
-function CheckHW(varargin)
+function out=CheckHW(varargin)
 %%%funcion para chequear el HW activo en prevision de inicializar
 %%%automaticamente.
 %%%V0 22-Oct-2021 funciona correctamente, pero programacion algo cumbersome
@@ -7,10 +7,24 @@ function CheckHW(varargin)
 %%% la posibilidad de leer las direcciones primarias de fichero (no
 %%% prioritario).
 
+ACQDIR='C:\Users\Athena\Desktop\Software\zartes_ACQ';
 Instruments={'Multimetro' 'DSA' 'K220' 'LKS' 'AVS47' 'Magnicon' 'PXI' 'BlueFors'}';
 
 if nargin==1
-    %AdressFile=varargin{1};%%%%Pdte de implementar
+    AdressFile=varargin{1};%%%%Only JSON file!
+    file=strcat(ACQDIR,'\',AdressFile);
+    try
+        data=loadjson(file);
+    catch
+        error('Invalid file format. Use a .json file');
+    end
+    multiPA=data.GPIB.multi;
+    dsaPA=data.GPIB.dsa;
+    k220PA=data.GPIB.k220;
+    LKSPA=data.GPIB.LKS;
+    AVS47PA=data.GPIB.AVS47;
+    magCOMstr=data.SERIAL.mag;
+    PXIname=data.PXI.pxi5922;
 else
     %%%GPIB Primary Addresses.
     multiPA=4;
@@ -19,6 +33,8 @@ else
     LKSPA=12;
     AVS47PA=21;
     magCOM=4;%serial.usually COM5; 
+    magCOMstr=strcat('COM',magCOM);
+    PXIname='PXI1Slot3';
 end
 
 nofound='NOT FOUND';
@@ -62,18 +78,18 @@ end
 
 %%%%Magnicon electronics Check
 try
-    mag=mag_init(strcat('COM',num2str(magCOM)));
+    mag=mag_init(magCOMstr);
     aux=mag_info(mag);
     if isempty(aux) magString=nofound; else magString='OK';end
-    fclose(mag)
-    delete(mag)
+    fclose(mag);
+    delete(mag);
     clear mag %solo lo usamos para chequear si está la electronica conectada.
 catch
     magString=nofound;
 end
 %%%%PXI card Check
 try 
-    pxi=PXI_init();
+    pxi=PXI_init(PXIname);
     pxiString='OK';
     disconnect(pxi)
     delete(pxi)
@@ -93,4 +109,4 @@ end
 
 Status={multiString dsaString k220String LKSString AVSString magString pxiString BFString}';
 
-table(Instruments,Status)
+out=table(Instruments,Status);

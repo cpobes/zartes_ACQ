@@ -54,14 +54,15 @@ for i=1:length(IbValues)
     %check if stop.txt exists at every OP
     if IbValues(1) > 0
         if  exist('../stop.txt','file') 'run stopped';return;end
-    elseif IbValues(1) > 0
+    elseif IbValues(1) < 0
         if  exist('../../stop.txt','file') 'run stopped';return;end
     end
     
     try
     %resetea lazo de realimentacion del squid.
-    mag_LoopResetCH(mag,sourceCH);
-
+    %mag_LoopResetCH(mag,sourceCH);
+    %mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
+    
     strcat('Ibias:',num2str(IbValues(i)))
     %Set Magnicon Ib value here
     mag_setImag_CH(mag,IbValues(i),sourceCH);
@@ -71,14 +72,15 @@ for i=1:length(IbValues)
     %Itxt=num2str(IbValues(i));
     Itxt=num2str(ix);
     
-    %mide TF
-    mag_LoopResetCH(mag,sourceCH);
+    %mide TF    
     if(PXIopt.TF)
-        %%%configure HP Fixed SINE y hacer barrido en frecuencia.
+        mag_LoopResetCH(mag,sourceCH);
+        mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
+        
         porcentaje=0.05;
         excitacion=round(abs(IbValues(i)*(1e1)*porcentaje));%%%amplitud en mV para la fuente.
         if excitacion==0 %%%cuando Ibias=0, exc=0 y al usar White Noise
-            %%%%en HP source se pone cero. Por algun motivo (hay bubles en
+            %%%%en HP source se pone cero. Por algun motivo (hay bucles en
             %%%%skw) esas capturas tardan muchisimo y alargan la medida de
             %%%%2min a 12min cuando en realidad esa TF ni siquiera es
             %%%%necesaria.
@@ -92,15 +94,30 @@ for i=1:length(IbValues)
     
     pause(1)
     %mide ruido
-    mag_LoopResetCH(mag,sourceCH);
+    n_avg=5;%%%<-Averages para el ruido.
+    nopt.SR=2e5;
+    nopt.RL=2e5;
+    nopt.subsampling.bool=0;
+    nopt.subsampling.NpointsDec=100;
     if(PXIopt.Noise)
+        if isfield(PXIopt,'nSR')
+            nopt.SR=PXIopt.nSR;
+        end
+        if isfield(PXIopt,'nRL')
+            nopt.RL=PXIopt.nRL;
+        end
+        if isfield(PXIopt,'subsampling')
+            nopt.subsampling.bool=PXI.subsampling.bool;
+            nopt.subsampling.NpointsDec=PXI.subsampling.NpointsDec;
+        end
+        mag_LoopResetCH(mag,sourceCH);
+        mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
         %pxi_Noise_Configure(pxi); no necesario. esta dentro de AcqPSD.
         pause(1)
-        aux=pxi_AcquirePSD(pxi);
+        aux=pxi_AcquirePSD(pxi,nopt);
         datos=aux;
-        n_avg=5;
         for jj=1:n_avg-1%%%Ya hemos adquirido una.
-            aux=pxi_AcquirePSD(pxi);
+            aux=pxi_AcquirePSD(pxi,nopt);
             datos(:,2)=datos(:,2)+aux(:,2);
         end
         datos(:,2)=datos(:,2)/n_avg;
@@ -117,13 +134,14 @@ for i=1:length(IbValues)
         %%%Resetea lazo para anular la componente DC del CH1. OJO: lo
         %%%robusto es sacar señal de trigger y meterla por Trigger EXT.
         mag_LoopResetCH(mag,sourceCH);
+        mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
         %vdc=mean(multi_read(multi))
         %opt.Level=vdc-0.04;%%%Amplitude dependent trigger above DC level.
         %pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos.
         %pause(1)
         
         vdc=-mode(multi_read(multi));%%%OJO! el valor en el HP es opuesto en signo al de la PXI!!!
-        mag_setCalPulseON_CH(mag,2);%%activamos la fuente
+        mag_setCalPulseON_CH(mag,sourceCH);%%activamos la fuente
         %%%'NISCOPE_VAL_VOLTAGE_BASE'=26
         %invoke(pxi.Measurement,'addwaveformprocessing','1',26);
         %vdc=pxi_getMeasurement(pxi,'1',26)
@@ -132,16 +150,18 @@ for i=1:length(IbValues)
 
     %%%%Pulsos de Fe55
     %%%%%
-        opt.RL=1e4;
+        opt.RL=1e4;%%%%Esto deberiamos pasarlo como config.
         opt.SR=2e5;
         pxi_Pulses_Configure(pxi,opt);%%%configuramos la pxi para adquirir pulsos. Con modulo trigger no pasamos Level.
         pause(1)
         mag_LoopResetCH(mag,sourceCH);
-        try
+        mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
+        try 
             datos=pxi_AcquirePulse(pxi);
-        catch
+        catch Error
             datos=[];
             pxi_AbortAcquisition(pxi);
+            fprintf(2,'Error en Pulsos ACQ:\n%s\n',Error.message);
         end
         %mag_setCalPulseOFF_CH(mag,2);%%desactivamos la fuente.
         
@@ -152,8 +172,9 @@ for i=1:length(IbValues)
         cd ..
         %pause(1)
     end
-    catch
+    catch Error
         strcat('error pxi Ib: ',num2str(IbValues(i)))
+        fprintf(2,'%s\n',Error.message);
     end
 end
 

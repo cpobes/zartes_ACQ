@@ -16,11 +16,15 @@ if(x==1) hp_noise_config(dsa);end
     fprintf(dsa,'SMSD');%query measure finish?
     ready=str2double(fscanf(dsa));
     %bucle de espera de la medida.
+    icounter=0;
     while(~ready)
         pause(5);
         fprintf(dsa,'SMSD');
         ready=str2double(fscanf(dsa));
-        second(now)
+        if ~mod(icounter,6)%%%<-mostrar cada 6*5seg.
+            fprintf(1,'%s\n',datestr(now));
+        end
+        icounter=icounter+1;
     end
     
     [freq,data]=hp_read(dsa);%lee la TF.

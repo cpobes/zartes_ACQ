@@ -1,6 +1,8 @@
 function varargout=Full_ACQ_wopt(file,circuit,varargin)
 %%%Función para adquirir IVs y Z(w) a varias temperaturas de forma
 %%%automática. versión sacando opciones a struct
+x=strsplit(pwd,'\');
+if isempty(strfind(x{end},'RUN')) error('Lanza la ACQ desde una carpeta con formato RUNnnn');end
 if nargin==0 %show options prototype
     options.IVs.boolacq=1;
     %options.IVs.IbiasValues=[];
@@ -26,10 +28,31 @@ if nargin==0 %show options prototype
     varargout{1}=options;
     return;
 end
+
+%%%Setting Log
+if strcmp(get(0,'Diary'),'on') diary off;end
+DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'.log');
+diary(DiaryFile);%%%Diary ON
+runname=strsplit(pwd,'\');
+fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
+
+%%%Check HW communication
+x=CheckHW('PrimaryAddresses.json');
+bad=[];
+for i=1:length(x.Instruments) %%%chequeamos instrumentos. Saltamos el LKS.
+    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS'))
+        bad(end+1)=i;
+    end
+end
+if ~isempty(bad)
+    diary off;
+    error('Error de Comunicación. Comprueba conexiones');
+end
+
 %%% Parametro de entrada fichero con lista de Tbaths
-fid=fopen(file)
+fid=fopen(file);
 temps=fscanf(fid,'%f')
-fclose(fid)
+fclose(fid);
 basedir=pwd;
 
 %opciones minimas necesarias.
@@ -66,6 +89,7 @@ if isfield(options,'Ibobina')
 end
 options.acqInfo.Start=datestr(now);
 optiond.acqInfo.dir=pwd;
+
 %empezamos buble de medida
 for i=1:length(temps)
     
@@ -76,7 +100,8 @@ for i=1:length(temps)
     %%%BF set temp
     BFsetPoint(temps(i));
     %%%El BFsetPoint ya hace una espera-> no hace falta ficheros.
-    Tstring=sprintf('%0.1fmK',temps(i)*1e3)
+    Tstring=sprintf('%0.1fmK',temps(i)*1e3);
+    fprintf(1,'Tbath set to %s',Tstring);
 %    SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!   
     
 %    while(~exist(SETstr,'file'))
@@ -209,6 +234,7 @@ for i=1:length(temps)
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
             IZvaluesN=IZvaluesN(abs(IZvaluesN)<500);%%%%Para evitar error fte normal si el spline no esta bien.
             %return;
+            ['Starting Z-Noise Measurements: ' datestr(now)]
             try
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'
@@ -216,8 +242,9 @@ for i=1:length(temps)
                 cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
                 'PXI done'
-            catch
+            catch Error
                 strcat('error Tb:',num2str(temps(i)))
+                fprintf(2,'%s\n',Error.message);
                 cd(basedir)%%%!!! da error al poner cd basedir.
             end
             %cd .. %%%(en acq Z(w) se sube ya un nivel.)
@@ -232,4 +259,7 @@ for i=1:length(temps)
 %     cd ..
 end
 options.acqInfo.Stop=datestr(now);
+options.circuit=circuit;
 save(strcat('AcqOptions_',num2str(round(now*86400))),'options')
+fprintf(1,'Stopping Acquisition %s at %s',runname(end),datestr(now));
+diary off
