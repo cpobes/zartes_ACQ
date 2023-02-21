@@ -9,12 +9,12 @@ opt.RL=2e5;
 opt.SR=2e5;
 comment='test';
 %%%configuracion subsampleo. Pasar como opcion
-subsampling.bool=0;
+subsampling.bool=1;
 subsampling.NpointsDec=100;
-
+savebool=0;
 for i=1:length(varargin)
-    if isstruct(varargin{i}) opt=varargin{i};end
-    if ischar(varargin{i}) comment=varargin{i};end%
+    if isstruct(varargin{i}) opt=varargin{i};savebool=0;end
+    if ischar(varargin{i}) comment=varargin{i};savebool=1;end%
 end
 
 pxi_Noise_Configure(pxi,opt);
@@ -46,7 +46,7 @@ end
 %size(freq), size(psd)
 
 if(boolsubsampling)%%%subsampleo?
-    'subsampleo'
+    %'subsampleo'
     if freq(1)==0, 
         logfmin=log10(freq(2));
     else
@@ -71,7 +71,7 @@ if(boolplot) %%%plot?
     subplot(2,1,2)
     %hold off
     vrhz=medfilt1(sqrt(psd),medfiltWindow);
-    loglog(freq(:),vrhz(:),'.-r')
+    loglog(freq(:),vrhz(:),'.-','linewidth',2)
     ylim(ylimRange),hold on
     %semilogx(freq,10*log10(psd),'.-')
     grid on
@@ -86,6 +86,7 @@ end
 
 datos(:,1)=freq;
 datos(:,2)=sqrt(psd);
-
-file=strcat('PXI_noise_',comment,'.txt');
-save(file,'datos','-ascii');%salva los datos a fichero. Esto debería ser también configurable.
+if(savebool)
+    file=strcat('PXI_noise_',comment,'.txt');
+    save(file,'datos','-ascii');%salva los datos a fichero. Esto debería ser también configurable.
+end

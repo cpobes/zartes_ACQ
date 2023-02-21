@@ -52,5 +52,5 @@ else
     f = fopen(SETstr, 'w' );
     fclose(f);
 end
-ok=1
+ok=1;
 if exist('outdata') varargout{1}=outdata; end

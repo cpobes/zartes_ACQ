@@ -107,8 +107,8 @@ for i=1:length(IbValues)
             nopt.RL=PXIopt.nRL;
         end
         if isfield(PXIopt,'subsampling')
-            nopt.subsampling.bool=PXI.subsampling.bool;
-            nopt.subsampling.NpointsDec=PXI.subsampling.NpointsDec;
+            nopt.subsampling.bool=PXIopt.subsampling.bool;
+            nopt.subsampling.NpointsDec=PXIopt.subsampling.NpointsDec;
         end
         mag_LoopResetCH(mag,sourceCH);
         mag_setAMP_CH(mag,mod((-1)^sourceCH,3));

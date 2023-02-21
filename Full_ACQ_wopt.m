@@ -48,7 +48,13 @@ if ~isempty(bad)
     diary off;
     error('Error de Comunicación. Comprueba conexiones');
 end
-
+k220=k220_init(0);%%Ojo a cambios de Primary y GPIB.
+%%%La k220 a veces se inicializa bien, pero da error al enviar comandos. Se
+%%%corrije al comunicarse con ella desde el Ni-MAX.
+if isnan(k220_CheckOUTPUT(k220))
+    diary off;
+    error('K220 Init OK, but Comunication Error. Try Reset from Ni-MAX');
+end
 %%% Parametro de entrada fichero con lista de Tbaths
 fid=fopen(file);
 temps=fscanf(fid,'%f')
@@ -101,7 +107,7 @@ for i=1:length(temps)
     BFsetPoint(temps(i));
     %%%El BFsetPoint ya hace una espera-> no hace falta ficheros.
     Tstring=sprintf('%0.1fmK',temps(i)*1e3);
-    fprintf(1,'Tbath set to %s',Tstring);
+    fprintf(1,'Tbath set to %s\n',Tstring);
 %    SETstr=strcat('tmp\T',Tstring,'.stb') %%%OJO al directorio donde se pone el temps.txt!   
     
 %    while(~exist(SETstr,'file'))
@@ -261,5 +267,5 @@ end
 options.acqInfo.Stop=datestr(now);
 options.circuit=circuit;
 save(strcat('AcqOptions_',num2str(round(now*86400))),'options')
-fprintf(1,'Stopping Acquisition %s at %s',runname(end),datestr(now));
+fprintf(1,'Stopping Acquisition %s at %s\n',runname{end},datestr(now));
 diary off
