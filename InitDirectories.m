@@ -13,13 +13,15 @@ end
 if ~exist(Thismonth, 'dir')
     mkdir(Thismonth);
     cd(Thismonth);
-    mkdir('RTs')
+    mkdir('R(T)s')
     copyfile(strcat(default_data_dir,'\','TemplateMuestrasRT.xlsx'),...
-        strcat('RTs/Muestras_',Thismonth,'.xlsx'));
-    fclose(fopen('RTs\zstop.txt','w'));
-    mkdir('Squids\TESA')
-    mkdir('Squids\TESB')
+        strcat('R(T)s/Muestras_',Thismonth,'.xlsx'));
+    %%%Rellenar .xls con muestras si se pasa fichero.
+    fclose(fopen('R(T)s\zstop.txt','w'));
+    mkdir('SQUIDs\CH1')
+    mkdir('SQUIDs\CH2')
     copyfile(strcat(default_data_dir,'\','circuit*'),'Squids');
+    %%%Crear también las .xls
     disp('Carpetas Creadas para Nueva Enfriada');
 else
     error('Call the function with a new Month Name');
