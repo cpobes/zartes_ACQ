@@ -56,7 +56,7 @@ while t-t0<Tmonitor
         break;
     end
 end
-out.timestamp=timestamp;
-out.Temp=Temp;
+out.timestamp=timestamp(:);%%%los escribimos en columnas para convertir mejor a tabla.
+out.Temp=Temp(:);
 %out.Tstd=Tstd;
 varargout{1}=out;
