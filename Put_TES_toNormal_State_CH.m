@@ -35,7 +35,7 @@ end
 
 if usek220
     %%%%K220
-    i_N=8e-3;%%%Corriente máxima en la bobina para poner TES en estado N.
+    i_N=5e-3;%%%Corriente máxima en la bobina para poner TES en estado N.
     k220=k220_init(0);
     Ibob=k220_readI(k220);
     k220_setVlimit(k220,5);

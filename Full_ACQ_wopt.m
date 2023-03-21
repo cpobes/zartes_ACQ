@@ -1,8 +1,7 @@
 function varargout=Full_ACQ_wopt(file,circuit,varargin)
 %%%Función para adquirir IVs y Z(w) a varias temperaturas de forma
 %%%automática. versión sacando opciones a struct
-x=strsplit(pwd,'\');
-if isempty(strfind(x{end},'RUN')) error('Lanza la ACQ desde una carpeta con formato RUNnnn');end
+
 if nargin==0 %show options prototype
     options.IVs.boolacq=1;
     %options.IVs.IbiasValues=[];
@@ -28,6 +27,9 @@ if nargin==0 %show options prototype
     varargout{1}=options;
     return;
 end
+
+x=strsplit(pwd,'\');
+if isempty(strfind(x{end},'RUN')) error('Lanza la ACQ desde una carpeta con formato RUNnnn');end
 
 %%%Setting Log
 if strcmp(get(0,'Diary'),'on') diary off;end

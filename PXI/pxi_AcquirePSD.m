@@ -9,7 +9,7 @@ opt.RL=2e5;
 opt.SR=2e5;
 comment='test';
 %%%configuracion subsampleo. Pasar como opcion
-subsampling.bool=1;
+subsampling.bool=0;
 subsampling.NpointsDec=100;
 savebool=0;
 for i=1:length(varargin)
@@ -62,7 +62,7 @@ if(boolsubsampling)%%%subsampleo?
 end
 
 medfiltWindow=10;%%%<-Esto deberia ser configurable.
-ylimRange=[1e-8 1e-4];
+ylimRange=[1e-7 1e-5];
 boolplot=1;
 if(boolplot) %%%plot?
     subplot(2,1,1)

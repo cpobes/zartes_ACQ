@@ -1,0 +1,12 @@
+{
+"heater_nr":4,
+"pid_mode":0,
+"active":"false",
+"setpoint":0.02,
+"max_power":0.002,
+"control_algorithm_settings":
+{"proportional":0.01,
+"integral":250,
+"derivative":0
+}
+}
