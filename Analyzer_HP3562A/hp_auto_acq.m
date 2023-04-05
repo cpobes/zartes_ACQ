@@ -118,6 +118,8 @@ end
 
 %mag_setLNCSImag(mag,0);%%%Ponemos la corriente a cero.
 mag_setImag_CH(mag,0,sourceCH);%%%Ponemos la corriente a cero.
+mag_setAMP_CH(mag,1);
+mag_setAMP_CH(mag,2);
 
 fclose(dsa);delete(dsa);%cierra la comunicación con el HP y borra el obj.
 fclose(mag);delete(mag);

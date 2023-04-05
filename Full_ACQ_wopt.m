@@ -57,21 +57,12 @@ if isnan(k220_CheckOUTPUT(k220))
     diary off;
     error('K220 Init OK, but Comunication Error. Try Reset from Ni-MAX');
 end
-%%% Parametro de entrada fichero con lista de Tbaths
-fid=fopen(file);
-temps=fscanf(fid,'%f')
-fclose(fid);
-basedir=pwd;
 
 %opciones minimas necesarias.
 options.IVs.boolacq=1;
 options.ICs.boolacq=0;
 options.Bscan.boolacq=0;
-options.ZsNoise.boolacq=1;
-
-if nargin>2
-    options=varargin{1};
-end
+options.ZsNoise.boolacq=0;
 
 %default IV options
 optIV.Rf=1e4;
@@ -80,8 +71,48 @@ optIV.sourceType='normal';
 optIV.boolplot=1;
 optIV.averages=5;
 
+if nargin>2
+    options=varargin{1};
+end
+if isfield(options,'comment')
+    comment=options.comment;
+else
+    comment='Run soft Carlos';
+end
+
+%%% Rellenamos .xls
+xlsfile=ls('../Summary_2023*.xls');%%%!
+[~,txt]=xlsread(strcat('../',xlsfile),2,'A:A');
+index=num2str(numel(txt)+1);
+rango=strcat('A',index,':D',index);
+try
+    xlswrite(strcat('../',xlsfile),{runname{end},0,0,comment},2,rango);
+catch Error
+    mess='Error escribiendo info en .xls file. Posiblemente file abierto. Recuerda rellenar los datos a mano al final de run';
+    disp(mess);
+    fprintf(2,'%s\n',Error.message);
+end
+
 if isfield(options,'optIV')
     optIV=options.optIV;
+end
+
+%%%comprobamos si el ch del squid y el del directorio coinciden
+chstring=strcat('CH',num2str(optIV.sourceCH));
+fc=@(x)strcmp(x,chstring);
+if ~sum(cellfun(fc,runname));
+    diary off;
+    error('SQUID_CH and directory_CH mismatch');
+end
+
+%%%Guardamos OP del squid en options.
+try
+    mag=mag_init();%%%ojo, esto depende de la conf por defecto. Habría que usar la MAGstring
+    squidOP=mag_GetSquidBiasPoint_CH(mag,optIV.sourceCH);
+    options.squidOP=squidOP;
+    fclose(mag);
+catch
+    error('Ojo default MAGdir=COM4. Error al leer squidOP');
 end
 
 if isfield(options,'IVset')
@@ -96,8 +127,13 @@ if isfield(options,'Ibobina')
     options.acqInfo.ActualIbobina=SetBoptimo(options.Ibobina);
 end
 options.acqInfo.Start=datestr(now);
-optiond.acqInfo.dir=pwd;
+options.acqInfo.dir=pwd;
 
+%%% Parametro de entrada fichero con lista de Tbaths
+fid=fopen(file);
+temps=fscanf(fid,'%f')
+fclose(fid);
+basedir=pwd;
 %empezamos buble de medida
 for i=1:length(temps)
     

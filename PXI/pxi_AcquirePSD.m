@@ -65,6 +65,11 @@ medfiltWindow=10;%%%<-Esto deberia ser configurable.
 ylimRange=[1e-7 1e-5];
 boolplot=1;
 if(boolplot) %%%plot?
+    auxhandle=findobj('name','PXI_PSD');
+    if isempty(auxhandle) 
+        auxhandle=figure('name','PXI_PSD'); 
+    else figure(auxhandle);
+    end
     subplot(2,1,1)
     plot(data(:,1),data(:,2));
     grid on
