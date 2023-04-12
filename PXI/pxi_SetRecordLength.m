@@ -1,8 +1,8 @@
 function pxi_SetRecordLength(pxi,RL)
 %%%función para fijar el numero de muestras en la adquisicion.
 
-set(get(pxi,'horizontal'),'min_number_of_points',RL)
-actualRL=get(get(pxi,'horizontal'),'actual_record_length')
+set(get(pxi,'horizontal'),'min_number_of_points',RL);
+actualRL=get(get(pxi,'horizontal'),'actual_record_length');
 
 if actualRL~=RL
     warning(strcat('Ojo: Actual Record Length fijado en:',num2str(actualRL)));

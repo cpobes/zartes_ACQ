@@ -94,6 +94,7 @@ for i=1:length(IbValues)
         %datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
+        disp(strcat('File ',file,' salvado.'));
     end
     
     %mide ruido
@@ -109,6 +110,7 @@ for i=1:length(IbValues)
         datos=hp_measure_noise(dsa);
         file=strcat('HP_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
+        disp(strcat('File ',file,' salvado.'));
     end
     catch Error
         strcat('error HP Ib: ',num2str(i))

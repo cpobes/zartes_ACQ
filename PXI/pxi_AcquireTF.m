@@ -39,7 +39,7 @@ if(boolWhiteNoise)%%%White Noise version,
     sk=skewness(data);
     ix=0;
     while abs(sk(3))>skTHR
-        if ix>10, break;end
+        if ix>10, disp('Bucle sobre GetWaveForm en TF ejecutado 10 veces.');break;end
         [data,WfmI]=pxi_GetWaveForm(pxi,Options);
         sk=skewness(data);
         ix=ix+1;
@@ -59,7 +59,7 @@ if(boolWhiteNoise)%%%White Noise version,
         sk=skewness(data);
         ix=0;
         while abs(sk(3))>skTHR
-            if ix>10, break;end
+            if ix>10,disp('Bucle sobre GetWaveForm en TF ejecutado 10 veces.'); break;end
             [data,WfmI]=pxi_GetWaveForm(pxi,Options);
             sk=skewness(data);
             ix=ix+1;

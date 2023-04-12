@@ -90,6 +90,7 @@ for i=1:length(IbValues)
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         file=strcat('PXI_TF_',Itxt,'uA','.txt');
         save(file,'TF','-ascii');%salva los datos a fichero.
+        disp(strcat('File ',file,' salvado.'));
     end
     
     pause(1)
@@ -123,6 +124,7 @@ for i=1:length(IbValues)
         datos(:,2)=datos(:,2)/n_avg;
         file=strcat('PXI_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
+        disp(strcat('File ',file,' salvado.'));
     end
     
     pause(1)
