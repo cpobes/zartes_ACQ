@@ -124,7 +124,7 @@ for i=1:length(IbValues)
         datos(:,2)=datos(:,2)/n_avg;
         file=strcat('PXI_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
-        disp(strcat('File ',file,' salvado.'));
+        disp(strcat('File:',file,' salvado.'));
     end
     
     pause(1)

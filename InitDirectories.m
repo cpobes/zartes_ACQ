@@ -30,7 +30,7 @@ if ~exist(Thismonth, 'dir')
     mkdir(Thismonth);
     cd(Thismonth);
     %jsave(strcat('Init_',Thismonth,'_',Thisyear),'vars',{'data'});
-    if ~isempty(configfile) copyfile(strcat(calldir,'/',configfile),strcat(pwd,'/','Init_',Thismonth,'_',Thisyear));end
+    if ~isempty(configfile) copyfile(strcat(calldir,'/',configfile),strcat(pwd,'/','Init_',Thismonth,'_',Thisyear,'.json'));end
     mkdir('R(T)s')
     Newxls=strcat('R(T)s/Muestras_',Thisyear,'_',Thismonth,'.xlsx');
     copyfile(strcat(default_data_dir,'\','TemplateMuestrasRT.xlsx'),...
