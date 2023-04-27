@@ -10,9 +10,13 @@ if Temp<=0.080 %0.050
     P=0.01;
     I=250;
     D=0;
-else
+elseif Temp<0.1
     P=0.05;
     I=100;
+    D=0;
+else
+    P=0.1;
+    I=80;
     D=0;
 end
 if nargin==1
@@ -50,7 +54,7 @@ end
 Tstring=sprintf('%0.1fmK',Temp*1e3);
 SETstr=strcat('tmp\T',Tstring,'.stb');
 T0=BFreadMCTemp();
-boolmonitor=0;
+boolmonitor=1;
 if isfield(config,'boolmonitor')
     boolmonitor=config.boolmonitor;
 end

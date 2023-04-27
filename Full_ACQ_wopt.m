@@ -271,8 +271,12 @@ for i=1:length(temps)
             else
                 rpp=[0.9:-0.05:0.3 0.29:-0.01:0.04];
             end
-            rpn=rpp;
             
+            if isfield(options.ZsNoise,'rpn')
+                rpn=options.ZsNoise.rpn;
+            else
+                rpn=rpp;
+            end
             IZvaluesP=BuildIbiasFromRp(IVsetP,rpp);
             IZvaluesP=IZvaluesP(abs(IZvaluesP)<500);%%%Si el spline no es bueno, puede haber valores por encima de 500uA y eso va a hacer que de error el set_Imag
             IZvaluesN=BuildIbiasFromRp(IVsetN,rpn);
@@ -280,9 +284,10 @@ for i=1:length(temps)
             %return;
             ['Starting Z-Noise Measurements: ' datestr(now)]
             try
+                %if HPopt.TF + HPopt.Noise
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'
-                
+                %end
                 cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
                 'PXI done'
