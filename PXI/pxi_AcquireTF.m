@@ -10,9 +10,10 @@ function TF=pxi_AcquireTF(pxi,varargin)
     [ConfStructs,waveformInfo]=pxi_Init_ConfigStructs();
     ConfStructs.Vertical.channelList='0,1';
     ConfStructs.Trigger.Type=6;
+    
     %%%Con SR=1e5,RL=10e5 se capturan 10seg y se puede llegar a freq bajas.
-    ConfStructs.Horizontal.SR = 1e5;%%%4e5.%2e5
-    ConfStructs.Horizontal.RL = 10e5;%1e6;%2e6.%2e5
+    ConfStructs.Horizontal.SR = 2.5e5;%%%1e5.4e5.%2.5e5
+    ConfStructs.Horizontal.RL = 20e5;%10e5.%1e6;%2e6.%20e5
     excitacion=50;%100.
 for i=1:length(varargin)
     if isnumeric(varargin{i})
@@ -32,7 +33,7 @@ boolWhiteNoise=1;
 boolplot=1;
 n_avg=5;%5<-move to configuration!!!
 skTHR=0.5;%Inf;%%%value para eliminar pulsos skTHR=0.5;
-filtWindow=40;
+filtWindow=10;%40
 if(boolWhiteNoise)%%%White Noise version,
     hp_WhiteNoise(dsa,excitacion);
     [data,WfmI]=pxi_GetWaveForm(pxi,Options);
@@ -44,9 +45,10 @@ if(boolWhiteNoise)%%%White Noise version,
         sk=skewness(data);
         ix=ix+1;
     end
-    wind = hann(1e5);%%%5000
-    nov = 5e4;%%%2500
-    [txy,freqs]=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+    wind = hann(ConfStructs.Horizontal.SR);%%%5000
+    nov = [];%5e4;%%%2500
+    twopow = [];%2^14;
+    [txy,freqs]=tfestimate(data(:,2),data(:,3),wind,nov,twopow,ConfStructs.Horizontal.SR);%%%,[],[],2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
 
     %pause(10)
     for i=1:n_avg-1
@@ -64,7 +66,7 @@ if(boolWhiteNoise)%%%White Noise version,
             sk=skewness(data);
             ix=ix+1;
         end%endWhile
-        aux=tfestimate(data(:,2),data(:,3),wind,nov,2^14,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
+        aux=tfestimate(data(:,2),data(:,3),wind,nov,twopow,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR);%%%,[],[],128,ConfStructs.Horizontal.SR
         txy=txy+aux;
         %pause(10)
     end%%5endFor
@@ -83,7 +85,7 @@ if(boolWhiteNoise)%%%White Noise version,
         plot(data(:,1),data(:,3));
         grid on
         subplot(1,2,2)
-        plot(txy,'o-')
+        plot(txy,'.-')
     end%%%end plot
 end%%%EndWhiteNoise
 

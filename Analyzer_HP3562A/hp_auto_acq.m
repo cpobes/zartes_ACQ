@@ -84,6 +84,8 @@ for i=1:length(IbValues)
     %mide TF
     if(HPopt.TF)
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
+        mag_LoopResetCH(mag,sourceCH);
+        mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=abs(IbValues(i)*1e-6*porcentaje);
         hp_ss_config(dsa);

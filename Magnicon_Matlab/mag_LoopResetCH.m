@@ -7,3 +7,4 @@ mag_setAMP_CH(mag,1);
 mag_setFLL_CH(mag,1);
 mag_setAMP_CH(mag,2);
 mag_setFLL_CH(mag,2);
+mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
