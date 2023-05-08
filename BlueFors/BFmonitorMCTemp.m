@@ -16,7 +16,7 @@ t=t0;
 timestamp(1)=t-t0;
 Tstd(1)=0;
 
-boolplot=1;
+boolplot=0;
 if(boolplot)
 auxhandle=findobj('name','BF_monitor');
 if isempty(auxhandle) 
