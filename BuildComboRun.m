@@ -16,7 +16,7 @@ if isstruct(config)%config es una estructura con las rutas completas a los runs
     PXIZsdir=config.PXIZsdir;
     HPNoisesdir=config.HPNoisesdir;
     PXINoisesdir=config.PXINoisesdir;
-    if isfield(config,'NSdir') NSdir=config.NSdir;
+    if isfield(config,'NSdir') NSdir=config.NSdir;end
 end
 if ischar(config)%pasamos .jsonfile con los runs. Ver combo_config.json de ejemplo.
     data=loadjson(config);
@@ -25,7 +25,7 @@ if ischar(config)%pasamos .jsonfile con los runs. Ver combo_config.json de ejemp
     PXIZsdir=strcat(basedir,'\',upper(data.PXIZsrun));
     HPNoisesdir=strcat(basedir,'\',upper(data.HPNoisesrun));
     PXINoisesdir=strcat(basedir,'\',upper(data.PXINoisesrun));
-    if isfield(data,'NSdir') NSdir=data.NSdir;
+    if isfield(data,'NSdir') NSdir=data.NSdir;end
 end
 xx=size(ls('RUN1**'));
 Ncomboruns=xx(1);
