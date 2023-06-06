@@ -14,13 +14,28 @@ RL=options.RL;
 SR=options.SR;
 multi=multi_init(0);%options.multi;
 mag=mag_init();%mag=options.mag;
-pxi=options.pxi;
+%pxi=options.pxi;
+pxi=PXI_init();
 %lks=options.lks
 %k220=options.k220;
 name=options.filename;
 
-subsampling=1;
-SourceCH=1;
+if isfield(options,'subsampling')
+    subsampling=options.subsampling;%step
+else
+    subsampling=1;%step
+end
+if isfield(options,'SourceCH')
+    SourceCH=options.SourceCH;
+else
+    SourceCH=2;
+end
+if isfield(options,'polarity')
+    polarity=options.polarity;
+else
+    polarity=1;
+end
+
 Ibias=round(mag_readImag_CH(mag,SourceCH));
 Rf=mag_readRf_FLL_CH(mag,SourceCH);
 
@@ -45,6 +60,8 @@ t0=now;
 i=0;
 j=0;
 dc=multi_read(multi);
+ResetTHR=1.0;%%%voltaje para resetear el lazo. Con esto no debería ser necesario el loopreset manual.
+mag_setAutoResetON_CH(mag,ResetTHR,SourceCH);
 while i<Npulsos && j<1000 && ~exist('stop.txt','file')
     Vout=multi_read(multi);
     %pause(1)
@@ -60,7 +77,7 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         pxi_AbortAcquisition(pxi);
         
         %Put_TES_toNormal_State_CH(mag,500,SourceCH,options.k220);
-        Put_TES_toNormal_State_CH(mag,500,SourceCH);
+        Put_TES_toNormal_State_CH(mag,polarity*500,SourceCH);
 %         mag_setImag_CH(mag,500,2);
 %         k220_setI(k220,10e-3);
 %         pause(0.5)
@@ -68,8 +85,19 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         
         mag_setImag_CH(mag,Ibias,SourceCH);
         mag_LoopResetCH(mag,SourceCH);
+        %%monitoreo de vout
+        rango=1e3;
+        strcat('monitoring','.')
+        icounter=1;
+        while rango>5e-4
+            rango=multi_monitor(multi);           
+            fprintf(1,'%s','.');
+            if ~mod(icounter,10) fprintf(1,'\n');end
+            icounter=icounter+1;
+            if icounter>100 break;end%por si acaso.
+        end
         j=j+1;
-        pause(3)%%% Si hay que resetear el TES puede notarlo un poco la Tbath.
+        %pause(3)%%% Si hay que resetear el TES puede notarlo un poco la Tbath.
     end
     try   
         pulseoptions.SR=options.SR;
@@ -92,13 +120,16 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         %if range(pulso(:,2))>0.05 continue;end%%%%Si se adquieren lineas de base
         disp(['Pulse Number: ' num2str(i)])
         i=i+1;
-    catch
+    catch Error
         pxi_AbortAcquisition(pxi);
         'hola, pxi_ACQ error'
+        fprintf(2,'%s\n',Error.message);
         %Put_TES_toNormal_State_CH(mag,500,SourceCH,options.k220);
         %mag_setImag_CH(mag,Ibias,SourceCH);
         %mag_LoopResetCH(mag,SourceCH);
-        j=j+1
+        %j=j+1
     end
 end
+mag_setAutoResetOFF_CH(mag,SourceCH);
+%no cerramos los instrumentos pero desactivamos el autoreset.
 fits.closeFile(fptr)
