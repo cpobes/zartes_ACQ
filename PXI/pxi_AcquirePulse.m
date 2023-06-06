@@ -6,6 +6,7 @@ function data=pxi_AcquirePulse(pxi,varargin)
 
 boolplot=1;
 boolsave=1;
+longrun=0;
 if nargin==3
     conf=varargin{2};
     if isfield(conf,'options')

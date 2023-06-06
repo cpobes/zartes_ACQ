@@ -6,6 +6,7 @@ if nargin==0
     ini=-500;
     fin=500;
 else
+    data=varargin{1};
     step=data.step;
     ini=data.ini;
     fin=data.fin;
