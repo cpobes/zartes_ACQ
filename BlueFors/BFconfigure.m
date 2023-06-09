@@ -7,9 +7,9 @@ Tstr=num2str(config.setpoint);
 default_msg=strcat('{"heater_nr":4,"pid_mode":1,"active":true,"setpoint":',Tstr,'}');
 for i=1:length(varargin)
     if ischar(varargin{i})
-    if strfind(varargin{i},'json')
-        config=loadjson(varargin{i});
-    end
+        if strfind(varargin{i},'json')
+            config=loadjson(varargin{i});
+        end
     end
     if isstruct(varargin{i})
         config=varargin{i};
