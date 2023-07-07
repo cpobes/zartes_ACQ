@@ -183,7 +183,10 @@ end
 if strcmpi(sourceType,'LNCS')
     mag_setLNCSImag(mag,0);%%%%%
     mag_DisconnectLNCS(mag);%%%%%
+else
+    mag_setImag_CH(mag,0,sourceCH);%ponemos la fuente a 0.(a veces medimos más alla de cero).
 end
+
 mag_setAMP_CH(mag,1);
 mag_setAMP_CH(mag,2);
 %%%Deshabilitamos el modo FLL para evitar
