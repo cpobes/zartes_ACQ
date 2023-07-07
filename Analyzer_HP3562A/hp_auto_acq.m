@@ -11,6 +11,7 @@ function hp_auto_acq(IbValues,varargin)
 %instrreset();
 dsa=hp_init(0);%inicializa el HP.
 mag=mag_init();
+multi=multi_init(0);%
 %multi=multi_init();
 
 if nargin==2
@@ -86,6 +87,18 @@ for i=1:length(IbValues)
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
         mag_LoopResetCH(mag,sourceCH);
         mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
+        %%%%Monitorizacion Vout
+        rango=1e3;
+        %%%Si la salida es estable, la fluctación en la
+        %%%salida es menor de 1mV.
+        rangoindx=1;
+        while rango>2e-3%5e-4
+            rango=multi_monitor(multi);
+            'monitoring...'
+            rangoindx=rangoindx+1;
+            if rangoindx>25 break;end
+        end
+        %%%%%%%
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=abs(IbValues(i)*1e-6*porcentaje);
         hp_ss_config(dsa);
@@ -96,7 +109,8 @@ for i=1:length(IbValues)
         %datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
-        disp(strcat('File ',file,' salvado.'));
+        disp(sprintf('File %s salvado.',file));
+        %disp(strcat('File ',file,' salvado.'));
     end
     
     %mide ruido
@@ -104,7 +118,19 @@ for i=1:length(IbValues)
         %resetea lazo de realimentacion del squid.
         mag_LoopResetCH(mag,sourceCH);%ojo.LoopReset resetea ambos canales.
         mag_setAMP_CH(mag,mod((-1)^sourceCH,3));%mejor poner en AMP el otro.
-
+        
+        %%%%Monitorizacion Vout
+        rango=1e3;
+        %%%Si la salida es estable, la fluctación en la
+        %%%salida es menor de 1mV.
+        rangoindx=1;
+        while rango>2e-3%5e-4
+            rango=multi_monitor(multi);
+            'monitoring...'
+            rangoindx=rangoindx+1;
+            if rangoindx>25 break;end
+        end
+        %%%%%%%
         hp_single_CAL(dsa);
         pause(35); %%%(el CAl tarda entre 29-32seg).
         
@@ -112,7 +138,8 @@ for i=1:length(IbValues)
         datos=hp_measure_noise(dsa);
         file=strcat('HP_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
-        disp(strcat('File ',file,' salvado.'));
+        disp(sprintf('File %s salvado.',file));
+        %disp(strcat('File ',file,' salvado.'));
     end
     catch Error
         strcat('error HP Ib: ',num2str(i))
@@ -127,4 +154,4 @@ mag_setAMP_CH(mag,2);
 
 fclose(dsa);delete(dsa);%cierra la comunicación con el HP y borra el obj.
 fclose(mag);delete(mag);
-%fclose(multi);delete(multi);
+fclose(multi);delete(multi);

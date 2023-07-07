@@ -68,17 +68,9 @@ else
     if Ibvalues(end)>0 pol='p';else pol='n';end
 end
 
-% 'Desactiva la fuente externa si está puesta'
-% pause(10)
-% 'Measure Start'
-
-%%%Reseteamos el lazo.
-% mag_setAMP_CH(mag,sourceCH);
-% mag_setFLL_CH(mag,sourceCH);
 pause(2)
-%mag_LoopResetCH(mag,sourceCH);
-mag_LoopResetCH(mag,1);
-mag_LoopResetCH(mag,2);
+mag_LoopResetCH(mag,sourceCH);
+
 pause(2)
 rango=1e3;
 %%%Si la salida es estable, la fluctación en la
@@ -135,15 +127,14 @@ for i=1:length(Ibvalues)
         %Vdc_array(i_av)=multi_read(multi);
     end
     Vdc=mean(Vdc_array);
-    if abs(Vdc)>10 
-        %mag_LoopResetCH(mag,sourceCH);
-        mag_LoopResetCH(mag,1);
-        mag_LoopResetCH(mag,2);
+    if abs(Vdc)>5 %Forzamos a empezar con un offset no muy alto. 
+        mag_LoopResetCH(mag,sourceCH);
+
         %%%cuando salta el squid, hay una deriva larguisima en el Vout.
         rango=1e3;
         while rango>5e-4
             rango=multi_monitor(multi);
-            strcat('monitoring',' ',num2str(i))
+            disp(sprintf('monitoring Ibias %s uA.',num2str(Ibvalues(i))));
         end
         for i_av=1:averages
             aux=multi_read(multi);
