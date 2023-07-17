@@ -169,9 +169,13 @@ for i=1:length(temps)
             else
                 IbiasValues=[500:-10:300 295:-5:200 198:-2:-10];
             end
-
+        
+            %config mag to auto reset 
+            mag=mag_init();
+            mag_setAutoResetON_CH(mag,9.0,optIV.sourceCH);%Ponemos umbral reset a 9V para no alterar la IV pero para evitar que salte a 10V y caliente.
+            fclose(mag);
         try  %%%A veces dan error las IVs. pq?
-             IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
+            IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
         catch
             instrreset;
             IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
@@ -283,14 +287,17 @@ for i=1:length(temps)
             IZvaluesN=IZvaluesN(abs(IZvaluesN)<500);%%%%Para evitar error fte normal si el spline no esta bien.
             %return;
             ['Starting Z-Noise Measurements: ' datestr(now)]
+            %config mag to auto reset 
+            mag=mag_init();
+            mag_setAutoResetON_CH(mag,1.0,optIV.sourceCH);%Ponemos umbral reset a 1V para que la pxi esté siempre en rango.
+            fclose(mag);
             try
                 %if HPopt.TF + HPopt.Noise
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'
                 %end
-                if(0)
+                if(0)%%%!!!pxi not communicating
                 cd(Tstring)
-                %if(0)%%%!!!pxi not communicating
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
                 'PXI done'
                 end%%%!!!pxi not communicating
