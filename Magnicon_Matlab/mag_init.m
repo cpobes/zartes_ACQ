@@ -1,7 +1,7 @@
 function s=mag_init(varargin)
 %Funcion para inicializar la comunicacion con la electronica magnicon.
 if nargin == 0
-    COM='COM4';%usually COM5.
+    COM='COM3';%usually COM5.
 else
     COM=varargin{1};
 end

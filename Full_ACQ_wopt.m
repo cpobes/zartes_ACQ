@@ -42,7 +42,7 @@ fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
 x=CheckHW('PrimaryAddresses.json');
 bad=[];
 for i=1:length(x.Instruments) %%%chequeamos instrumentos. Saltamos el LKS.
-    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS'))
+    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'PXI'))%%%!!!PXI!!!
         bad(end+1)=i;
     end
 end
@@ -288,9 +288,12 @@ for i=1:length(temps)
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'
                 %end
+                if(0)
                 cd(Tstring)
+                %if(0)%%%!!!pxi not communicating
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
                 'PXI done'
+                end%%%!!!pxi not communicating
             catch Error
                 strcat('error Tb:',num2str(temps(i)))
                 fprintf(2,'%s\n',Error.message);

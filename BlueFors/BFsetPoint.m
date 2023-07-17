@@ -74,7 +74,7 @@ else
         %%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
         outdata=BFmonitorMCTemp(Temp);
         fname=strcat('TsetLogData_',num2str(round(now*86400)),'_from',num2str(round(T0*1e3)*1e-3),'_to',num2str(Temp),'K.txt');
-        writetable(struct2table(outdata),fname,'writevariablenames',0,'delimiter',' ');
+        writetable(struct2table(outdata),strcat('tmp\',fname),'writevariablenames',0,'delimiter',' ');
         %save(fname,'outdata','-ascii');
     end
     
