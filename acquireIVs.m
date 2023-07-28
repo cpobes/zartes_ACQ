@@ -70,15 +70,17 @@ end
 
 pause(2)
 mag_LoopResetCH(mag,sourceCH);
-
+mag_setAutoResetON_CH(mag,8,sourceCH);%Dejamos rango para IV pero evitamos salto a 10V.
+%Y si esta puesto a 1V por Zs,pulsos, lo reseteamos.
 pause(2)
 rango=1e3;
 %%%Si la salida es estable, la fluctación en la
 %%%salida es menor de 1mV.
 rangoindx=1;
 while rango>2e-3%5e-4
-    rango=multi_monitor(multi)
-    'monitoring...'
+    rango=multi_monitor(multi);
+    %'monitoring...'
+    disp(sprintf('monitoring Vout... Range=%s',num2str(rango)));
     rangoindx=rangoindx+1;
     if rangoindx>25 break;end
 end
@@ -132,9 +134,12 @@ for i=1:length(Ibvalues)
 
         %%%cuando salta el squid, hay una deriva larguisima en el Vout.
         rango=1e3;
+        rangoindx=1;
         while rango>5e-4
             rango=multi_monitor(multi);
-            disp(sprintf('monitoring Ibias %s uA.',num2str(Ibvalues(i))));
+            disp(sprintf('monitoring Vout at Ibias %suA. Range=%s',num2str(Ibvalues(i)),num2str(rango)));
+            rangoindx=rangoindx+1;
+            if rangoindx>25 break;end
         end
         for i_av=1:averages
             aux=multi_read(multi);

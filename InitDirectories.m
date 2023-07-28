@@ -2,8 +2,8 @@ function InitDirectories(varargin)
 %%%Funcion para inicializar toda la estructura de carpetas de una enfriada.
 %%% Se puede pasar fichero .json de configuracion con las muestras.
 calldir=pwd;
-%default_data_dir='C:\Users\Athena\Desktop\Datos_Nuevo_Dilucion';
-default_data_dir='C:\Users\nico\Desktop\DATOS_BLUEFORS';
+default_data_dir='C:\Users\Athena\Desktop\Datos_Nuevo_Dilucion';
+%default_data_dir='C:\Users\nico\Desktop\DATOS_BLUEFORS';
 Meses={'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',...
     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'};
 cd(default_data_dir)

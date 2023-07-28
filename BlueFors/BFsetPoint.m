@@ -65,6 +65,8 @@ else
     if config.pid_mode %si estamos en modo PID pasamos el setpoint
         config.setpoint=Temp;
         BFconfigure(config);
+        caux=BFgetHeaterConfig();
+        if caux.setpoint~=Temp error('Error de comunicacion con BF');end
 %         wscWrite=SimpleClient(Writeurl);
 %         wscWrite.send(message)
 %         wscWrite.close()
@@ -73,7 +75,7 @@ else
         %pause(1800);
         %%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
         outdata=BFmonitorMCTemp(Temp);
-        fname=strcat('TsetLogData_',num2str(round(now*86400)),'_from',num2str(round(T0*1e3)*1e-3),'_to',num2str(Temp),'K.txt');
+        fname=strcat('tmp\TsetLogData_',num2str(round(now*86400)),'_from',num2str(round(T0*1e3)*1e-3),'_to',num2str(Temp),'K.txt');
         writetable(struct2table(outdata),fname,'writevariablenames',0,'delimiter',' ');
         %save(fname,'outdata','-ascii');
     end
