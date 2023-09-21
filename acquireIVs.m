@@ -77,7 +77,8 @@ rango=1e3;
 %%%Si la salida es estable, la fluctación en la
 %%%salida es menor de 1mV.
 rangoindx=1;
-while rango>2e-3%5e-4
+rangoTHR=5e-3;
+while rango>rangoTHR%2e-3%5e-4
     rango=multi_monitor(multi);
     %'monitoring...'
     disp(sprintf('monitoring Vout... Range=%s',num2str(rango)));

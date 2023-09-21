@@ -142,7 +142,14 @@ for i=1:length(temps)
         return
     end
     %%%BF set temp
-    BFsetPoint(temps(i));
+    try
+        BFsetPoint(temps(i));
+    catch Error
+        strcat('error Tb:',num2str(temps(i)))
+        fprintf(2,'%s\n',Error.message);
+        diary off;
+        error('Tset no se ha configurado correctamente. Revisar comunicación con el BF.');
+    end
     %%%El BFsetPoint ya hace una espera-> no hace falta ficheros.
     Tstring=sprintf('%0.1fmK',temps(i)*1e3);
     fprintf(1,'Tbath set to %s\n',Tstring);
