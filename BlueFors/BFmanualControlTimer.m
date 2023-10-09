@@ -3,7 +3,13 @@ function t=BFmanualControlTimer(Tset,pid)
    myVar=BFgetNextManualPower();
    myVar.Tset=Tset;
    Hconfig=BFgetHeaterConfig();
+   if Hconfig.pid_mode
+       fprintf(2,'BF in PID mode. Set to manual\n');
+       t=0;
+       return;
+   end
    Hconfig.setpoint=Tset;
+   Hconfig.control_algorithm_settings=pid;
    BFconfigure(Hconfig);
    t=timer;
    %t.StartFcn = @initTimer;
@@ -14,7 +20,8 @@ function t=BFmanualControlTimer(Tset,pid)
    start(t);
    %wait(t);
    %delete(t);
-   
+   %SOFTPOWERLIMIT=5e-3;%pongo un limite maximo de potencia, que puede ser limitado mas aun en la propia configuracion.
+   %MAXPOWER=min(Hconfig.max_power,SOFTPOWERLIMIT);
    function initTimer(src, event)
 %         myVar = 0;
 %         [T,info]=BFreadMCTemp();
@@ -33,11 +40,19 @@ function t=BFmanualControlTimer(Tset,pid)
    function timerCallback(src, event)
        %myVar = myVar + 1;
        %disp(myVar),pause(1)
-       myVar = BFgetNextManualPower(myVar,pid);
-       %disp(myVar)
        Hconfig=BFgetHeaterConfig();
-       Hconfig.power=myVar.W;
+       ActualPID=Hconfig.control_algorithm_settings;
+       myVar = BFgetNextManualPower(myVar,ActualPID);
+       %disp(myVar)
+       Hconfig.power=max(myVar.W,0); %forzamos valores >=0
+       %Hconfig.power=min(myVar.W,MAXPOWER); % ponemos un control de
+       %seguridad en la potencia maxima. Al estar en control manual, el
+       %max_power de la config no actua por defecto. Lo comento porque
+       %aqui da error. Lo paso a BFgetNextManualPower. Tiene tb mas sentido alli. 
        %%%pid:(0.05,200,0) en control manual resulta inestable.
+       %%%pid:(0.05,100,0) tb da algunos problemas. En algún momento la W
+       %%%se queda fija aunque la T sea diferente a la Tset. Parece estar
+       %%%asociado a valores de W negativos.
        BFconfigure(Hconfig);
     end
 end
