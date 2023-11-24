@@ -62,7 +62,7 @@ pause(35);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %questdlg('TES normal?')
-
+rangoTHR=5e-3;
 for i=1:length(IbValues)
     %check if stop.txt exists at every OP
     if IbValues(1) > 0
@@ -92,7 +92,7 @@ for i=1:length(IbValues)
         %%%Si la salida es estable, la fluctación en la
         %%%salida es menor de 1mV.
         rangoindx=1;
-        while rango>2e-3%5e-4
+        while rango>rangoTHR%5e-4
             rango=multi_monitor(multi);
             'monitoring...'
             rangoindx=rangoindx+1;
@@ -124,7 +124,7 @@ for i=1:length(IbValues)
         %%%Si la salida es estable, la fluctación en la
         %%%salida es menor de 1mV.
         rangoindx=1;
-        while rango>2e-3%5e-4
+        while rango>rangoTHR%5e-4
             rango=multi_monitor(multi);
             'monitoring...'
             rangoindx=rangoindx+1;

@@ -49,7 +49,7 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+rangoTHR=5e-3;%ojo, definido tb en HPacq.
 for i=1:length(IbValues)
     %check if stop.txt exists at every OP
     if IbValues(1) > 0
@@ -81,7 +81,7 @@ for i=1:length(IbValues)
         %%%Si la salida es estable, la fluctación en la
         %%%salida es menor de 1mV.
         rangoindx=1;
-        while rango>2e-3%5e-4
+        while rango>rangoTHR%5e-4
             rango=multi_monitor(multi);
             'monitoring...'
             rangoindx=rangoindx+1;
@@ -132,7 +132,7 @@ for i=1:length(IbValues)
         %%%Si la salida es estable, la fluctación en la
         %%%salida es menor de 1mV.
         rangoindx=1;
-        while rango>2e-3%5e-4
+        while rango>rangoTHR%5e-4
             rango=multi_monitor(multi);
             'monitoring...'
             rangoindx=rangoindx+1;
