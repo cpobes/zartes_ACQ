@@ -7,7 +7,8 @@ function out=CheckHW(varargin)
 %%% la posibilidad de leer las direcciones primarias de fichero (no
 %%% prioritario).
 
-ACQDIR='C:\Users\Athena\Desktop\Software\zartes_ACQ';
+%ACQDIR='C:\Users\Athena\Desktop\Software\zartes_ACQ';
+ACQDIR='C:\Users\nico\Desktop\Software\zartes_ACQ';
 Instruments={'Multimetro' 'DSA' 'K220' 'LKS' 'AVS47' 'Magnicon' 'PXI' 'BlueFors'}';
 
 if nargin==1

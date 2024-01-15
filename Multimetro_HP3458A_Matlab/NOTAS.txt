@@ -1,0 +1,6 @@
+En el multimetro podemos conectar de forma 'directa' o 'invertida' las bananas. He marcado el pin de señal con cinta plateada y el otro es el que marca masa.
+Cuando está conectado de forma 'directa', la lectura es la misma que da la PXI. Si se concecta de forma 'invertida', hay un cambio de signo respecto a la PXI.
+Esto no se deseable, pero el CH2 del squid se soldó posiblemente con los V+/V- invertidos y si se pone el multi en modo 'directo', las IVs salen invertidas. 
+Para futuro el nuevo holder se soldará con cuidado para que ambos canales tengan la polaridad adecuada. Mientras tanto, y dado que en cualquier caso hay que 
+cambiar el BNC, se invierte también físicamente la polaridad. Otra opción es cambiarlo via software, se ha incluiudo un campo en la estrucuta de optIV que es
+'softpolarity' (1:'directa', '-1':invertida). Pero ojo, porque esto cambia sólo las IVs (puede haber luego lío con la PXI).

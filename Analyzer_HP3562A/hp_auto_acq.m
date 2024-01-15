@@ -90,7 +90,7 @@ for i=1:length(IbValues)
         Excitacion=abs(IbValues(i)*1e-6*porcentaje);
         hp_ss_config(dsa);
         if Excitacion==0
-            Excitacion=50;
+            Excitacion=50*1e-7;%!
         end
         datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         %datos=hp_measure_TF(dsa);
