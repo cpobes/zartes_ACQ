@@ -68,25 +68,24 @@ else
     if Ibvalues(end)>0 pol='p';else pol='n';end
 end
 
-% 'Desactiva la fuente externa si está puesta'
-% pause(10)
-% 'Measure Start'
+pause(2)
+mag_LoopResetCH(mag,sourceCH);
 
-%%%Reseteamos el lazo.
-% mag_setAMP_CH(mag,sourceCH);
-% mag_setFLL_CH(mag,sourceCH);
+IV_THR=10;%umbral en Vout para el autoreseteado.
+mag_setAutoResetON_CH(mag,IV_THR,sourceCH);%Dejamos rango para IV pero evitamos salto a 10V.
+%Y si esta puesto a 1V por Zs,pulsos, lo reseteamos.
 pause(2)
-%mag_LoopResetCH(mag,sourceCH);
-mag_LoopResetCH(mag,1);
-mag_LoopResetCH(mag,2);
-pause(2)
+
 rango=1e3;
 %%%Si la salida es estable, la fluctación en la
 %%%salida es menor de 1mV.
 rangoindx=1;
-while rango>2e-3%5e-4
-    rango=multi_monitor(multi)
-    'monitoring...'
+rangoTHR=5e-3;
+Nmonitor=10;%default=100
+while rango>rangoTHR%2e-3%5e-4
+    rango=multi_monitor(multi,Nmonitor);
+    %'monitoring...'
+    disp(sprintf('monitoring Vout... Range=%s',num2str(rango)));
     rangoindx=rangoindx+1;
     if rangoindx>25 break;end
 end
@@ -135,15 +134,17 @@ for i=1:length(Ibvalues)
         %Vdc_array(i_av)=multi_read(multi);
     end
     Vdc=mean(Vdc_array);
-    if abs(Vdc)>10 
-        %mag_LoopResetCH(mag,sourceCH);
-        mag_LoopResetCH(mag,1);
-        mag_LoopResetCH(mag,2);
+    if abs(Vdc)>IV_THR %Forzamos a empezar con un offset no muy alto. 
+        mag_LoopResetCH(mag,sourceCH);
+
         %%%cuando salta el squid, hay una deriva larguisima en el Vout.
         rango=1e3;
-        while rango>5e-4
-            rango=multi_monitor(multi);
-            strcat('monitoring',' ',num2str(i))
+        rangoindx=1;
+        while rango>rangoTHR
+            rango=multi_monitor(multi,Nmonitor);
+            disp(sprintf('monitoring Vout at Ibias %suA. Range=%s',num2str(Ibvalues(i)),num2str(rango)));
+            rangoindx=rangoindx+1;
+            if rangoindx>25 break;end
         end
         for i_av=1:averages
             aux=multi_read(multi);
@@ -192,7 +193,10 @@ end
 if strcmpi(sourceType,'LNCS')
     mag_setLNCSImag(mag,0);%%%%%
     mag_DisconnectLNCS(mag);%%%%%
+else
+    mag_setImag_CH(mag,0,sourceCH);%ponemos la fuente a 0.(a veces medimos más alla de cero).
 end
+
 mag_setAMP_CH(mag,1);
 mag_setAMP_CH(mag,2);
 %%%Deshabilitamos el modo FLL para evitar
@@ -206,7 +210,7 @@ IV.Tbath= sscanf(Temp,'%dmK')*1e-3;
 
 auxhandle_2=findobj('name','IVs_corregidas');
 if isempty(auxhandle_2) figure('name','IVs_corregidas'); else figure(auxhandle_2);end
-hold on;
+hold on;grid on;
 plot(IV.ibias,IV.vout,'.-');
 
 %%%guardar datos

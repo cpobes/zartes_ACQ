@@ -5,8 +5,8 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 %%%nombre del fichero.
 
 %default config
-opt.RL=2e5;
-opt.SR=2e5;
+opt.RL=2e5;%def: 2e5
+opt.SR=2e5;%2e5
 comment='test';
 %%%configuracion subsampleo. Pasar como opcion
 subsampling.bool=0;

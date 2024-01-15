@@ -4,7 +4,7 @@ function AcquirePulses(options)
 %%%%antes la pxi, porque si no da error el writeCol.
 
 %%Hay que pasar la configuración en options. Recordar incluir:
-%%% Npulsos, RL, SR, multi, mag, pxi, filename,comment, longrun y boolplot
+%%% Npulsos, RL, SR, filename,comment, longrun y boolplot
 import matlab.io.*
 
 uri='http://192.168.2.121:5001/channel/measurement/latest';
@@ -19,6 +19,7 @@ pxi=PXI_init();
 %lks=options.lks
 %k220=options.k220;
 name=options.filename;
+pxi_Pulses_Configure(pxi,options);
 
 if isfield(options,'subsampling')
     subsampling=options.subsampling;%step
@@ -36,8 +37,10 @@ else
     polarity=1;
 end
 
-Ibias=round(mag_readImag_CH(mag,SourceCH));
+Ibias=round(mag_readImag_CH(mag,SourceCH))*1e-6;
 Rf=mag_readRf_FLL_CH(mag,SourceCH);
+
+Tmc=BFreadMCTemp();
 
 pulsetype=strcat(num2str(RL/subsampling),'E');
 ttype = {'Pulso' 'Time' 'Temperature' 'Resistence' 'DateTime'};
@@ -52,8 +55,14 @@ end
 fits.createTbl(fptr,'binary',0,ttype,tform,{},'pulsos')%Tabla para los pulsos
 fits.writeKey(fptr,'SR',SR,'sampling rate');
 fits.writeKey(fptr,'RL',RL,'record length');
-fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
+fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en A');
 fits.writeKey(fptr,'Rf',Rf,'Resistencia de Feedback en Ohm');
+fits.writeKey(fptr,'Tmc',Tmc,'Temperatura de la M/C');
+if isfield(options,'I0')
+    fits.writeKey(fptr,'I0',options.I0,'Corriente en el TES en el punto de operacion.');
+end
+%otras opciones de configuracion.
+
 fits.writeDate(fptr);
 fits.writeComment(fptr,options.comment);
 t0=now;

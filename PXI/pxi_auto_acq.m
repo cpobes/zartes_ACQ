@@ -49,7 +49,7 @@ Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 %fprintf(dsa,'SRON');%source off (toggle)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+rangoTHR=5e-3;%ojo, definido tb en HPacq.
 for i=1:length(IbValues)
     %check if stop.txt exists at every OP
     if IbValues(1) > 0
@@ -76,7 +76,18 @@ for i=1:length(IbValues)
     if(PXIopt.TF)
         mag_LoopResetCH(mag,sourceCH);
         mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
-        
+        %%%%Monitorizacion Vout
+        rango=1e3;
+        %%%Si la salida es estable, la fluctación en la
+        %%%salida es menor de 1mV.
+        rangoindx=1;
+        while rango>rangoTHR%5e-4
+            rango=multi_monitor(multi);
+            'monitoring...'
+            rangoindx=rangoindx+1;
+            if rangoindx>25 break;end
+        end
+        %%%%%%%
         porcentaje=0.05;
         excitacion=round(abs(IbValues(i)*(1e1)*porcentaje));%%%amplitud en mV para la fuente.
         if excitacion==0 %%%cuando Ibias=0, exc=0 y al usar White Noise
@@ -90,7 +101,8 @@ for i=1:length(IbValues)
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         file=strcat('PXI_TF_',Itxt,'uA','.txt');
         save(file,'TF','-ascii');%salva los datos a fichero.
-        disp(strcat('File ',file,' salvado.'));
+        disp(sprintf('File %s salvado.',file));
+        %disp(strcat('File ',file,' salvado.'));
     end
     
     pause(1)
@@ -114,6 +126,19 @@ for i=1:length(IbValues)
         mag_LoopResetCH(mag,sourceCH);
         mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
         %pxi_Noise_Configure(pxi); no necesario. esta dentro de AcqPSD.
+        
+        %%%%Monitorizacion Vout
+        rango=1e3;
+        %%%Si la salida es estable, la fluctación en la
+        %%%salida es menor de 1mV.
+        rangoindx=1;
+        while rango>rangoTHR%5e-4
+            rango=multi_monitor(multi);
+            'monitoring...'
+            rangoindx=rangoindx+1;
+            if rangoindx>25 break;end
+        end
+        %%%%%%%
         pause(1)
         aux=pxi_AcquirePSD(pxi,nopt);
         datos=aux;
@@ -124,7 +149,8 @@ for i=1:length(IbValues)
         datos(:,2)=datos(:,2)/n_avg;
         file=strcat('PXI_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.
-        disp(strcat('File:',file,' salvado.'));
+        disp(sprintf('File %s salvado.',file));
+        %disp(strcat('File:',file,' salvado.'));
     end
     
     pause(1)
@@ -189,4 +215,4 @@ mag_setAMP_CH(mag,2);
 fclose(mag);delete(mag);
 disconnect(pxi);delete(pxi);
 fclose(multi);delete(multi);
-instrreset;
+%instrreset;

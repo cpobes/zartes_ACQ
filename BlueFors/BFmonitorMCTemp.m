@@ -3,7 +3,7 @@ function varargout=BFmonitorMCTemp(varargin)
 %%%Salvo los valores de timestamp y Temp. Se podría leer el power,
 %%%pero en modo PID, el heater_power es siempre cero. Como acceder al valor
 %%%real de power?
-Tmonitor=2400;%%%Max tiempo en 
+Tmonitor=2400;%%%Max tiempo en seg.
 if nargin==1
     Tset=varargin{1};
 end

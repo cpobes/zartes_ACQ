@@ -2,7 +2,7 @@ function rango=multi_monitor(multi,varargin)
 %Funcion para monitorizar el Vout durante unas cuantas muestras N
 %(default=100). Cuando la medida es estable, rango<0.5mV.
 if nargin==1
-    N=100;
+    N=10;%100
 else
     N=varargin{1};
 end

@@ -1,14 +1,15 @@
 function Bscan(varargin)
 %%%funcion para hacer el Bscan. Ojo, poner antes el TES en medio de la
 %%%transicion y recordar apagar a mano al final la fuente.
+%%%Recordar: Valores de corriente en uA.(Luego se convierten a A).
 if nargin==0
     step=50;
-    ini=-500;
+    ini=-500;%Valores de corriente en uA.
     fin=500;
 else
     data=varargin{1};
     step=data.step;
-    ini=data.ini;
+    ini=data.ini;%Valores de corriente en uA.
     fin=data.fin;
 end
 %B=[0:step:1000 1000:-step:0 0:-step:-500 -500:step:0]*1e-6;
@@ -32,7 +33,17 @@ k220_setI(k220,B(i));
 pause(1)
 %B(i)
     V(i)=mean(multi_read(multi));
-    plot(B([1:i]),V([1:i]),'o-','markerfacecolor','r')
+    if i==1
+        auxhandle=findobj('name','Bscan');
+        if isempty(auxhandle) figure('name','Bscan'); else figure(auxhandle);end
+        hold on;grid on;
+        h=plot(B(i),V(i),'o-','markerfacecolor','r');
+    else
+        xdata=B(1:i);%B tiene longitud fija pero V va creciendo.
+        ydata=V;
+        set(h,'XData',xdata,'YData',ydata');
+        %plot(B([1:i]),V([1:i]),'o-','markerfacecolor','r');
+    end
 end
 save('BscanData','B','V')
 %k220_setI(k220,0);da error.pq?

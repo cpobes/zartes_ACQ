@@ -42,7 +42,7 @@ fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
 x=CheckHW('PrimaryAddresses.json');
 bad=[];
 for i=1:length(x.Instruments) %%%chequeamos instrumentos. Saltamos el LKS.
-    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS'))
+    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'PXI'))%%%!!!PXI!!!
         bad(end+1)=i;
     end
 end
@@ -82,7 +82,8 @@ end
 
 %%% Rellenamos .xls
 xlsfile=ls(strcat('../Summary_',num2str(year(now)),'*.xls'));
-%xlsfile=ls('../Summary_2024*.xls');%%%!
+%xlsfile=ls('../Summary_2023*.xls');%%%!
+
 [~,txt]=xlsread(strcat('../',xlsfile),2,'A:A');
 index=num2str(numel(txt)+1);
 rango=strcat('A',index,':D',index);
@@ -143,7 +144,14 @@ for i=1:length(temps)
         return
     end
     %%%BF set temp
-    BFsetPoint(temps(i));
+    try
+        BFsetPoint(temps(i));
+    catch Error
+        strcat('error Tb:',num2str(temps(i)))
+        fprintf(2,'%s\n',Error.message);
+        diary off;
+        error('Tset no se ha configurado correctamente. Revisar comunicación con el BF.');
+    end
     %%%El BFsetPoint ya hace una espera-> no hace falta ficheros.
     Tstring=sprintf('%0.1fmK',temps(i)*1e3);
     fprintf(1,'Tbath set to %s\n',Tstring);
@@ -170,9 +178,13 @@ for i=1:length(temps)
             else
                 IbiasValues=[500:-10:300 295:-5:200 198:-2:-10];
             end
-
+        
+            %config mag to auto reset 
+            mag=mag_init();
+            mag_setAutoResetON_CH(mag,9.0,optIV.sourceCH);%Ponemos umbral reset a 9V para no alterar la IV pero para evitar que salte a 10V y caliente.
+            fclose(mag);
         try  %%%A veces dan error las IVs. pq?
-             IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
+            IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
         catch
             instrreset;
             IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
@@ -284,14 +296,20 @@ for i=1:length(temps)
             IZvaluesN=IZvaluesN(abs(IZvaluesN)<500);%%%%Para evitar error fte normal si el spline no esta bien.
             %return;
             ['Starting Z-Noise Measurements: ' datestr(now)]
+            %config mag to auto reset 
+            mag=mag_init();
+            mag_setAutoResetON_CH(mag,1.0,optIV.sourceCH);%Ponemos umbral reset a 1V para que la pxi esté siempre en rango.
+            fclose(mag);
             try
                 %if HPopt.TF + HPopt.Noise
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'
                 %end
+                %if(0)%%%!!!pxi not communicating
                 cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
                 'PXI done'
+                %end%%%!!!pxi not communicating
             catch Error
                 strcat('error Tb:',num2str(temps(i)))
                 fprintf(2,'%s\n',Error.message);

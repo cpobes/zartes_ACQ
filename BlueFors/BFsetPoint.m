@@ -2,7 +2,7 @@ function [ok,varargout]=BFsetPoint(Temp,varargin)
 %%%basic function para fijar T bath.
 Writeurl='ws://192.168.2.121:5002/heater/update';
 %Readurl='ws://192.168.2.121:5002/heater';
-if Temp>0.2 error('ojo a la set Temp');end
+if Temp>0.45 error('ojo a la set Temp');end
 %Tstr=num2str(Temp);
 %wscRead=SimpleClient(Readurl);
 
@@ -65,6 +65,8 @@ else
     if config.pid_mode %si estamos en modo PID pasamos el setpoint
         config.setpoint=Temp;
         BFconfigure(config);
+        caux=BFgetHeaterConfig();
+        if caux.setpoint~=Temp error('Error de comunicacion con BF');end
 %         wscWrite=SimpleClient(Writeurl);
 %         wscWrite.send(message)
 %         wscWrite.close()
@@ -74,7 +76,7 @@ else
         %%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
         outdata=BFmonitorMCTemp(Temp);
         fname=strcat('TsetLogData_',num2str(round(now*86400)),'_from',num2str(round(T0*1e3)*1e-3),'_to',num2str(Temp),'K.txt');
-        writetable(struct2table(outdata),fname,'writevariablenames',0,'delimiter',' ');
+        writetable(struct2table(outdata),strcat('tmp\',fname),'writevariablenames',0,'delimiter',' ');
         %save(fname,'outdata','-ascii');
     end
     
