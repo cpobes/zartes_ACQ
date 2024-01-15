@@ -81,7 +81,8 @@ else
 end
 
 %%% Rellenamos .xls
-xlsfile=ls('../Summary_2023*.xls');%%%!
+xlsfile=ls(strcat('../Summary_',num2str(year(now)),'*.xls'));
+%xlsfile=ls('../Summary_2023*.xls');%%%!
 [~,txt]=xlsread(strcat('../',xlsfile),2,'A:A');
 index=num2str(numel(txt)+1);
 rango=strcat('A',index,':D',index);
@@ -303,11 +304,11 @@ for i=1:length(temps)
                 hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
                 'HP done'
                 %end
-                if(0)%%%!!!pxi not communicating
+                %if(0)%%%!!!pxi not communicating
                 cd(Tstring)
                 pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
                 'PXI done'
-                end%%%!!!pxi not communicating
+                %end%%%!!!pxi not communicating
             catch Error
                 strcat('error Tb:',num2str(temps(i)))
                 fprintf(2,'%s\n',Error.message);
