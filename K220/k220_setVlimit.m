@@ -9,4 +9,4 @@ else
 end
     
 str=strcat('V',num2str(Vmax),'X','\n');
-query(k220,str)
+query(k220,str);

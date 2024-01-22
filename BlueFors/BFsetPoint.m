@@ -1,6 +1,6 @@
 function [ok,varargout]=BFsetPoint(Temp,varargin)
 %%%basic function para fijar T bath.
-Writeurl='ws://192.168.2.121:5002/heater/update';
+%Writeurl='ws://192.168.2.121:5002/heater/update';
 %Readurl='ws://192.168.2.121:5002/heater';
 if Temp>0.45 error('ojo a la set Temp');end
 %Tstr=num2str(Temp);

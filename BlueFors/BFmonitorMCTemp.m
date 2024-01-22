@@ -36,6 +36,11 @@ while t-t0<Tmonitor
     if ~mod(icounter,100) fprintf(1,'\n');end
     pause(1)
     [T,msg]=BFreadMCTemp();
+    if isempty(T) || ~strcmp(msg.status,'OK') %%%chequeamos una vez si hay error de lectura. No robusto si falla tras 10seg.
+        pause(10)
+         [T,msg]=BFreadMCTemp();
+         disp(msg)
+    end%%%posibles errores de comunicación con BF?!
     t=msg.timestamp;
     Temp(end+1)=T;
     timestamp(end+1)=t-t0;

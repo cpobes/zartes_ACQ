@@ -26,11 +26,13 @@ if (useLNCS)
     mag_setLNCSImag(mag,signo*Ilimite);
     mag_setLNCSImag(mag,signo*0.5e3);
     %%%Si queremos usar la fte en Ch1 hay que quitar la LNCS.
-    mag_setImag_CH(mag,signo*500,nch);
+    %mag_setImag_CH(mag,signo*500,nch);
+    mag_setImag_CH(mag,Imax,nch);
     mag_setLNCSImag(mag,0);
     mag_DisconnectLNCS(mag);
 else
-    mag_setImag_CH(mag,signo*500,nch);
+    %mag_setImag_CH(mag,signo*500,nch);
+    mag_setImag_CH(mag,Imax,nch);
 end
 
 if usek220
@@ -51,7 +53,7 @@ if usek220
         k220_setI(k220,i_N);
     end
     pause(0.5);
-    mag_setImag_CH(mag,signo*500,nch);
+    mag_setImag_CH(mag,Imax,nch);
     try
         k220_setI(k220,Ibob);
     catch

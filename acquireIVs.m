@@ -50,7 +50,7 @@ mag_setRf_FLL_CH(mag,Rf,sourceCH);%3e3
 %%%Ponemos el máximo de corriente 
 signo=sign(Ibvalues(1));
 
-if ~Put_TES_toNormal_State_CH(mag,signo,sourceCH)%%%,k220.
+if ~Put_TES_toNormal_State_CH(mag,Ibvalues(1),sourceCH)%%%,k220. signo
     %instrreset;
     error('El TES no se ha podido poner en estado normal');
 end
@@ -71,7 +71,7 @@ end
 pause(2)
 mag_LoopResetCH(mag,sourceCH);
 
-IV_THR=10;%umbral en Vout para el autoreseteado.
+IV_THR=5;%umbral en Vout para el autoreseteado.
 mag_setAutoResetON_CH(mag,IV_THR,sourceCH);%Dejamos rango para IV pero evitamos salto a 10V.
 %Y si esta puesto a 1V por Zs,pulsos, lo reseteamos.
 pause(2)
@@ -99,7 +99,7 @@ end
 %%%
 
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
-psl=1;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
+psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 verbose=1;
 t0start=now;
 for i=1:length(Ibvalues)
@@ -109,7 +109,7 @@ for i=1:length(Ibvalues)
     end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
     
     %%%%Control de estado superconductor para cambiar Step.
-    if state && mod(Ibvalues(i),10) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
+    if state && mod(Ibvalues(i),2) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
     
     if strcmpi(sourceType,'LNCS')
         mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
@@ -197,6 +197,7 @@ else
     mag_setImag_CH(mag,0,sourceCH);%ponemos la fuente a 0.(a veces medimos más alla de cero).
 end
 
+mag_setAutoResetON_CH(mag,1,sourceCH);%refijamos el autoreset a 1V
 mag_setAMP_CH(mag,1);
 mag_setAMP_CH(mag,2);
 %%%Deshabilitamos el modo FLL para evitar

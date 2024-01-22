@@ -15,7 +15,11 @@ SR=options.SR;
 multi=multi_init(0);%options.multi;
 mag=mag_init();%mag=options.mag;
 %pxi=options.pxi;
-pxi=PXI_init();
+try
+    pxi=PXI_init();
+catch
+    error('Error inicializando la PXI.')
+end
 %lks=options.lks
 %k220=options.k220;
 name=options.filename;
@@ -36,9 +40,17 @@ if isfield(options,'polarity')
 else
     polarity=1;
 end
-
-Ibias=round(mag_readImag_CH(mag,SourceCH))*1e-6;
-Rf=mag_readRf_FLL_CH(mag,SourceCH);
+if isfield(options,'Ibias')
+    Ibias=options.Ibias;%%%Ojo a si se define como A o como uA!!!!
+else
+    Ibias=round(mag_readImag_CH(mag,SourceCH))*1e-6;
+end
+if isfield(options,'Rf')
+    Rf=options.Rf;
+    mag_setRf_FLL_CH(mag,Rf,SourceCH);
+else
+    Rf=mag_readRf_FLL_CH(mag,SourceCH);
+end
 
 Tmc=BFreadMCTemp();
 
@@ -61,6 +73,9 @@ fits.writeKey(fptr,'Tmc',Tmc,'Temperatura de la M/C');
 if isfield(options,'I0')
     fits.writeKey(fptr,'I0',options.I0,'Corriente en el TES en el punto de operacion.');
 end
+if isfield(options,'V0')
+    fits.writeKey(fptr,'V0',options.V0,'Voltaje en el TES en el punto de operacion.');
+end
 %otras opciones de configuracion.
 
 fits.writeDate(fptr);
@@ -69,10 +84,37 @@ t0=now;
 i=0;
 j=0;
 dc=multi_read(multi);
-ResetTHR=1.0;%%%voltaje para resetear el lazo. Con esto no debería ser necesario el loopreset manual.
+
+ResetTHR=0.8;%%%voltaje para resetear el lazo. Con esto no debería ser necesario el loopreset manual.
 mag_setAutoResetON_CH(mag,ResetTHR,SourceCH);
+
+pulseoptions.SR=options.SR;
+pulseoptions.RL=options.RL;
+pulseoptions.options.longrun=options.longrun;
+pulseoptions.options.boolplot=options.boolplot;
+%pxi_Pulses_Configure(pxi,pulseoptions);%si hacemos longrun necesitamos configurar al menos una vez al principio.
+
+if(0)
+    Put_TES_toNormal_State_CH(mag,500,SourceCH);
+    mag_setImag_CH(mag,Ibias*1e6,SourceCH);
+    mag_LoopResetCH(mag,SourceCH);
+end
+
+Vout=0;%%%deshabilito el vout check.
 while i<Npulsos && j<1000 && ~exist('stop.txt','file')
-    Vout=multi_read(multi);
+%     Vout=multi_read(multi);
+%         %%monitoreo de vout
+%         %rango=1e3;
+%         rango=multi_monitor(multi); 
+%         icounter=1;
+%         while rango>10e-4
+%             strcat('monitoring','.')
+%             rango=multi_monitor(multi);           
+%             fprintf(1,'%s','.');
+%             if ~mod(icounter,10) fprintf(1,'\n');end
+%             icounter=icounter+1;
+%             if icounter>100 break;end%por si acaso.
+%         end
     %pause(1)
     if abs(Vout)>0.8 %%%Si offset mal reseteamos lazo 3 veces para probar
         'SIMPLE LOOP RESET'
@@ -92,7 +134,7 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
 %         pause(0.5)
 %         k220_setI(k220,1.24e-3);%%%vuelta a valor optimo
         
-        mag_setImag_CH(mag,Ibias,SourceCH);
+        mag_setImag_CH(mag,Ibias*1e6,SourceCH);
         mag_LoopResetCH(mag,SourceCH);
         %%monitoreo de vout
         rango=1e3;
@@ -109,10 +151,6 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         %pause(3)%%% Si hay que resetear el TES puede notarlo un poco la Tbath.
     end
     try   
-        pulseoptions.SR=options.SR;
-        pulseoptions.RL=options.RL;
-        pulseoptions.options.longrun=options.longrun;
-        pulseoptions.options.boolplot=options.boolplot;
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
         %data=pulso(:,2);
         time=now-t0;
@@ -134,11 +172,13 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         'hola, pxi_ACQ error'
         fprintf(2,'%s\n',Error.message);
         %Put_TES_toNormal_State_CH(mag,500,SourceCH,options.k220);
-        %mag_setImag_CH(mag,Ibias,SourceCH);
-        %mag_LoopResetCH(mag,SourceCH);
-        %j=j+1
+        Put_TES_toNormal_State_CH(mag,500,SourceCH);
+        mag_setImag_CH(mag,Ibias*1e6,SourceCH);
+        mag_LoopResetCH(mag,SourceCH);
+        j=j+1
     end
 end
-mag_setAutoResetOFF_CH(mag,SourceCH);
-%no cerramos los instrumentos pero desactivamos el autoreset.
+%mag_setAutoResetOFF_CH(mag,SourceCH); %no cerramos los instrumentos pero desactivamos el autoreset.
+%mejor no desactivarlo pq si salta el Vout, se calienta todo.
 fits.closeFile(fptr)
+disconnect(pxi),delete(pxi)
