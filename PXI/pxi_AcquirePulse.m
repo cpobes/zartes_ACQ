@@ -38,12 +38,12 @@ if(boolplot) %%%plot?
     plot(data(:,1),data(:,2)-boolremoveoffset*data(1,2),'.-');
     grid on
     subplot(2,1,2)
-    %loglog(freq,psd,'.-')
-    semilogx(freq,10*log10(psd),'.-')
+    loglog(freq,sqrt(psd),'.-')
+    %semilogx(freq,10*log10(psd),'.-')
     grid on
 end
 
-if nargin>1 & boolsave
+if nargin>1 && boolsave
     comment=varargin{1};
     file=strcat('PXI_TimeSample_',comment,'.txt');
     save(file,'data','-ascii');%salva los datos a fichero.

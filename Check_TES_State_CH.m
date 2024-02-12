@@ -1,4 +1,4 @@
-function state=Check_TES_State_CH(mag,nch,varargin)
+function [state,varargout]=Check_TES_State_CH(mag,nch,varargin)
 %%%Funcion para comprobar el estado del TES. En varargin paso polarity por
 %%%si está invertida. Uso 10*step porque el step es demasiado fino y
 %%%fluctua la estimacion de la pendiente. Chequeo también la transicion
@@ -32,7 +32,7 @@ Vaux2=multi_read(multi);
 Slope=polarity*(Vaux2-Vaux1)/((Iaux2-Iaux1)*1e-6)/Rf;
 %mag_setLNCSImag(mag,Iaux1);%devolvemos al estado inicial.
 mag_setImag_CH(mag,Iaux1,nch);%devolvemos al estado inicial.
-fclose(multi)
+fclose(multi);
 
 %Slope
 if Slope>1
@@ -42,4 +42,5 @@ elseif Slope>0 && Slope<1
 elseif Slope<0
     state='T';
 end
+varargout{1}=Slope;
     

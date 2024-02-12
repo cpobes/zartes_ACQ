@@ -5,6 +5,9 @@ function AcquirePulses(options)
 
 %%Hay que pasar la configuración en options. Recordar incluir:
 %%% Npulsos, RL, SR, filename,comment, longrun y boolplot
+
+%%% Version Feb2024. Eliminamos check manual de Vout y fijamos el
+%%% autoreset.
 import matlab.io.*
 
 uri='http://192.168.2.121:5001/channel/measurement/latest';
@@ -12,11 +15,10 @@ uri='http://192.168.2.121:5001/channel/measurement/latest';
 Npulsos=options.Npulsos;
 RL=options.RL;
 SR=options.SR;
-multi=multi_init(0);%options.multi;
-mag=mag_init();%mag=options.mag;
-%pxi=options.pxi;
+multi=multi_init(0);
+mag=mag_init();
 try
-    pxi=PXI_init();
+    pxi=PXI_init();%Feb24 mejoro PXI_init(). Ya no seria necesario el try.
 catch
     error('Error inicializando la PXI.')
 end
@@ -35,15 +37,16 @@ if isfield(options,'SourceCH')
 else
     SourceCH=2;
 end
-if isfield(options,'polarity')
-    polarity=options.polarity;
-else
-    polarity=1;
-end
 if isfield(options,'Ibias')
     Ibias=options.Ibias;%%%Ojo a si se define como A o como uA!!!!
 else
     Ibias=round(mag_readImag_CH(mag,SourceCH))*1e-6;
+end
+if isfield(options,'polarity')
+    polarity=options.polarity;
+else
+    %polarity=1;
+    polarity=sign(Ibias);%%%%Solo se usa para Poner el TES normal.
 end
 if isfield(options,'Rf')
     Rf=options.Rf;
@@ -85,7 +88,13 @@ i=0;
 j=0;
 dc=multi_read(multi);
 
-ResetTHR=0.8;%%%voltaje para resetear el lazo. Con esto no debería ser necesario el loopreset manual.
+%%%Configuramos Autoreset.
+if isfield(options,'ResetTHR')
+    ResetTHR=options.ResetTHR;
+else
+    ResetTHR=1.05;%%%voltaje para resetear el lazo. Con esto no debería ser necesario el loopreset manual.
+end
+fits.writeKey(fptr,'ResetTHR',ResetTHR,'Valor del Autoreset de la electronica magnicon.');
 mag_setAutoResetON_CH(mag,ResetTHR,SourceCH);
 
 pulseoptions.SR=options.SR;
@@ -94,62 +103,18 @@ pulseoptions.options.longrun=options.longrun;
 pulseoptions.options.boolplot=options.boolplot;
 %pxi_Pulses_Configure(pxi,pulseoptions);%si hacemos longrun necesitamos configurar al menos una vez al principio.
 
-if(0)
+if(0)%%%Confirgurar. Esto es para poner o no el TES en el OP al empezar. Mejor no hacerlo si ya esta polarizado.
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias*1e6,SourceCH);
     mag_LoopResetCH(mag,SourceCH);
 end
 
-Vout=0;%%%deshabilito el vout check.
+%CalAmpArray=[25.022 49.98   75.0069   100.029];%valores D11
+CalAmpArray=[99.73 100.2087];
+
 while i<Npulsos && j<1000 && ~exist('stop.txt','file')
-%     Vout=multi_read(multi);
-%         %%monitoreo de vout
-%         %rango=1e3;
-%         rango=multi_monitor(multi); 
-%         icounter=1;
-%         while rango>10e-4
-%             strcat('monitoring','.')
-%             rango=multi_monitor(multi);           
-%             fprintf(1,'%s','.');
-%             if ~mod(icounter,10) fprintf(1,'\n');end
-%             icounter=icounter+1;
-%             if icounter>100 break;end%por si acaso.
-%         end
-    %pause(1)
-    if abs(Vout)>0.8 %%%Si offset mal reseteamos lazo 3 veces para probar
-        'SIMPLE LOOP RESET'
-        mag_LoopResetCH(mag,SourceCH);
-        mag_LoopResetCH(mag,SourceCH);
-        mag_LoopResetCH(mag,SourceCH);
-        pause(1)%%%Se ven derivas en el DC tras un salto del Squid.
-    end
-    if abs(Vout)>0.8 %|| abs(Vout)>1.2*abs(dc) || abs(Vout)<0.8*abs(dc)  %%%%Intentamos ver si ha saltado el squid.
-    'hola, FULL RESET'
-        pxi_AbortAcquisition(pxi);
-        
-        %Put_TES_toNormal_State_CH(mag,500,SourceCH,options.k220);
-        Put_TES_toNormal_State_CH(mag,polarity*500,SourceCH);
-%         mag_setImag_CH(mag,500,2);
-%         k220_setI(k220,10e-3);
-%         pause(0.5)
-%         k220_setI(k220,1.24e-3);%%%vuelta a valor optimo
-        
-        mag_setImag_CH(mag,Ibias*1e6,SourceCH);
-        mag_LoopResetCH(mag,SourceCH);
-        %%monitoreo de vout
-        rango=1e3;
-        strcat('monitoring','.')
-        icounter=1;
-        while rango>5e-4
-            rango=multi_monitor(multi);           
-            fprintf(1,'%s','.');
-            if ~mod(icounter,10) fprintf(1,'\n');end
-            icounter=icounter+1;
-            if icounter>100 break;end%por si acaso.
-        end
-        j=j+1;
-        %pause(3)%%% Si hay que resetear el TES puede notarlo un poco la Tbath.
-    end
+    mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
+
     try   
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
         %data=pulso(:,2);
@@ -175,6 +140,26 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         Put_TES_toNormal_State_CH(mag,500,SourceCH);
         mag_setImag_CH(mag,Ibias*1e6,SourceCH);
         mag_LoopResetCH(mag,SourceCH);
+        Vout=multi_read(multi);
+        %%monitoreo de vout
+        %rango=1e3;
+        rango=multi_monitor(multi); 
+        icounter=1;
+        while rango>10e-4
+            strcat('monitoring','.')
+            rango=multi_monitor(multi);           
+            fprintf(1,'%s','.');
+            if ~mod(icounter,10) fprintf(1,'\n');end
+            icounter=icounter+1;
+            if icounter>100 break;end%por si acaso.
+        end
+        [st,sl]=Check_TES_State_CH(mag,SourceCH,-1)
+        if strcmp(st,'S')
+            Ibias=Ibias+0.06;
+            disp(['Ibias cambiado a: ' num2str(Ibias)])
+            mag_setImag_CH(mag,Ibias*1e6,SourceCH);
+            fprintf(2,'%s\n',strcat('Ibias set to: ',num2str(Ibias)));
+        end
         j=j+1
     end
 end

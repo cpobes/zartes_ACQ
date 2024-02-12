@@ -16,14 +16,14 @@ end
 str=sprintf('%s%s%s','<0',ch,'r8');%%%
 chk=mod(sum(double(str)),256);
 str=sprintf('%s%02X\r',str,chk);
-out=query(s,str,'%s','%s')
+out=query(s,str,'%s','%s');
 
-DAC=hex2dec(out(2:4))
+DAC=hex2dec(out(2:4));
 
 if RL==0
 AMP=5e6*(DAC-2048)/(4096*1.0196*20000);
 else
-    I=mag_readImag_CH(s,nch)*1e-6
+    I=mag_readImag_CH(s,nch)*1e-6;
     Rp=(RL^-1+22143^-1)^-1;
     Upa=5e6*(DAC-2048)/4096;%%%error en manual? 1e6.
     range=mag_getIrange_CH(s,nch);
