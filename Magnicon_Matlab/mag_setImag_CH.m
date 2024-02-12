@@ -1,5 +1,7 @@
 function out=mag_setImag_CH(s,IuA,nch)
 %Función para fijar valor de Ibias. Pasar Ibias en uA.
+% %dac=0 corresponde a Ibias:-501.7898118402937
+% fijando Ib=-500 corresponde a dac=29.
 
 if abs(IuA)>500
     error('Ibias too high');

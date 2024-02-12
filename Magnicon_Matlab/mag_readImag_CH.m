@@ -1,5 +1,6 @@
 function IuA=mag_readImag_CH(s,nch)
 %Funcion para leer la Ibias
+%dac=0 corresponde a Ibias:-5.017898118402937e+02
 
 if nch==1
     ch='1';
@@ -14,6 +15,10 @@ chk=mod(sum(double(str)),256);
 str=sprintf('%s%02X\r',str,chk);
 out=query(s,str,'%s','%s');
 
+if isempty(out)
+    warning('mag Ibias query FAILED. Empty out. Returning default -501.1773uA');
+    dac=10;%corresponde a Ib: -501.1772754488871. Para distinguirlo de cuando devuelve out=0;
+end
 %str=sprintf('%s\r','<01q846');
 %out=query(s,str,'%s','%s');
 

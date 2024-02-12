@@ -65,7 +65,10 @@ for i=1:length(IbValues)
     
     strcat('Ibias:',num2str(IbValues(i)))
     %Set Magnicon Ib value here
-    mag_setImag_CH(mag,IbValues(i),sourceCH);
+    out=mag_setImag_CH(mag,IbValues(i),sourceCH);
+    if strcmp(out,'FAIL') 
+        warning('Ibias set FAILED!');
+    end
     %mag_setLNCSImag(mag,IbValues(i));
     %ix=mag_readLNCSImag(mag);
     ix=mag_readImag_CH(mag,sourceCH);

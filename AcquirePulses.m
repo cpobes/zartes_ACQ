@@ -9,8 +9,15 @@ function AcquirePulses(options)
 %%% Version Feb2024. Eliminamos check manual de Vout y fijamos el
 %%% autoreset.
 import matlab.io.*
-
 uri='http://192.168.2.121:5001/channel/measurement/latest';
+
+try%%%try catch global para poder cerrar el diary
+%%%Setting Log
+if strcmp(get(0,'Diary'),'on') diary off;end
+DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'_',options.filename);
+x=strsplit(acqPulsesD11F.filename,'.');
+DiaryFile=strrep(DiaryFile,x{end},'log');%%%ojo si el fichero no termina exactamente con .fits.
+diary(DiaryFile);%%%Diary ON
 
 Npulsos=options.Npulsos;
 RL=options.RL;
@@ -167,3 +174,6 @@ end
 %mejor no desactivarlo pq si salta el Vout, se calienta todo.
 fits.closeFile(fptr)
 disconnect(pxi),delete(pxi)
+catch
+    diary off;
+end
