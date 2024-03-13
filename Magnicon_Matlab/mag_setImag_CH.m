@@ -3,7 +3,8 @@ function out=mag_setImag_CH(s,IuA,nch)
 % %dac=0 corresponde a Ibias:-501.7898118402937
 % fijando Ib=-500 corresponde a dac=29.
 
-if abs(IuA)>500
+Imax=500.02;%Al poner 500 en la fte se ponen realmente 500.013uA.
+if abs(IuA)>Imax
     error('Ibias too high');
 end
 if abs(IuA)>125
