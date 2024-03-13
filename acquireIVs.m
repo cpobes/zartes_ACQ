@@ -26,7 +26,7 @@ if nargin==2
     Rf=3e3;%%%Rf
     averages=5;
     %%%%Fuente a usar: LNCS. Normal
-    sourceType='LNCS';%%% o 'Normal'.
+    sourceType='Normal';%%% o 'Normal'.
     softpolarity=1;
 elseif nargin==3
     opt=varargin{1};%%%%Pasar las opciones en una estructura!
@@ -117,7 +117,7 @@ for i=1:length(Ibvalues)
         mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
     end
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
-    if i==1, pause(2); end
+    %if i==1, pause(2); end
     
     %pause(1.5)
     

@@ -15,8 +15,9 @@ end
 
 multi=multi_init(0);
 step=0.06125;%step de la fte normal.
+Nsteps=100;
 %DeltaI=10*3.05;%%Delta de corriente en la fuente LNCS.
-DeltaI=10*step;%10*1.7;%?!%Delta de corriente en la fte normal en uA.
+DeltaI=Nsteps*step;%10*1.7;%?!%Delta de corriente en la fte normal en uA.
 %mS=8/3;%%%Slope en estado superconductor/3K
 %mN=0.3;%%Slope en estado normal.
 Rf=mag_readRf_FLL_CH(mag,nch);
@@ -24,7 +25,12 @@ Rf=mag_readRf_FLL_CH(mag,nch);
 Iaux1=mag_readImag_CH(mag,nch);
 Vaux1=multi_read(multi);
 %mag_setLNCSImag(mag,Iaux1+DeltaI);
-mag_setImag_CH(mag,Iaux1+DeltaI,nch);
+if abs(Iaux1)>abs(500-DeltaI)
+    signo=-1;
+else
+    signo=1;
+end
+mag_setImag_CH(mag,sign(Iaux1)*(abs(Iaux1)+signo*DeltaI),nch);%%%Ojo a la polaridad de Iaux1.
 pause(0.5);
 %Iaux2=mag_readLNCSImag(mag);
 Iaux2=mag_readImag_CH(mag,nch);
@@ -32,7 +38,10 @@ Vaux2=multi_read(multi);
 Slope=polarity*(Vaux2-Vaux1)/((Iaux2-Iaux1)*1e-6)/Rf;
 %mag_setLNCSImag(mag,Iaux1);%devolvemos al estado inicial.
 mag_setImag_CH(mag,Iaux1,nch);%devolvemos al estado inicial.
-fclose(multi);
+
+%fclose(multi);%%%OJO! Necesito multi para calcular la slope, pero
+%normalmente uso esta funcion dentro de la acq y si cierro el instrumento,
+%luego da error porque otras funciones tratar de usarlo!
 
 %Slope
 if Slope>1

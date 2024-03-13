@@ -41,8 +41,9 @@ fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
 %%%Check HW communication
 x=CheckHW('PrimaryAddresses.json');
 bad=[];
-for i=1:length(x.Instruments) %%%chequeamos instrumentos. Saltamos el LKS.
-    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'PXI'))%%%!!!PXI!!!
+%%%chequeamos instrumentos. Saltamos el LKS. Mar24 saltamos tb K220.
+for i=1:length(x.Instruments) 
+    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'K220'))
         bad(end+1)=i;
     end
 end
@@ -50,6 +51,8 @@ if ~isempty(bad)
     diary off;
     error('Error de Comunicación. Comprueba conexiones');
 end
+
+if(0)%%%Deshabilitamos uso K220 como fuente para la bobina. Ahora usamos LNCS.
 k220=k220_init(0);%%Ojo a cambios de Primary y GPIB.
 %%%La k220 a veces se inicializa bien, pero da error al enviar comandos. Se
 %%%corrije al comunicarse con ella desde el Ni-MAX.
@@ -57,6 +60,7 @@ if isnan(k220_CheckOUTPUT(k220))
     diary off;
     error('K220 Init OK, but Comunication Error. Try Reset from Ni-MAX');
 end
+end %%%ifk220. Ya no la usamos.Mar24.
 
 %opciones minimas necesarias.
 options.IVs.boolacq=1;
@@ -114,6 +118,7 @@ try
     options.squidOP=squidOP;
     fclose(mag);
 catch
+    diary off;
     error('Ojo default MAGdir=COM4. Error al leer squidOP');
 end
 
