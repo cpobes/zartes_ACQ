@@ -4,14 +4,17 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 %%%como argumento el handle al instrumento y un string para identificar el
 %%%nombre del fichero.
 
-%default config
+%default config para muestrear desde 1Hz a 100KHz.
 opt.RL=2e5;%def: 2e5
 opt.SR=2e5;%2e5
 comment='test';
+plotmode='V';
+
 %%%configuracion subsampleo. Pasar como opcion
 subsampling.bool=0;
 subsampling.NpointsDec=100;
 savebool=0;
+
 for i=1:length(varargin)
     if isstruct(varargin{i}) opt=varargin{i};savebool=0;end
     if ischar(varargin{i}) comment=varargin{i};savebool=1;end%
@@ -31,13 +34,14 @@ NpointsDec=subsampling.NpointsDec;
 Options.TimeOut=5;
 Options.channelList='1';
 
-[data,WfmI]=pxi_GetWaveForm(pxi,Options);
+[data,~]=pxi_GetWaveForm(pxi,Options);
 rg=skewness(data);
 
 ix=0;
-while abs(rg(2))>0.6 %%%%%Condición para filtrar lineas de base con pulsos! 0.004
+skewTHR=0.6;
+while abs(rg(2))>skewTHR %%%%%Condición para filtrar lineas de base con pulsos! 0.004
     if ix>10, disp('Bucle sobre GetWaveForm en PSD ejecutado 10 veces');break;end
-    [data,WfmI]=pxi_GetWaveForm(pxi,Options);
+    [data,~]=pxi_GetWaveForm(pxi,Options);
     rg=skewness(data);
     ix=ix+1;
 end
@@ -62,8 +66,28 @@ if(boolsubsampling)%%%subsampleo?
 end
 
 medfiltWindow=10;%%%<-Esto deberia ser configurable.
-ylimRange=[1e-7 1e-5];
 boolplot=1;
+if isfield(opt,'boolplot')
+    boolplot=opt.boolplot;
+end
+if isfield(opt,'plotmode')
+    plotmode=opt.plotmode;
+end
+%%%data preparation
+datos(:,1)=freq;
+datos(:,2)=sqrt(psd);
+if strcmp(plotmode,'I')&& isfield(opt,'circuit')
+    datos(:,2)=V2I(datos(:,2),opt.circuit);
+    str='ArHz';
+    comment=strcat(comment,'_I_',str);
+    ylimRange=[1e-11 1e-9];
+else
+    str='VrHz';
+    comment=strcat(comment,'_V_',str);
+    ylimRange=[1e-7 1e-5];
+end
+%%%
+
 if(boolplot) %%%plot?
     auxhandle=findobj('name','PXI_PSD');
     if isempty(auxhandle) 
@@ -75,9 +99,10 @@ if(boolplot) %%%plot?
     grid on
     subplot(2,1,2)
     %hold off
-    vrhz=medfilt1(sqrt(psd),medfiltWindow);
-    loglog(freq(:),vrhz(:),'.-','linewidth',2)
+    Drhz=medfilt1(datos(:,2),medfiltWindow);
+    loglog(freq(:),Drhz(:),'.-','linewidth',2)
     ylim(ylimRange),hold on
+    ylabel(str);
     %semilogx(freq,10*log10(psd),'.-')
     grid on
     %%%
@@ -89,8 +114,6 @@ if(boolplot) %%%plot?
     %semilogx(logspace(0,6),20*log10(I2V(noisemodel,circuit)),'r')
 end
 
-datos(:,1)=freq;
-datos(:,2)=sqrt(psd);
 if(savebool)
     file=strcat('PXI_noise_',comment,'.txt');
     save(file,'datos','-ascii');%salva los datos a fichero. Esto debería ser también configurable.
