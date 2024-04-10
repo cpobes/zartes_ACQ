@@ -6,7 +6,7 @@ function out=Put_TES_toNormal_State_CH(mag,Imax,nch)
 %%% usar pero para alimentar la bobina. Imas si se usa como valor maximo de
 %%% corriente en la source normal por si no queremos pasar los 500uA.
 
-Ilimite=3e3;%%%Corriente limite a no sobrepasar en la LNCS.
+Ilimite=25e3;%%%Corriente limite a no sobrepasar en la LNCS.
 signo=sign(Imax);
 
 % step=200;%%%Step para ir aumentando la corriente en uA.

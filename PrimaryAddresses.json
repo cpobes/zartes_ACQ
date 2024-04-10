@@ -6,7 +6,8 @@
  "AVS47":	21},
 
 "SERIAL":{
- "mag": "COM3"},
+ "mag": "COM3",
+ "pre":"COM6"},
 
 "PXI":{
  "pxi5922": "PXI1Slot3"}

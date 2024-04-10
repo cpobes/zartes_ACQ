@@ -1,6 +1,7 @@
 function multi=multi_init(varargin)
 %Función para inicializar una sesión con el multimetro HP.
 % 
+Multi_Primary_Address=4;%leer from .json?
 if nargin == 0
     gpib_dir=1;%%%antes default = 0.
 else
@@ -9,12 +10,12 @@ end
 
 %%%%%%%%%%%%Error instrfind!!!!!!!!!!!
 %%clear
- aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',4);
+ aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',Multi_Primary_Address);
  for i=1:length(aux) delete(aux(i));end
 
-multi=instrfind('type','gpib','Status','open','primaryaddress',4);
+multi=instrfind('type','gpib','Status','open','primaryaddress',Multi_Primary_Address);
 if isempty(multi)    
-    multi=gpib('ni',gpib_dir,4);%dir:1 puede cambiar
+    multi=gpib('ni',gpib_dir,Multi_Primary_Address);%dir:1 puede cambiar
     fopen(multi); %cerrar al final.
     multi.EOSmode='read';
 end
@@ -22,11 +23,16 @@ end
 
 %fprintf(dsa,'ID?');
 %device=fscanf(dsa)%devuelve HP3562A. Permite comprobar si estamos leyendo el 
-device=query(multi,'ID?')%esta instruccion es más directa.
+device=query(multi,'ID?'); %esta instruccion es más directa.
 %if ~strcmpi('HP3458A',device(1:end-2)), return;end %dispositivo
 %correcto?Este comando fallaba pq ademas de devolver el código, devuelve también un
 %array de valores de voltaje.
-if ~strcmpi('HP3458A',device(1:7)), return;end %dispositivo correcto?
+x=strfind(device,'HP3458A');
+if isempty(x)
+%if ~strcmpi('HP3458A',device(1:7)) %Apr24 da error pq device sale vacío
+%aunq la comunicacion es buena.
+    warning('Comprueba comunicacion con Multi');
+end %dispositivo correcto?
 
 %%% Importante para poder saber si la conexión es buena.
 % device(8:9) = char([13 10]);  % Al parecer estos dos caracteres conforman

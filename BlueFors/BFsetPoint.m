@@ -28,7 +28,7 @@ end
 if nargin>1
     config=varargin{1};%puede ser struct o filename
 end
-if nargin>1 & isstruct(config)
+if nargin>1 && isstruct(config)
     if isfield(varargin{1},'P')%para pasar el pid como estructura directamente.
         pid=varargin{1};
         config=BFgetHeaterConfig;
@@ -36,7 +36,7 @@ if nargin>1 & isstruct(config)
         config.control_algorithm_settings.integral=pid.I;
         config.control_algorithm_settings.derivative=pid.D;
     end
-elseif nargin>1 & ischar(config)%para pasar configuracion completa con .json
+elseif nargin>1 && ischar(config)%para pasar configuracion completa con .json
     config=loadjson(config);
 end
 %%%runs PID
@@ -71,7 +71,7 @@ else
 %         wscWrite.send(message)
 %         wscWrite.close()
     end
-    if Temp>0 & boolmonitor
+    if Temp>0 && boolmonitor
         %pause(1800);
         %%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
         outdata=BFmonitorMCTemp(Temp);

@@ -24,43 +24,13 @@ if nargin==0 %show options prototype
     options.optIV.sourceType='normal';
     options.optIV.boolplot=1;
     options.optIV.averages=5;
+    options.excludeList={'LKS','K220'};
     varargout{1}=options;
     return;
 end
 
 x=strsplit(pwd,'\');
 if isempty(strfind(x{end},'RUN')) error('Lanza la ACQ desde una carpeta con formato RUNnnn');end
-
-%%%Setting Log
-if strcmp(get(0,'Diary'),'on') diary off;end
-DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'.log');
-diary(DiaryFile);%%%Diary ON
-runname=strsplit(pwd,'\');
-fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
-
-%%%Check HW communication
-x=CheckHW('PrimaryAddresses.json');
-bad=[];
-%%%chequeamos instrumentos. Saltamos el LKS. Mar24 saltamos tb K220.
-for i=1:length(x.Instruments) 
-    if(~strcmp(x.Status(i),'OK')&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'K220'))
-        bad(end+1)=i;
-    end
-end
-if ~isempty(bad)
-    diary off;
-    error('Error de Comunicación. Comprueba conexiones');
-end
-
-if(0)%%%Deshabilitamos uso K220 como fuente para la bobina. Ahora usamos LNCS.
-k220=k220_init(0);%%Ojo a cambios de Primary y GPIB.
-%%%La k220 a veces se inicializa bien, pero da error al enviar comandos. Se
-%%%corrije al comunicarse con ella desde el Ni-MAX.
-if isnan(k220_CheckOUTPUT(k220))
-    diary off;
-    error('K220 Init OK, but Comunication Error. Try Reset from Ni-MAX');
-end
-end %%%ifk220. Ya no la usamos.Mar24.
 
 %opciones minimas necesarias.
 options.IVs.boolacq=1;
@@ -78,6 +48,45 @@ optIV.averages=5;
 if nargin>2
     options=varargin{1};
 end
+
+%%%Setting Log
+if strcmp(get(0,'Diary'),'on') diary off;end
+DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'.log');
+diary(DiaryFile);%%%Diary ON
+runname=strsplit(pwd,'\');
+fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
+
+%%%Check HW communication
+x=CheckHW('PrimaryAddresses.json');
+bad=[];
+if isfield(options,'excludeList')
+    excludeList=options.excludeList;
+else
+    excludeList={'LKS','K220'};
+end
+%%%chequeamos instrumentos. Saltamos el LKS. Mar24 saltamos tb K220.
+for i=1:length(x.Instruments) 
+    %%%if strcmp(x.Instruments(i),'DSA') continue;end %%%%
+    if sum(strcmp(x.Instruments(i),excludeList)) continue;end
+    if(~strcmp(x.Status(i),'OK') %%%&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'K220'))
+        bad(end+1)=i;
+    end
+end
+if ~isempty(bad)
+    diary off;
+    error('Error de Comunicación. Comprueba conexiones');
+end
+
+if(0)%%%Deshabilitamos uso K220 como fuente para la bobina. Ahora usamos LNCS.
+    k220=k220_init(0);%%Ojo a cambios de Primary y GPIB.
+    %%%La k220 a veces se inicializa bien, pero da error al enviar comandos. Se
+    %%%corrije al comunicarse con ella desde el Ni-MAX.
+    if isnan(k220_CheckOUTPUT(k220))
+        diary off;
+        error('K220 Init OK, but Comunication Error. Try Reset from Ni-MAX');
+    end
+end %%%ifk220. Ya no la usamos.Mar24.
+
 if isfield(options,'comment')
     comment=options.comment;
 else

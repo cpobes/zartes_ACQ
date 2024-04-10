@@ -1,6 +1,7 @@
 function dsa=hp_init(varargin)
 %Función para inicializar una sesión con el HP.
 % 
+DSA_Primary_Address=11;%leer from .json?
 if nargin == 0
     gpib_dir=1;
 else
@@ -8,13 +9,13 @@ else
 end
 
 %%clear
-aux=instrfind('type','gpib','Status','close','Boardindex',gpib_dir,'primaryaddress',11);
+aux=instrfind('type','gpib','Status','close','Boardindex',gpib_dir,'primaryaddress',DSA_Primary_Address);
 for i=1:length(aux) delete(aux(i));end
 
 %dsa=instrfind('Status','open');%ojo! puede haber otros devices abiertos!
-dsa=instrfind('type','gpib','Status','open','primaryaddress',11);
+dsa=instrfind('type','gpib','Status','open','primaryaddress',DSA_Primary_Address);
 if isempty(dsa)    
-    dsa=gpib('ni',gpib_dir,11);%dir:1 puede cambiar
+    dsa=gpib('ni',gpib_dir,DSA_Primary_Address);%dir:1 puede cambiar
     fopen(dsa); %cerrar al final.
 end
 %instrfind; %muestra los instrumentos y su estado.

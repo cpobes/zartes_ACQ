@@ -43,6 +43,21 @@ elseif nargin==3
     %k220=opt.k220;%%%
 end
 
+%%%use fan in fan out
+%%%%
+useFanInOut=1;%%%Abril 2024
+if useFanInOut
+    fan=fanout_init();
+    switch sourceCH
+        case 1
+            CH='b';
+        case 2
+            CH='B';
+    end
+    fanout_set(fan,CH);
+    fclose(fan);
+end
+
 mag=mag_init();
 multi=multi_init(0);%
 
@@ -50,9 +65,10 @@ mag_setRf_FLL_CH(mag,Rf,sourceCH);%3e3
 %%%Ponemos el máximo de corriente 
 signo=sign(Ibvalues(1));
 
-if ~Put_TES_toNormal_State_CH(mag,Ibvalues(1),sourceCH)%%%,k220. signo
+if ~Put_TES_toNormal_State_CH(mag,Ibvalues(1),sourceCH) && abs(Ibvalues(1))>abs(Ibvalues(2))%%%,k220. signo
     %instrreset;
-    error('El TES no se ha podido poner en estado normal');
+    %error('El TES no se ha podido poner en estado normal');
+    warning('El TES no se ha podido poner en estado normal');
 end
 
 if Ibvalues(1)>0

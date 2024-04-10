@@ -7,6 +7,7 @@ function [state,varargout]=Check_TES_State_CH(mag,nch,varargin)
 %%%%tenemos mS=8000 para Rf=3K -> ms'=2.67. y mN=900 tb para Rf=3K por lo
 %%%%que mN'=0.3. Podemos usar por tanto mcritica=1 como criterio.
 
+stack=dbstack('-completenames');%used later.
 if nargin==3
     polarity=varargin{1};
 else
@@ -42,6 +43,13 @@ mag_setImag_CH(mag,Iaux1,nch);%devolvemos al estado inicial.
 %fclose(multi);%%%OJO! Necesito multi para calcular la slope, pero
 %normalmente uso esta funcion dentro de la acq y si cierro el instrumento,
 %luego da error porque otras funciones tratar de usarlo!
+if numel(stack) >= 2
+   %fprintf('Caller is %s line %d in file %s.\n', stack(2).name, stack(2).line, stack(2).file)
+else
+   %fprintf('No caller.\n')
+   %when no caller, it is called from command line, so close the multi.
+   fclose(multi);
+end
 
 %Slope
 if Slope>1
