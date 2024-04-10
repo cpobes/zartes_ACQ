@@ -2,11 +2,18 @@ function dsa=hp_init(varargin)
 %Función para inicializar una sesión con el HP.
 % 
 DSA_Primary_Address=11;%leer from .json?
-if nargin == 0
+
+if nargin == 0%obsoleto
     gpib_dir=1;
 else
     gpib_dir=varargin{1};
 end
+
+%robust gpib_dir find.
+x=instrhwinfo('visa','ni');
+y=regexp(x.ObjectConstructorName,strcat('GPIB(?<gpib>\d)::',num2str(DSA_Primary_Address),'::'),'names');
+y=y{~cellfun(@isempty,y)};
+gpib_dir=str2num(y.gpib);
 
 %%clear
 aux=instrfind('type','gpib','Status','close','Boardindex',gpib_dir,'primaryaddress',DSA_Primary_Address);

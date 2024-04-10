@@ -54,23 +54,23 @@ for i=1:length(info.ObjectConstructorName)
     %info.ObjectConstructorName(i)
     multiStatus=strfind(info.ObjectConstructorName(i),strcat('::',num2str(multiPA),'::'));
     %if multiStatus{1} multiString='OK'; else multiString='NOT FOUND';end
-    if ~isempty(multiStatus{1})&&strcmp(multiString,'NOT FOUND') multiString='OK';end
+    if ~isempty(multiStatus{1})&&strcmp(multiString,nofound) multiString='OK';end
         
     dsaStatus=strfind(info.ObjectConstructorName(i),strcat('::',num2str(dsaPA),'::'));
     %if dsaStatus{1} dsaString='OK'; else dsaString='NOT FOUND';end
-    if ~isempty(dsaStatus{1})&&strcmp(dsaString,'NOT FOUND') dsaString='OK';end
+    if ~isempty(dsaStatus{1})&&strcmp(dsaString,nofound) dsaString='OK';end
         
     k220Status=strfind(info.ObjectConstructorName(i),strcat('::',num2str(k220PA),'::'));
     %if k220Status{1} k220String='OK'; else k220String='NOT FOUND';end
-    if ~isempty(k220Status{1})&&strcmp(k220String,'NOT FOUND') k220String='OK';end
+    if ~isempty(k220Status{1})&&strcmp(k220String,nofound) k220String='OK';end
     
     LKSStatus=strfind(info.ObjectConstructorName(i),strcat('::',num2str(LKSPA),'::'));
     %if LKSStatus{1} LKSString='OK'; else LKSString='NOT FOUND';end
-    if ~isempty(LKSStatus{1})&&strcmp(LKSString,'NOT FOUND') LKSString='OK';end
+    if ~isempty(LKSStatus{1})&&strcmp(LKSString,nofound) LKSString='OK';end
     
     AVSStatus=strfind(info.ObjectConstructorName(i),strcat('::',num2str(AVS47PA),'::'));
     %if AVSStatus{1} AVSString='OK'; else AVSString='NOT FOUND';end
-    if ~isempty(AVSStatus{1})&&strcmp(AVSString,'NOT FOUND') AVSString='OK';end
+    if ~isempty(AVSStatus{1})&&strcmp(AVSString,nofound) AVSString='OK';end
     
     %%%el puerto serie se lista siempre aunque la electronica este apagada.
 %     magStatus=strfind(info.ObjectConstructorName(i),strcat('ASRL',num2str(magCOM)));
