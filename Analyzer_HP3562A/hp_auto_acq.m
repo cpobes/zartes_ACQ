@@ -22,6 +22,22 @@ else
     HPopt.sourceCH=2;
 end
 sourceCH=HPopt.sourceCH;
+
+%%%use fan in fan out
+%%%%
+useFanInOut=1;%%%Abril 2024
+if useFanInOut
+    fan=fanout_init();
+    switch sourceCH
+        case 1
+            CH='b';
+        case 2
+            CH='B';
+    end
+    fanout_set(fan,CH);
+    fclose(fan);
+end
+
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);
 

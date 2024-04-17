@@ -67,8 +67,10 @@ end
 %%%chequeamos instrumentos. Saltamos el LKS. Mar24 saltamos tb K220.
 for i=1:length(x.Instruments) 
     %%%if strcmp(x.Instruments(i),'DSA') continue;end %%%%
-    if sum(strcmp(x.Instruments(i),excludeList)) continue;end
-    if(~strcmp(x.Status(i),'OK') %%%&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'K220'))
+    if sum(strcmp(x.Instruments(i),excludeList)) 
+        continue;
+    end
+    if ~strcmp(x.Status(i),'OK') %%%&& ~strcmp(x.Instruments(i),'LKS') && ~strcmp(x.Instruments(i),'K220'))
         bad(end+1)=i;
     end
 end

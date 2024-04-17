@@ -19,6 +19,22 @@ else
 end
 %%%%%%%%%%%%%%try to put TES in N state.%%%%%%%%%%%%%%%
 sourceCH=PXIopt.sourceCH;
+
+%%%use fan in fan out
+%%%%
+useFanInOut=1;%%%Abril 2024
+if useFanInOut
+    fan=fanout_init();
+    switch sourceCH
+        case 1
+            CH='b';
+        case 2
+            CH='B';
+    end
+    fanout_set(fan,CH);
+    fclose(fan);
+end
+
 Put_TES_toNormal_State_CH(mag,IbValues(1),sourceCH);%%%%
 
 %Check_TES_State(mag,multi)
