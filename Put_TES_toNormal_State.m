@@ -3,7 +3,7 @@ function out=Put_TES_toNormal_State(mag,Imax)
 %%%%LNCS. La Imax es simplemente el signo para ponerlo con corrientes
 %%%%positivas o negativas.
 
-Ilimite=5000;%%%Corriente limite a no sobrepasar.
+Ilimite=25000;%%%Corriente limite a no sobrepasar.
 
 % step=200;%%%Step para ir aumentando la corriente en uA.
  signo=sign(Imax);

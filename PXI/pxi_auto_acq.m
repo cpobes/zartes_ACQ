@@ -22,7 +22,7 @@ sourceCH=PXIopt.sourceCH;
 
 %%%use fan in fan out
 %%%%
-useFanInOut=1;%%%Abril 2024
+useFanInOut=0;%%%Abril 2024
 if useFanInOut
     fan=fanout_init();
     switch sourceCH

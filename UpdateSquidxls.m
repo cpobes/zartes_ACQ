@@ -13,7 +13,7 @@ end
 if ~isempty(strfind(file,'CH2'))
     name={data.SQUIDs.CH2.name};
     size={data.SQUIDs.CH2.size};
-    xlswrite(file,name,1,'C2');
-    xlswrite(file,fecha,1,'D2');
-    xlswrite(file,size,1,'I2');
+    xlswrite(file,name,1,'C3');
+    xlswrite(file,fecha,1,'D3');
+    xlswrite(file,size,1,'I3');
 end

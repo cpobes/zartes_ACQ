@@ -31,7 +31,7 @@ if ~exist(Thismonth, 'dir')
     mkdir(Thismonth);
     cd(Thismonth);
     %jsave(strcat('Init_',Thismonth,'_',Thisyear),'vars',{'data'});
-    if ~isempty(configfile) copyfile(strcat(calldir,'/',configfile),strcat(pwd,'/','Init_',Thismonth,'_',Thisyear,'.json'));end
+    if ~isempty(configfile) copyfile(strcat(default_data_dir,'/',configfile),strcat(pwd,'/','Init_',Thismonth,'_',Thisyear,'.json'));end
     mkdir('R(T)s')
     Newxls=strcat('R(T)s/Muestras_',Thisyear,'_',Thismonth,'.xlsx');
     copyfile(strcat(default_data_dir,'\','TemplateMuestrasRT.xlsx'),...
@@ -62,6 +62,8 @@ if ~exist(Thismonth, 'dir')
     delete('Summary_Desktop_Datos_Nuevo_Dilucion.xls')
     cd('../..')
     disp('Carpetas Creadas para Nueva Enfriada');
+    cd(calldir)
 else
+    cd(calldir)
     error('Call the function with a new Month Name');
 end

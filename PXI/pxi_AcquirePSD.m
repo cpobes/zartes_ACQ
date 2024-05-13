@@ -46,7 +46,7 @@ while abs(rg(2))>skewTHR %%%%%Condición para filtrar lineas de base con pulsos! 
     ix=ix+1;
 end
 [psd,freq]=PSD(data);
-
+%freq(end)
 %size(freq), size(psd)
 
 if(boolsubsampling)%%%subsampleo?
@@ -65,7 +65,7 @@ if(boolsubsampling)%%%subsampleo?
     freq=xx;
 end
 
-medfiltWindow=10;%%%<-Esto deberia ser configurable.
+medfiltWindow=1;%10;%%%<-Esto deberia ser configurable.
 boolplot=1;
 if isfield(opt,'boolplot')
     boolplot=opt.boolplot;
