@@ -90,7 +90,7 @@ for i=1:length(file)
     copyfile(strcat(path,file{i}),name);
 end
 %%% Rellenamos .xls
-xlsfile=ls('Summary_2023*.xls');%%%!
+xlsfile=ls('Summary_*.xls');%%%!
 [~,txt]=xlsread(xlsfile,2,'A:A');%%%Asumimos que estamos en el dir correcto.
 index=num2str(numel(txt)+1);
 rango=strcat('A',index,':D',index);

@@ -110,17 +110,17 @@ pulseoptions.options.longrun=options.longrun;
 pulseoptions.options.boolplot=options.boolplot;
 %pxi_Pulses_Configure(pxi,pulseoptions);%si hacemos longrun necesitamos configurar al menos una vez al principio.
 
-if(0)%%%Confirgurar. Esto es para poner o no el TES en el OP al empezar. Mejor no hacerlo si ya esta polarizado.
+if(0)%%%Configurar. Esto es para poner o no el TES en el OP al empezar. Mejor no hacerlo si ya esta polarizado.
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias*1e6,SourceCH);
     mag_LoopResetCH(mag,SourceCH);
 end
 
 %CalAmpArray=[25.022 49.98   75.0069   100.029];%valores D11
-CalAmpArray=[99.73 100.2087];
+%CalAmpArray=[99.73 100.2087];
 
 while i<Npulsos && j<1000 && ~exist('stop.txt','file')
-    mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
+    %mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
 
     try   
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
@@ -160,7 +160,7 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
             icounter=icounter+1;
             if icounter>100 break;end%por si acaso.
         end
-        [st,sl]=Check_TES_State_CH(mag,SourceCH,-1)
+        [st,sl]=Check_TES_State_CH(mag,SourceCH,1);
         if strcmp(st,'S')
             Ibias=Ibias+0.06;
             disp(['Ibias cambiado a: ' num2str(Ibias)])

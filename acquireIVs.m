@@ -28,6 +28,7 @@ if nargin==2
     %%%%Fuente a usar: LNCS. Normal
     sourceType='Normal';%%% o 'Normal'.
     softpolarity=1;
+    useFanInOut=1;
 elseif nargin==3
     opt=varargin{1};%%%%Pasar las opciones en una estructura!
     sourceCH=opt.sourceCH;
@@ -40,12 +41,17 @@ elseif nargin==3
     else
         softpolarity=1;
     end
+    if isfield(opt,'useFanInOut')
+        useFanInOut=opt.useFanInOut;
+    else
+        useFanInOut=1;
+    end
     %k220=opt.k220;%%%
 end
 
 %%%use fan in fan out
 %%%%
-useFanInOut=1;%%%Abril 2024
+%useFanInOut=1;%%%Abril 2024
 if useFanInOut
     fan=fanout_init();
     switch sourceCH
