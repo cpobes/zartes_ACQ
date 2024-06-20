@@ -45,6 +45,6 @@ end
 
 if nargin>1 && boolsave
     comment=varargin{1};
-    file=strcat('PXI_TimeSample_',comment,'.txt');
+    file=strcat('PXI_PulseSample_',comment,'.txt');
     save(file,'data','-ascii');%salva los datos a fichero.
 end
