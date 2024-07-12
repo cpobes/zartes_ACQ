@@ -47,7 +47,7 @@ end
 if isfield(options,'Ibias')
     Ibias=options.Ibias;%%%Ojo a si se define como A o como uA!!!!
 else
-    Ibias=round(mag_readImag_CH(mag,SourceCH))*1e-6;
+    Ibias=round(mag_readImag_CH(mag,SourceCH));
 end
 if isfield(options,'polarity')
     polarity=options.polarity;
@@ -77,7 +77,7 @@ end
 fits.createTbl(fptr,'binary',0,ttype,tform,{},'pulsos')%Tabla para los pulsos
 fits.writeKey(fptr,'SR',SR,'sampling rate');
 fits.writeKey(fptr,'RL',RL,'record length');
-fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en A');
+fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
 fits.writeKey(fptr,'Rf',Rf,'Resistencia de Feedback en Ohm');
 fits.writeKey(fptr,'Tmc',Tmc,'Temperatura de la M/C');
 if isfield(options,'I0')
@@ -112,7 +112,7 @@ pulseoptions.options.boolplot=options.boolplot;
 
 if(0)%%%Configurar. Esto es para poner o no el TES en el OP al empezar. Mejor no hacerlo si ya esta polarizado.
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
-    mag_setImag_CH(mag,Ibias*1e6,SourceCH);
+    mag_setImag_CH(mag,Ibias,SourceCH);
     mag_LoopResetCH(mag,SourceCH);
 end
 
@@ -145,7 +145,7 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         fprintf(2,'%s\n',Error.message);
         %Put_TES_toNormal_State_CH(mag,500,SourceCH,options.k220);
         Put_TES_toNormal_State_CH(mag,500,SourceCH);
-        mag_setImag_CH(mag,Ibias*1e6,SourceCH);
+        mag_setImag_CH(mag,Ibias,SourceCH);
         mag_LoopResetCH(mag,SourceCH);
         Vout=multi_read(multi);
         %%monitoreo de vout
@@ -164,7 +164,7 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         if strcmp(st,'S')
             Ibias=Ibias+0.06;
             disp(['Ibias cambiado a: ' num2str(Ibias)])
-            mag_setImag_CH(mag,Ibias*1e6,SourceCH);
+            mag_setImag_CH(mag,Ibias,SourceCH);
             fprintf(2,'%s\n',strcat('Ibias set to: ',num2str(Ibias)));
         end
         j=j+1

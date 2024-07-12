@@ -11,7 +11,7 @@ function datos=hp_measure_TF(dsa,varargin)
     if(x==5) hp_ss_config(dsa);end
     
     if nargin==2
-        V=round(abs(varargin{1}*1e4*1e3));%%%Expresado en mV
+        V=round(abs(varargin{1}*1e4*1e3));%%%Expresado en mV. 1e-6=10mV.
         str=strcat('SRLV ',' ',num2str(V),'mV')%%amplitud de excitación*10
     else
         str=strcat('SRLV 50mV')

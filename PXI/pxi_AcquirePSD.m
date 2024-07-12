@@ -8,7 +8,7 @@ function datos=pxi_AcquirePSD(pxi,varargin)
 opt.RL=2e5;%def: 2e5
 opt.SR=2e5;%2e5
 comment='test';
-plotmode='V';
+plotmode='V';%%%V: Voltage, I:current.
 
 %%%configuracion subsampleo. Pasar como opcion
 subsampling.bool=0;
@@ -66,6 +66,7 @@ if(boolsubsampling)%%%subsampleo?
 end
 
 medfiltWindow=1;%10;%%%<-Esto deberia ser configurable.
+
 boolplot=1;
 if isfield(opt,'boolplot')
     boolplot=opt.boolplot;

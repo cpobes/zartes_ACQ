@@ -7,6 +7,10 @@ function data=pxi_AcquirePulse(pxi,varargin)
 boolplot=1;
 boolsave=1;
 longrun=0;
+
+Options.TimeOut=300;%%%60;%%%def:12.
+Options.channelList='1';%1
+
 if nargin==3
     conf=varargin{2};
     if isfield(conf,'options')
@@ -14,14 +18,14 @@ if nargin==3
         boolplot=conf.options.boolplot;
         boolsave=~longrun;%%%Si es run largo, no guardamos el temp.
     end
+    if isfield(conf,'TimeOut')
+        Options.TimeOut=conf.TimeOut;
+    end
     if ~longrun pxi_Pulses_Configure(pxi,conf);end  %%%si es longrun no reconfiguramos cada vez, pero hay que hacerlo 1 vez al principio.
 else
     %pxi_Pulses_Configure(pxi);%%%!configuraba por defecto !BUG.
 end
 %pxi_Pulses_Configure(pxi);
-
-Options.TimeOut=60;%%%def:12.
-Options.channelList='1';
 
 %stdpulso=0;
 %while stdpulso<0.01
@@ -30,12 +34,12 @@ Options.channelList='1';
 %end
 
 if(boolplot) %%%plot?
-    boolremoveoffset=1;%config.
+    boolremoveoffset=0;%config.
      auxhandle_pulsos=findobj('name','Pulsos');
      if isempty(auxhandle_pulsos) figure('name','Pulsos'); auxhandle_pulsos=findobj('name','Pulsos'); else figure(auxhandle_pulsos);end
     [psd,freq]=PSD(data);
     subplot(2,1,1)
-    plot(data(:,1),data(:,2)-boolremoveoffset*data(1,2),'.-');
+    plot(data(:,1),data(:,2)-boolremoveoffset*data(1,2),'.-');%%%!!!
     grid on
     subplot(2,1,2)
     loglog(freq,sqrt(psd),'.-')

@@ -37,6 +37,7 @@ if nargin==1
 end
 
 %%% si tenemos modulo trigger.
+%TriggerConf.Source='0';%%%
 TriggerConf.Level=1;
 TriggerConf.Slope=1;
 TriggerConf.Coupling=1;
@@ -50,6 +51,7 @@ pxi_ConfigureTrigger(pxi,TriggerConf);
 
 %TriggerConf.Source='NISCOPE_VAL_EXTERNAL';
 set(get(pxi,'triggering'),'trigger_source','NISCOPE_VAL_EXTERNAL');%%%%Hacerlo a través de ConfigureTrigger da error!!!pq?!
+%set(get(pxi,'triggering'),'trigger_source','NISCOPE_VAL_RTSI_0');
 
 if TriggerConf.Type==1003.0
     HighLevel=TriggerConf.Level;

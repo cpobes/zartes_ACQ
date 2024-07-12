@@ -131,6 +131,7 @@ for i=1:length(IbValues)
     nopt.RL=2e5;
     nopt.subsampling.bool=0;
     nopt.subsampling.NpointsDec=100;
+    nopt.boolplot=0;
     if(PXIopt.Noise)
         if isfield(PXIopt,'nSR')
             nopt.SR=PXIopt.nSR;
@@ -141,6 +142,9 @@ for i=1:length(IbValues)
         if isfield(PXIopt,'subsampling')
             nopt.subsampling.bool=PXIopt.subsampling.bool;
             nopt.subsampling.NpointsDec=PXIopt.subsampling.NpointsDec;
+        end
+        if isfield(PXIopt,'boolplot')
+            nopt.boolplot=PXIopt.boolplot;
         end
         mag_LoopResetCH(mag,sourceCH);
         mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
