@@ -121,7 +121,7 @@ end
 %%%
 
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
-psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
+psl=1;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 verbose=1;
 t0start=now;
 for i=1:length(Ibvalues)

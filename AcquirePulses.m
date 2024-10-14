@@ -8,6 +8,9 @@ function AcquirePulses(options)
 
 %%% Version Feb2024. Eliminamos check manual de Vout y fijamos el
 %%% autoreset.
+
+%%%Nota Sept2024: falta implementar uso o no de FanInOut y programar 
+%%%el PRE. De momento se hace manual.
 import matlab.io.*
 uri='http://192.168.2.121:5001/channel/measurement/latest';
 
@@ -108,9 +111,13 @@ pulseoptions.SR=options.SR;
 pulseoptions.RL=options.RL;
 pulseoptions.options.longrun=options.longrun;
 pulseoptions.options.boolplot=options.boolplot;
-%pxi_Pulses_Configure(pxi,pulseoptions);%si hacemos longrun necesitamos configurar al menos una vez al principio.
+if isfield(options,'TriggerType')
+    pulseoptions.TriggerType=options.TriggerType;
+end
+pxi_Pulses_Configure(pxi,pulseoptions);%si hacemos longrun necesitamos configurar al menos una vez al principio.
 
-if(0)%%%Configurar. Esto es para poner o no el TES en el OP al empezar. Mejor no hacerlo si ya esta polarizado.
+%if(1)%%%Configurar. Esto es para poner o no el TES en el OP al empezar. Mejor no hacerlo si ya esta polarizado.
+if abs(Ibias-mag_readImag_CH(mag,SourceCH))>1
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias,SourceCH);
     mag_LoopResetCH(mag,SourceCH);
@@ -174,6 +181,7 @@ end
 %mejor no desactivarlo pq si salta el Vout, se calienta todo.
 fits.closeFile(fptr)
 disconnect(pxi),delete(pxi)
+diary off;
 catch Error
     diary off;
     disp(Error.message)

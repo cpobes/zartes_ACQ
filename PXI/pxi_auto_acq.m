@@ -22,7 +22,11 @@ sourceCH=PXIopt.sourceCH;
 
 %%%use fan in fan out
 %%%%
-useFanInOut=0;%%%Abril 2024
+if isfield(PXIopt,'useFanInOut')
+    useFanInOut=PXIopt.useFanInOut;
+else
+    useFanInOut=0;%%%Abril 2024
+end
 if useFanInOut
     fan=fanout_init();
     switch sourceCH
@@ -116,6 +120,19 @@ for i=1:length(IbValues)
             %%%%necesaria.
             excitacion=50;
         end
+        %%%
+        if useFanInOut
+            fan=fanout_init();
+            switch sourceCH
+                case 1
+                    sCH='a';
+                case 2
+                    sCH='A';
+            end
+            fanout_set(fan,sCH);
+            fclose(fan);
+        end
+        %%%
         TF=pxi_AcquireTF(pxi,excitacion);
         %%%datos=pxi_measure_TF(dsa,IbValues(i)*1e-6*0.02);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         file=strcat('PXI_TF_',Itxt,'uA','.txt');
@@ -163,6 +180,21 @@ for i=1:length(IbValues)
         end
         %%%%%%%
         pause(1)
+        %%%
+        if useFanInOut
+            fan=fanout_init();
+            switch sourceCH
+                case 1
+                    CH='b';
+                case 2
+                    CH='B';
+            end
+            fanout_open(fan);
+            pause(2.5)
+            fanout_set(fan,CH);
+            fclose(fan);
+        end
+        %%%
         aux=pxi_AcquirePSD(pxi,nopt);
         datos=aux;
         for jj=1:n_avg-1%%%Ya hemos adquirido una.

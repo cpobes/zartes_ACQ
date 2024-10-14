@@ -41,10 +41,12 @@ if(boolplot) %%%plot?
     subplot(2,1,1)
     plot(data(:,1),data(:,2)-boolremoveoffset*data(1,2),'.-');%%%!!!
     grid on
+    drawnow
     subplot(2,1,2)
     loglog(freq,sqrt(psd),'.-')
     %semilogx(freq,10*log10(psd),'.-')
     grid on
+    drawnow
 end
 
 if nargin>1 && boolsave

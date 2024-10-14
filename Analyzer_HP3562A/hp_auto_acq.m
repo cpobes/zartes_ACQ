@@ -25,7 +25,12 @@ sourceCH=HPopt.sourceCH;
 
 %%%use fan in fan out
 %%%%
-useFanInOut=0;%%%Abril 2024
+if isfield(HPopt,'useFanInOut')
+    useFanInOut=HPopt.useFanInOut;
+else
+    useFanInOut=0;%%%Abril 2024
+end
+
 if useFanInOut
     fan=fanout_init();
     switch sourceCH
@@ -98,7 +103,7 @@ for i=1:length(IbValues)
     %Itxt=num2str(IbValues(i));
     Itxt=num2str(ix);
     
-    %mide TF
+    %%%%%%%%%%%%%%%%mide TF
     if(HPopt.TF)
         %datos=hp_measure_TF(dsa); %%% Versión que usa 20mV de excitación por defecto
         mag_LoopResetCH(mag,sourceCH);
@@ -121,6 +126,19 @@ for i=1:length(IbValues)
         if Excitacion==0
             Excitacion=50*1e-7;%!
         end
+        %%%
+        if useFanInOut
+            fan=fanout_init();
+            switch sourceCH
+                case 1
+                    sCH='a';
+                case 2
+                    sCH='A';
+            end
+            fanout_set(fan,sCH);
+            fclose(fan);
+        end
+        %%%
         datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         %datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');
@@ -146,11 +164,25 @@ for i=1:length(IbValues)
             rangoindx=rangoindx+1;
             if rangoindx>25 break;end
         end
-        %%%%%%%
+        %%%%%%
+        hp_noise_config(dsa);
+        %%%
+        if useFanInOut
+            fan=fanout_init();
+            switch sourceCH
+                case 1
+                    CH='b';
+                case 2
+                    CH='B';
+            end
+            fanout_open(fan);%para apagar la salida de la source para Zs.
+            pause(2.5)
+            fanout_set(fan,CH);
+            fclose(fan);
+        end
+        %%%
         hp_single_CAL(dsa);
         pause(35); %%%(el CAl tarda entre 29-32seg).
-        
-        hp_noise_config(dsa);
         datos=hp_measure_noise(dsa);
         file=strcat('HP_noise_',Itxt,'uA','.txt');
         save(file,'datos','-ascii');%salva los datos a fichero.

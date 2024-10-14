@@ -38,7 +38,7 @@ Options.channelList='1';
 rg=skewness(data);
 
 ix=0;
-skewTHR=0.6;
+skewTHR=0.6;%%%0.6
 while abs(rg(2))>skewTHR %%%%%Condición para filtrar lineas de base con pulsos! 0.004
     if ix>10, disp('Bucle sobre GetWaveForm en PSD ejecutado 10 veces');break;end
     [data,~]=pxi_GetWaveForm(pxi,Options);

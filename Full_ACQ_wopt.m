@@ -14,6 +14,7 @@ if nargin==0 %show options prototype
     options.Bscan.TempsArray=[];
     options.ZsNoise.boolacq=0;
     options.ZsNoise.TempsArray=[];
+    options.ZsNoise.useFanInOut=0;
     options.ZsNoise.HPopt.TF=1;
     options.ZsNoise.HPopt.Noise=1;
     options.ZsNoise.PXIopt.TF=1;
@@ -24,7 +25,8 @@ if nargin==0 %show options prototype
     options.optIV.sourceType='normal';
     options.optIV.boolplot=1;
     options.optIV.averages=5;
-    options.excludeList={'LKS','K220'};
+    options.optIV.useFanInOut=1;
+    options.excludeList={'LKS','K220','AVS47'};
     varargout{1}=options;
     return;
 end
@@ -62,7 +64,7 @@ bad=[];
 if isfield(options,'excludeList')
     excludeList=options.excludeList;
 else
-    excludeList={'LKS','K220'};
+    excludeList={'LKS','K220','AVS47'};
 end
 %%%chequeamos instrumentos. Saltamos el LKS. Mar24 saltamos tb K220.
 for i=1:length(x.Instruments) 
@@ -141,6 +143,11 @@ if isfield(options,'IVsetN')
     ivauxN=options.IVsetN;
 end
 
+%%%
+if isfield(options.optIV,'useFanInOut')
+    optIV.useFanInOut=options.optIV.useFanInOut;
+end
+%%%
 if isfield(options,'Ibobina')
     options.acqInfo.ActualIbobina=SetBoptimo(options.Ibobina);
 end
@@ -157,6 +164,7 @@ for i=1:length(temps)
     
     if  exist('stop.txt','file')
         varargout{1}=options;
+        diary off;
         return
     end
     %%%BF set temp
@@ -281,7 +289,10 @@ for i=1:length(temps)
             PXIopt.Pulses=0;
             PXIopt.sourceCH=optIV.sourceCH;
         end
-        
+        if isfield(options.ZsNoise,'useFanInOut')
+            HPopt.useFanInOut=options.ZsNoise.useFanInOut;
+            PXIopt.useFanInOut=options.ZsNoise.useFanInOut;
+        end
         if(~isempty(find(auxarray==temps(i), 1)))           
             mkdir(Tstring)
             cd(Tstring)           
