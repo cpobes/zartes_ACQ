@@ -25,14 +25,15 @@ signo=sign(Imax);
 useLNCS=1;
 usek220=0;
 if (useLNCS)%%%From Mar24 LNCS connected to the coil
+    LncsOld=mag_readLNCSImag(mag);
     mag_ConnectLNCS(mag);
     mag_setLNCSImag(mag,signo*Ilimite);
     %mag_setLNCSImag(mag,signo*0.5e3);
     %%%Si queremos usar la fte en Ch1 hay que quitar la LNCS.
     %mag_setImag_CH(mag,signo*500,nch);
     mag_setImag_CH(mag,Imax,nch);
-    mag_setLNCSImag(mag,0);
-    mag_DisconnectLNCS(mag);
+    mag_setLNCSImag(mag,LncsOld);
+    %%%mag_DisconnectLNCS(mag);%%%!!!
 else
     %mag_setImag_CH(mag,signo*500,nch);
     mag_setImag_CH(mag,Imax,nch);
