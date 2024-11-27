@@ -11,6 +11,11 @@ else
     step=data.step;
     ini=data.ini;%Valores de corriente en uA.
     fin=data.fin;
+    if nargin==2 
+        fnameStr=varargin{2}; 
+    else
+        fnameStr='';
+    end
 end
 %B=[0:step:1000 1000:-step:0 0:-step:-500 -500:step:0]*1e-6;
 B=[ini:step:fin fin:-step:ini];%*1e-6;%%en realidad es la corriente. No tenemos la calibracion exacta de esta bobina!
@@ -20,7 +25,7 @@ B=[ini:step:fin fin:-step:ini];%*1e-6;%%en realidad es la corriente. No tenemos 
 multi=multi_init(0);
 %k220=k220_init(0);
 mag=mag_init();
-mag_ConnectLNCS(mag);
+mag_ConnectLNCS(mag);%por si no esta conectada.
 %mag_readLNCSImag(mag)%
 'hello'
 pause(1)
@@ -51,7 +56,8 @@ pause(1)
         %plot(B([1:i]),V([1:i]),'o-','markerfacecolor','r');
     end
 end
-save('BscanData','B','V')
+fname=strcat('BscanData',fnameStr);
+save(fname,'B','V')
 %k220_setI(k220,0);da error.pq?
 %mag_setLNCSImag(mag,0);
 %mag_DisconnectLNCS(mag)

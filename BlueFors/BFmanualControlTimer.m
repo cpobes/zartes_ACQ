@@ -1,5 +1,18 @@
 function t=BFmanualControlTimer(Tset,pid)
    %myVar = [];
+   tarray=timerfind('Name','BFmanualControlTimer');
+   if isempty(tarray)
+       t=timer();
+       t.Name='BFmanualControlTimer';
+   else
+       for i=1:length(tarray)
+           if strcmp(tarray(i).Name,'BFmanualControlTimer')
+               %error('Another BF timer already exists.');
+               t=tarray(i);
+               stop(t);
+           end
+       end
+   end
    myVar=BFgetNextManualPower();
    myVar.Tset=Tset;
    Hconfig=BFgetHeaterConfig();
@@ -11,7 +24,7 @@ function t=BFmanualControlTimer(Tset,pid)
    Hconfig.setpoint=Tset;
    Hconfig.control_algorithm_settings=pid;
    BFconfigure(Hconfig);
-   t=timer;
+   %t=timer;
    %t.StartFcn = @initTimer;
    t.TimerFcn = @timerCallback;
    t.Period   = 5;

@@ -1,6 +1,6 @@
 function AcquirePulses(options)
 %%%%Funcion de prueba para adquirir pulsos estando ya en un O.P. y guardar
-%%%%en FITS. Funciona correctmente pero hay que tener bien configurado
+%%%%en FITS. Funciona correctamente pero hay que tener bien configurado
 %%%%antes la pxi, porque si no da error el writeCol.
 
 %%Hay que pasar la configuración en options. Recordar incluir:
@@ -20,7 +20,11 @@ if strcmp(get(0,'Diary'),'on') diary off;end
 DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'_',options.filename);
 x=strsplit(options.filename,'.');
 DiaryFile=strrep(DiaryFile,x{end},'log');%%%ojo si el fichero no termina exactamente con .fits.
-diary(DiaryFile);%%%Diary ON
+DiaryDir='DiaryFiles';
+if ~exist(DiaryDir)
+    mkdir(DiaryDir)
+end
+diary(strcat(DiaryDir,'\',DiaryFile));%%%Diary ON
 
 Npulsos=options.Npulsos;
 RL=options.RL;
@@ -144,7 +148,7 @@ while i<Npulsos && j<1000 && ~exist('stop.txt','file')
         %fits.writeCol(fptr,3,i+1,lks_temp);
         %fits.writeCol(fptr,4,i+1,Rsensor);
         %if range(pulso(:,2))>0.05 continue;end%%%%Si se adquieren lineas de base
-        disp(['Pulse Number: ' num2str(i)])
+        disp(['Pulse Number: ' num2str(i+1)])
         i=i+1;
     catch Error
         pxi_AbortAcquisition(pxi);

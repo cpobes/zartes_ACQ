@@ -29,6 +29,8 @@ if nargin==2
     sourceType='Normal';%%% o 'Normal'.
     softpolarity=1;
     useFanInOut=1;
+    OutputDir='.\';
+    Ibobina=0;
 elseif nargin==3
     opt=varargin{1};%%%%Pasar las opciones en una estructura!
     sourceCH=opt.sourceCH;
@@ -45,6 +47,16 @@ elseif nargin==3
         useFanInOut=opt.useFanInOut;
     else
         useFanInOut=1;
+    end
+    if isfield(opt,'OutputDir')
+        OutputDir=opt.OutputDir;
+    else
+        OutputDir='.';%local Dir.
+    end
+    if isfield(opt,'Ibobina')
+        Ibobina=opt.Ibobina;
+    else
+        Ibobina=0;
     end
     %k220=opt.k220;%%%
 end
@@ -66,8 +78,9 @@ end
 
 mag=mag_init();
 multi=multi_init(0);%
-
+mag_setLNCSImag(mag,Ibobina);
 mag_setRf_FLL_CH(mag,Rf,sourceCH);%3e3
+mag_LoopResetCH(mag,sourceCH);%asegurar FLL mode.
 %%%Ponemos el máximo de corriente 
 signo=sign(Ibvalues(1));
 
@@ -93,7 +106,11 @@ end
 pause(2)
 mag_LoopResetCH(mag,sourceCH);
 
-IV_THR=5;%umbral en Vout para el autoreseteado.
+if isfield(opt,'IV_THR')
+    IV_THR=opt.IV_THR;
+else
+    IV_THR=5;%umbral en Vout para el autoreseteado.
+end
 mag_setAutoResetON_CH(mag,IV_THR,sourceCH);%Dejamos rango para IV pero evitamos salto a 10V.
 %Y si esta puesto a 1V por Zs,pulsos, lo reseteamos.
 pause(2)
@@ -125,13 +142,17 @@ psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simula
 verbose=1;
 t0start=now;
 for i=1:length(Ibvalues)
-    if verbose strcat('Ibias:',num2str(Ibvalues(i))),end
+    if verbose disp(strcat('Ibias:',num2str(Ibvalues(i)))); end
     if slope/Rf>slopeTHR && slope<Inf && ~psl
         state=1;
+        disp('S state detected');
     end %%% state=1 -> estado superconductor. Ojo, la slope=3000 es para Rf=3K.
-    
     %%%%Control de estado superconductor para cambiar Step.
-    if state && mod(Ibvalues(i),2) && abs(Ibvalues(i))>10, continue;end  %%%mod(,10)
+    if state && mod(Ibvalues(i),5) && abs(Ibvalues(i))>10,
+        disp('Skipped Ibias');
+        continue;
+    end  %%%mod(,10)
+    if state && abs(Ibvalues(i))<10 && round(abs(Ibvalues(i)))~=abs(Ibvalues(i)), continue;end%si step es muy fino pasamos a step entero.
     
     if strcmpi(sourceType,'LNCS')
         mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
@@ -239,7 +260,11 @@ plot(IV.ibias,IV.vout,'.-');
 %%%guardar datos
 Rf=mag_readRf_FLL_CH(mag,sourceCH)/1000;
 file=strcat(Temp,'_Rf',num2str(Rf),'K_',dire,'_',pol,'_matlab.txt');
-save(file,'data','-ascii');
+if ~exist(OutputDir,'dir')
+    mkdir(OutputDir);
+end
+outfile=strcat(OutputDir,'\',file);%%%sirve tanto '.\' como '.\\'.
+save(outfile,'data','-ascii');
 
 %%%cerrar ficheros
 fclose(mag);delete(mag);

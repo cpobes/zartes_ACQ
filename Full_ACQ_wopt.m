@@ -53,8 +53,10 @@ end
 
 %%%Setting Log
 if strcmp(get(0,'Diary'),'on') diary off;end
+mkdir DiaryFiles
 DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'.log');
-diary(DiaryFile);%%%Diary ON
+DiaryFileFullName=strcat('DiaryFiles\',DiaryFile);
+diary(DiaryFileFullName);%%%Diary ON
 runname=strsplit(pwd,'\');
 fprintf(1,'Starting Acquisition %s at %s\n',runname{end},datestr(now));
 

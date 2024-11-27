@@ -31,7 +31,7 @@ dsa=hp_init(0);
 
 boolWhiteNoise=1;
 boolplot=1;
-n_avg=5;%5<-move to configuration!!!
+n_avg=3;%5<-move to configuration!!!
 skTHR=0.5;%Inf;%%%value para eliminar pulsos skTHR=0.5;
 filtWindow=10;%40
 if(boolWhiteNoise)%%%White Noise version,

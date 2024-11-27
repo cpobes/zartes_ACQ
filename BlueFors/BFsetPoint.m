@@ -10,7 +10,7 @@ if Temp<=0.080 %0.050
     P=0.01;
     I=250;
     D=0;
-elseif Temp<0.1
+elseif Temp<0.2%
     P=0.05;
     I=100;
     D=0;
@@ -70,11 +70,18 @@ else
 %         wscWrite=SimpleClient(Writeurl);
 %         wscWrite.send(message)
 %         wscWrite.close()
+    else%%%en modo manual
+        if Temp==0
+            config.power=0;
+            BFconfigure(config);
+        end
+        BFmanualControlTimer(Temp,config.control_algorithm_settings);
     end
     if Temp>0 && boolmonitor
         %pause(1800);
         %%%Stab Algorithm. wait time. normal run:1200. PIDs 1800.
         outdata=BFmonitorMCTemp(Temp);
+        mkdir tmp
         fname=strcat('TsetLogData_',num2str(round(now*86400)),'_from',num2str(round(T0*1e3)*1e-3),'_to',num2str(Temp),'K.txt');
         writetable(struct2table(outdata),strcat('tmp\',fname),'writevariablenames',0,'delimiter',' ');
         %save(fname,'outdata','-ascii');
