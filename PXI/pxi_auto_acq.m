@@ -83,7 +83,7 @@ for i=1:length(IbValues)
     %mag_LoopResetCH(mag,sourceCH);
     %mag_setAMP_CH(mag,mod((-1)^sourceCH,3));
     
-    strcat('Ibias:',num2str(IbValues(i)))
+    disp(strcat('Ibias:',num2str(IbValues(i)),'uA'));
     %Set Magnicon Ib value here
     out=mag_setImag_CH(mag,IbValues(i),sourceCH);
     if strcmp(out,'FAIL') 
@@ -106,7 +106,7 @@ for i=1:length(IbValues)
         rangoindx=1;
         while rango>rangoTHR%5e-4
             rango=multi_monitor(multi);
-            'monitoring...'
+            disp(strcat('monitoring...',num2str(rangoindx)));
             rangoindx=rangoindx+1;
             if rangoindx>25 break;end
         end
@@ -174,7 +174,7 @@ for i=1:length(IbValues)
         rangoindx=1;
         while rango>rangoTHR%5e-4
             rango=multi_monitor(multi);
-            'monitoring...'
+            disp(strcat('monitoring...',num2str(rangoindx)));
             rangoindx=rangoindx+1;
             if rangoindx>25 break;end
         end
