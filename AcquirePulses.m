@@ -11,6 +11,9 @@ function AcquirePulses(options)
 
 %%%Nota Sept2024: falta implementar uso o no de FanInOut y programar 
 %%%el PRE. De momento se hace manual.
+
+%%%Nota 30Nov2024. Cambio version para pasar IV y Rp. Ibias, I0 y V0 se
+%%%calculan internamente. Se adquieren Nbaselines antes de los pulsos.
 import matlab.io.*
 uri='http://192.168.2.121:5001/channel/measurement/latest';
 
@@ -54,7 +57,7 @@ end
 if isfield(options,'Ibias')
     Ibias=options.Ibias;%%%Ojo a si se define como A o como uA!!!!
 else
-    Ibias=round(mag_readImag_CH(mag,SourceCH));
+    Ibias=round(mag_readImag_CH(mag,SourceCH));%%%Ojo si no se pasa Ibias y no se ha polarizado antes.
 end
 if isfield(options,'polarity')
     polarity=options.polarity;
@@ -84,15 +87,33 @@ end
 fits.createTbl(fptr,'binary',0,ttype,tform,{},'pulsos')%Tabla para los pulsos
 fits.writeKey(fptr,'SR',SR,'sampling rate');
 fits.writeKey(fptr,'RL',RL,'record length');
-fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
+%fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
 fits.writeKey(fptr,'Rf',Rf,'Resistencia de Feedback en Ohm');
 fits.writeKey(fptr,'Tmc',Tmc,'Temperatura de la M/C');
-if isfield(options,'I0')
-    fits.writeKey(fptr,'I0',options.I0,'Corriente en el TES en el punto de operacion.');
+%%%automatizamos Ibias, I0 y V0.
+if isfield(options,'IV') && isfield(options,'Rp')
+    IV=options.IV;
+    Rp=options.Rp;
+    Ibias=BuildIbiasFromRp(IV,Rp);
+    fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
+    Put_TES_toNormal_State_CH(mag,500,SourceCH);
+    mag_setImag_CH(mag,Ibias,SourceCH);
+    mag_LoopResetCH(mag,SourceCH);
+    Ibias=mag_readImag_CH(mag,SourceCH);
+    I0=interp1(IV.ibias,IV.ites,Ibias*1e-6);
+    fits.writeKey(fptr,'I0',I0,'Corriente en el TES en el punto de operacion.');
+    V0=interp1(IV.ibias,IV.vtes,Ibias*1e-6);
+    fits.writeKey(fptr,'V0',V0,'Voltaje en el TES en el punto de operacion.');
+else
+    error('You are using a new version. Use IV and Rp as fields.');
 end
-if isfield(options,'V0')
-    fits.writeKey(fptr,'V0',options.V0,'Voltaje en el TES en el punto de operacion.');
-end
+% if isfield(options,'I0')
+%     fits.writeKey(fptr,'I0',options.I0,'Corriente en el TES en el punto de operacion.');
+% end
+% if isfield(options,'V0')
+%     fits.writeKey(fptr,'V0',options.V0,'Voltaje en el TES en el punto de operacion.');
+% end
+
 %otras opciones de configuracion.
 
 fits.writeDate(fptr);
@@ -129,10 +150,19 @@ end
 
 %CalAmpArray=[25.022 49.98   75.0069   100.029];%valores D11
 %CalAmpArray=[99.73 100.2087];
-
-while i<Npulsos && j<1000 && ~exist('stop.txt','file')
+if isfield(options,'Nbaselines')
+    Nbaselines=options.Nbaselines;
+else
+    Nbaselines=0;
+end
+pulseoptions.TriggerType='immediate';
+pxi_Pulses_Configure(pxi,pulseoptions);
+while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
     %mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
-
+    if i==Nbaselines
+        pulseoptions.TriggerType='edge';
+        pxi_Pulses_Configure(pxi,pulseoptions);
+    end
     try   
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
         %data=pulso(:,2);
