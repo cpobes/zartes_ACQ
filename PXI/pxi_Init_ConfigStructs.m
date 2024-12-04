@@ -9,7 +9,7 @@ ConfStructs.Horizontal.RefPos = 10;%%%
 
 %%%% Vertical Configuration
 ConfStructs.Vertical.ChannelList='0,1';
-ConfStructs.Vertical.Range=0.0025;
+ConfStructs.Vertical.Range=2;%0.0025;usaba 0.0025pq?! opciones:2,10. 
 ConfStructs.Vertical.Coupling='dc';
 ConfStructs.Vertical.ProbeAttenuation=1;
 ConfStructs.Vertical.offset=0;

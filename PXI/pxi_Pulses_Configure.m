@@ -29,7 +29,11 @@ end
 pxi_ConfigureHorizontal(pxi,HorizontalConf)
 
 VerticalConf=Confs.Vertical;%%%El init ya esta bien.
-VerticalConf.Range=1;
+if isfield(conf,'VerticalRange')
+    VerticalConf.Range=conf.VerticalRange;
+else
+    VerticalConf.Range=2;%options:2,10.
+end
 pxi_ConfigureChannels(pxi,VerticalConf)
 
 if nargin==1
