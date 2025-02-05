@@ -56,7 +56,9 @@ elseif nargin==3
     if isfield(opt,'Ibobina')
         Ibobina=opt.Ibobina;
     else
-        Ibobina=0;
+        mag=mag_init();
+        Ibobina=mag_readLNCSImag(mag);%lo ponia a cero y podia crear confusion.
+        fclose(mag);
     end
     %k220=opt.k220;%%%
 end

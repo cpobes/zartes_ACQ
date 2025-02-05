@@ -96,6 +96,7 @@ if isfield(options,'IV') && isfield(options,'Rp')
     Rp=options.Rp;
     Ibias=BuildIbiasFromRp(IV,Rp);
     fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
+    fits.writeKey(fptr,'Rp',Ibias,'Punto de operacion R0/Rn');
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias,SourceCH);
     mag_LoopResetCH(mag,SourceCH);

@@ -52,7 +52,9 @@ if nargin>2
 end
 
 %%%Setting Log
-if strcmp(get(0,'Diary'),'on') diary off;end
+if strcmp(get(0,'Diary'),'on') 
+    diary off;
+end
 mkdir DiaryFiles
 DiaryFile=strcat('DiaryFile_',num2str(round(now*86400)),'.log');
 DiaryFileFullName=strcat('DiaryFiles\',DiaryFile);
@@ -209,8 +211,19 @@ for i=1:length(temps)
             mag=mag_init();
             mag_setAutoResetON_CH(mag,9.0,optIV.sourceCH);%Ponemos umbral reset a 9V para no alterar la IV pero para evitar que salte a 10V y caliente.
             fclose(mag);
+            if isfield(options,'bool2channels')
+                bool2channels=options.bool2channels;
+            else
+                bool2channels=0;
+            end
         try  %%%A veces dan error las IVs. pq?
-            IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
+            if bool2channels
+                %%%%%OJO, ad hoc solo para runs IVs sin Zs ni ruidos.
+                optIV.OutputDir='CH1';
+                IVaux=acquire_2channel_IVs(Tstring,IbiasValues,optIV);
+            else
+                IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
+            end
         catch
             instrreset;
             IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);
