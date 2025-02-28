@@ -139,6 +139,7 @@ for i=1:length(IbValues)
             fclose(fan);
         end
         %%%
+        %Excitacion=25*1e-7;%%%Debug!!!
         datos=hp_measure_TF(dsa,Excitacion);%%%Hay que pasar el porcentaje respecto a la corriente de bias en A.
         %datos=hp_measure_TF(dsa);
         file=strcat('TF_',Itxt,'uA','.txt');

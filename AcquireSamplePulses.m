@@ -21,13 +21,15 @@ ib50=BuildIbiasFromRp(IVaux,rps);
 SourceCH=options.SourceCH;
 pulsopt=options.pulsopt;
 mag=mag_init();
-Put_TES_toNormal_State_CH(mag,500,SourceCH);
+signo=sign(ib50(1));
+Put_TES_toNormal_State_CH(mag,signo*500,SourceCH);
 mag_LoopResetCH(mag,SourceCH);
 multi=multi_init(0);
 pxi=PXI_init();
 tini=pulsopt.RL/pulsopt.SR/10;%sumimos disparo al 10%.
 mkdir(options.OutputDir)
 for i=1:length(ib50)
+    i
     mag_setImag_CH(mag,ib50(i),SourceCH);
     mag_LoopResetCH(mag,SourceCH);
     iaux=mag_readImag_CH(mag,SourceCH);
@@ -42,13 +44,18 @@ for i=1:length(ib50)
             if rangoindx>25 break;end
         end
         str=strcat(num2str(iaux),'uA');
-        pulso=pxi_AcquirePulse(pxi,str,pulsopt);
+        try
+            pulso=pxi_AcquirePulse(pxi,str,pulsopt);
+        catch
+            pxi_AbortAcquisition(pxi);
+            pulso=zeros(1,pulsopt.RL);
+        end
         file=strcat('PXI_PulseSample_',str,'.txt');
         movefile(file,options.OutputDir);
         %%%analisis
      dc(i)=mean(pulso(1:pulsopt.RL/20,2));
-    Amp(i)=max(medfilt1(pulso(:,2)-dc(i),10));
-    aux=find(pulso(:,2)-dc(i)>Amp(i)/exp(1));
+    Amp(i)=max(signo*medfilt1(pulso(:,2)-dc(i),10));
+    aux=find(signo*(pulso(:,2)-dc(i))>Amp(i)/exp(1));
     Taue(i)=pulso(aux(end),1)-tini;%0.004=tini
 end
 output.rps=rps;

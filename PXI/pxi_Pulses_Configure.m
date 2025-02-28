@@ -41,8 +41,8 @@ if nargin==1
 end
 
 %%% si tenemos modulo trigger.
-%TriggerConf.Source='0';%%%
-TriggerConf.Level=1;
+%TriggerConf.Source='1';%%%
+TriggerConf.Level=0;
 TriggerConf.Slope=1;
 TriggerConf.Coupling=1;
 
