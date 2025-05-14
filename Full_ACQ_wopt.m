@@ -204,9 +204,12 @@ for i=1:length(temps)
             if isfield(options.IVs,'IbiasValues')
                 IbiasValues=options.IVs.IbiasValues;
             else
-                IbiasValues=[500:-10:300 295:-5:200 198:-2:-10];
+                IbiasValues=[500:-10:300 295:-5:200 198:-2:150 149:-1:-10];
             end
-        
+            %%%
+            %if temps(i)==0.05
+                %IbiasFino?
+            %end
             %config mag to auto reset 
             mag=mag_init();
             mag_setAutoResetON_CH(mag,9.0,optIV.sourceCH);%Ponemos umbral reset a 9V para no alterar la IV pero para evitar que salte a 10V y caliente.
@@ -309,8 +312,7 @@ for i=1:length(temps)
             PXIopt.useFanInOut=options.ZsNoise.useFanInOut;
         end
         if(~isempty(find(auxarray==temps(i), 1)))           
-            mkdir(Tstring)
-            cd(Tstring)           
+            mkdir(Tstring)          
             %%%acquire Z(w). Automatizar definición de los IZvalues
             if nargin==2 || (nargin==3 && (isstruct(varargin{1})&& ~isfield(varargin{1},'IVset')))
                 IVsetP=GetIVTES(circuit,IVaux.ivp);%%%nos quedamos con la IV de bias positivo.
@@ -344,12 +346,17 @@ for i=1:length(temps)
             fclose(mag);
             try
                 %if HPopt.TF + HPopt.Noise
-                hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
+                if HPopt.TF || HPopt.Noise %ahorro unos minutos si no hay que adquirir nada.
+                    cd(Tstring) 
+                    hp_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,HPopt);%%%ojo, se sube un nivel
+                end
                 'HP done'
                 %end
                 %if(0)%%%!!!pxi not communicating
-                cd(Tstring)
-                pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
+                if PXIopt.TF || PXIopt.Noise %ahorro unos minutos si no hay que adquirir nada.
+                    cd(Tstring)
+                    pxi_auto_acq_POS_NEG(IZvaluesP,IZvaluesN,PXIopt);%%%se sube tb un nivel
+                end
                 'PXI done'
                 %end%%%!!!pxi not communicating
             catch Error

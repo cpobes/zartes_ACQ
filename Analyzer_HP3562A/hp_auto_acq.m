@@ -123,6 +123,13 @@ for i=1:length(IbValues)
         porcentaje=0.05;%%%%<-Porcentaje!
         Excitacion=abs(IbValues(i)*1e-6*porcentaje);
         hp_ss_config(dsa);
+        if isfield(HPopt,'Excitacion')
+            Excitacion=HPopt.Excitacion;
+            if Excitacion>1 Excitacion=Excitacion*1e-7;end%se pasa en mV
+            if Excitacion<1 && Excitacion>0.001 Excitacion=Excitacion*1e-4;end%se pasa en V.
+        else
+            Excitacion=20e-7;%%%Abril 2024
+        end
         if Excitacion==0
             Excitacion=50*1e-7;%!
         end

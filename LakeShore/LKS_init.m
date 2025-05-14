@@ -1,5 +1,5 @@
 function lks=LKS_init(varargin)
-%Función para inicializar una sesión con la fuente de corriente K220.
+%Función para inicializar una sesión con el LKS.
 % Por defecto esta en la dir=1, subdir=2.
 LKS_Primary_Address=12;
 
