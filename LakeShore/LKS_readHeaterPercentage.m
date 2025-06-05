@@ -1,7 +1,7 @@
 function HtrSet=LKS_readHeaterPercentage(lks,output)
 %%%%Función para leer el porcentaje de excitación del heater.
 
-if output>=1 & output<=4
+if output>=1 && output<=4
 else
     error('wrong output number');
 end

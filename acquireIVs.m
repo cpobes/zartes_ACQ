@@ -31,6 +31,7 @@ if nargin==2
     useFanInOut=1;
     OutputDir='.\';
     Ibobina=0;
+    psl=0;
 elseif nargin==3
     opt=varargin{1};%%%%Pasar las opciones en una estructura!
     sourceCH=opt.sourceCH;
@@ -38,6 +39,12 @@ elseif nargin==3
     Rf=opt.Rf;
     sourceType=opt.sourceType;
     averages=opt.averages;
+    psl=0;
+    if isfield(opt,'psl')
+        psl=opt.psl;
+    else
+        psl=0;
+    end
     if isfield(opt,'softpolarity')
         softpolarity=opt.softpolarity;
     else
@@ -140,7 +147,7 @@ end
 %%%
 
 slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora dividida por Rf es >1.
-psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
+%psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 verbose=1;
 t0start=now;
 for i=1:length(Ibvalues)

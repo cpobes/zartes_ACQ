@@ -8,7 +8,7 @@ boolplot=1;
 boolsave=1;
 longrun=0;
 
-Options.TimeOut=300;%%%60;%%%def:12.
+Options.TimeOut=10;%300;%%%60;%%%def:12.
 Options.channelList='1';%1
 
 if nargin==3

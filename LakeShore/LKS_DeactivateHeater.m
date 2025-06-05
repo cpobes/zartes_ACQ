@@ -1,6 +1,6 @@
 function LKS_DeactivateHeater(lks,output)
 %%%%Función que desactiva el heater.
-if output>=1 & output<=4
+if output>=1 && output<=4
 else
     error('wrong output number');
 end
