@@ -7,8 +7,9 @@ else
     opt='.-';
 end
 
+nCH=1;%%%Canal de la fuente externa a usar.
+
 mag=mag_init();
-nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
 if(abs(Ivalues(end)))>500

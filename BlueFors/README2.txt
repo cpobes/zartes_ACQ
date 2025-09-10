@@ -14,5 +14,5 @@ nuevos valores. Funciona! Esto podría permitir una adaptación dinámica del PI
 Pruebo con D=1 y va bien. También pruebo a aumentar el periodo del timer a 30seg y al menos con el pid std de <50mK estabiliza a 40mK. Lo suyo seria hacer un estudio de estabilidad
 con transformada Z con el modelo de planta que obtuvimos. Con ese pid, el sistema parece robusto incluso con periodo de 1min. Se empieza a introducir una oscilación de periodo 2min. 
 Es estable, diverge o se amortigua? Parece que se amortigua, aunque las fluctuaciones de ruido tardan mas en controlarse. Pongo timer a 1seg (el BF se sigue actualizando cada 5seg)
-Funciona pero no responde a la command line, tengo que hcer ctrl+C.
+Funciona pero no responde a la command line, tengo que hacer ctrl+C.
  

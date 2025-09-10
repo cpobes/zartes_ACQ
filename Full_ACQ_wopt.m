@@ -173,7 +173,7 @@ for i=1:length(temps)
     end
     %%%BF set temp
     try
-        BFsetPoint(temps(i));
+        %BFsetPoint(temps(i));
     catch Error
         strcat('error Tb:',num2str(temps(i)))
         fprintf(2,'%s\n',Error.message);

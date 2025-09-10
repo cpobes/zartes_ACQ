@@ -1,7 +1,7 @@
 function ICpair=measure_IC_Pair(varargin)
-%%%%Funci´çon para medir directamente los valores de Icrítica positivos y
-%%%%negativos sin crear los ficheros .txt. Para poder automatizra medidas
-%%%%Ic(B). Construiuda a partir de measure_Ic eliminando la parte de
+%%%%Función para medir directamente los valores de Icrítica positivos y
+%%%%negativos sin crear los ficheros .txt. Para poder automatizar medidas
+%%%%Ic(B). Construida a partir de measure_Ic eliminando la parte de
 %%%%guardar fichero.
 
 %%%Pasamos de pintar.
@@ -11,8 +11,9 @@ function ICpair=measure_IC_Pair(varargin)
 %     opt='.-';
 % end
 
+nCH=1;%%%Canal de la fuente externa a usar.
+
 mag=mag_init();
-nCH=2;%%%Canal de la fuente externa a usar.
 multi=multi_init();
 
 if nargin==0
@@ -32,15 +33,15 @@ if(abs(Ivalues(end)))>500
     mag_ConnectLNCS(mag);
     mag_setLNCSImag(mag,0);
 end
-
+mag_setAutoResetON_CH(mag,10.0,nCH);
 for jj=1:2
     
 Rf=mag_readRf_FLL_CH(mag,nCH);%%%Guardamos el valor original (normalmente 3e3).
 %mag_setRf_FLL_CH(mag,700,nCH);%%%% Ponemos (o no) la Rf a 700Ohm para que no sature al medir Ics grandes. En realidad, cerca de Tc no hace falta
 
 Rfnew=mag_readRf_FLL_CH(mag,nCH);
-%THR=3000*Rfnew/Rf; %%% Tenemos medido que las pendientes en estado superconductor cuando la Rf=3e3 están sobre 800 y las de estado N sobre 8000. Se toma 3000 como valor de separacion.
-THR=1;
+THR=10000*Rfnew/10e3; %%% Tenemos medido que las pendientes en estado superconductor cuando la Rf=3e3 están sobre 800 y las de estado N sobre 8000. Se toma 3000 como valor de separacion.
+%THR=1;
     if jj==2 Ivalues=-Ivalues;IV=[];end %%%Metemos a pelo el barrido negativo asi.
 %%%Reseteamos el lazo.
 %mag_setAMP_CH(mag,nCH);
@@ -71,7 +72,7 @@ if(abs(Ivalues(end)))>500
         %vout2,vout1
         %Ivalues(2),Ivalues(1)
         slope=(vout2-vout1)/((Ivalues(i)-Ivalues(i-1))*1e-6)/Rf;%%%normalizamos
-        if slope<THR,break;end  %%%
+        if abs(slope)<THR,break;end  %%%
         %[slope, THR]
         vout1=vout2;
     end
@@ -134,8 +135,8 @@ else
         %if (abs(vout2*1e6)-abs(vout1*1e6))<0, break;end
         %vout2,vout1
         %Ivalues(2),Ivalues(1)
-        slope=(vout2-vout1)/((Ivalues(i)-Ivalues(i-1))*1e-6)/Rf %%%normalizamos
-        if slope<THR,break;end  %%%
+        slope=(vout2-vout1)/((Ivalues(i)-Ivalues(i-1))*1e-6)%%%normalizamos
+        if abs(slope)<THR,break;end  %%%
         [slope, THR]
         vout1=vout2;
     end

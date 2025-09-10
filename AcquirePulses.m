@@ -31,6 +31,11 @@ diary(strcat(DiaryDir,'\',DiaryFile));%%%Diary ON
 
 Npulsos=options.Npulsos;
 RL=options.RL;
+FileSize=Npulsos*RL*4;
+if FileSize > 1e9
+    diary off;
+    error('Cuidado, tamaño de fichero demasiado grande.');
+end
 SR=options.SR;
 multi=multi_init(0);
 mag=mag_init();
@@ -72,7 +77,9 @@ else
     Rf=mag_readRf_FLL_CH(mag,SourceCH);
 end
 
-Tmc=BFreadMCTemp();
+%Tmc=BFreadMCTemp();
+Tmc=0.05;%!!!
+warning('Ojo, Tmc fijada a mano a 50mK.');
 
 pulsetype=strcat(num2str(RL/subsampling),'E');
 ttype = {'Pulso' 'Time' 'Temperature' 'Resistence' 'DateTime'};
@@ -96,7 +103,7 @@ if isfield(options,'IV') && isfield(options,'Rp')
     Rp=options.Rp;
     Ibias=BuildIbiasFromRp(IV,Rp);
     fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
-    fits.writeKey(fptr,'Rp',Ibias,'Punto de operacion R0/Rn');
+    fits.writeKey(fptr,'Rp',Rp,'Punto de operacion R0/Rn');
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias,SourceCH);
     mag_LoopResetCH(mag,SourceCH);
@@ -168,7 +175,11 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
         %data=pulso(:,2);
         time=now-t0;
-        x=webread(uri);
+        %x=webread(uri);
+        x.temperature=0.05;
+        x.resistance=0;
+        x.datetime='nan';
+        
         %lks_temp=LKS_readKelvinFromInput(lks,'A');
         %Rsensor=LKS_readSensorFromInput(lks,'A');
         fits.writeCol(fptr,1,i+1,pulso(1:subsampling:end,2)');
@@ -219,5 +230,5 @@ disconnect(pxi),delete(pxi)
 diary off;
 catch Error
     diary off;
-    disp(Error.message)
+    error(Error.message)
 end

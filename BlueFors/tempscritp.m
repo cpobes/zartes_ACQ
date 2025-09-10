@@ -1,0 +1,1 @@
+jsondata = '{ "calib_curve_nr": 8,"name": "M57", "sensor_model": "MODEL", "points": 2, "impedances": [1, 2], "temperatures": [2, 1], "type": 1 } '

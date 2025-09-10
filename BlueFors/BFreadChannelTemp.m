@@ -1,8 +1,8 @@
-function [Temp,varargout]=BFreadMCTemp()
+function [Temp,varargout]=BFreadChannelTemp(ch)
 url='http://192.168.2.121:5001/channel/measurement/latest';
-msg=urlread(url,'Timeout',10);
+msg=urlread(url);
 msg_str=loadjson(msg);
-while msg_str.channel_nr ~= 6
+while msg_str.channel_nr ~= ch
     msg=urlread(url);
     msg_str=loadjson(msg);
 end

@@ -3,7 +3,7 @@ if nargin==0
     %min input options
     output.SourceCH=1;
     output.IV=[];
-    output.pulsopt.SR=1e6;
+    output.pulsopt.SR=2e6;
     output.pulsopt.RL=20000;
     output.pulsopt.TriggerType='edge';
     output.OutputDir='.';
@@ -28,6 +28,7 @@ if nargin==2
     pxi=PXI_init();
     tini=pulsopt.RL/pulsopt.SR/10;%sumimos disparo al 10%.
     mkdir(options.OutputDir)
+    dc=[];Amp=[];Taue=[];
     for i=1:length(ib50)
         i
         mag_setImag_CH(mag,ib50(i),SourceCH);
@@ -55,6 +56,7 @@ if nargin==2
             movefile(file,options.OutputDir);
     end
         %%%analisis
+        %size(pulso), size(dc)
         dc(i)=mean(pulso(1:pulsopt.RL/20,2));
         Amp(i)=max(signo*medfilt1(pulso(:,2)-dc(i),10));
         aux=find(signo*(pulso(:,2)-dc(i))>Amp(i)/exp(1));

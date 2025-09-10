@@ -1,8 +1,10 @@
 function ICpairs=Barrido_fino_Ic_B(Bvalues,varargin)
 %%%Barrido Bfield Fino a 80mK
-k220=k220_init(0);
+%comentamos todo lo de la k220. Ahora(2025) se hace con LNCS.
+%k220=k220_init(0);
+nCH=1;%%%Canal de la fuente externa a usar.
+
 mag=mag_init();
-nCH=2;%%%Canal de la fuente externa a usar.
 
 %B=[830:5:900 902:2:1300 1305:5:1400]*1e-6;
 %B=[1070:10:1400]*1e-6;
@@ -10,8 +12,8 @@ B=Bvalues;%%%Realmente son valores de corriente en la bobina.
 % step=0.5; %%% El step para medir la Ic
 % ICvalues=[0:step:200];
 
-k220_setI(k220,B(1));
-k220_Start(k220);
+%k220_setI(k220,B(1));
+%k220_Start(k220);
 mag_LoopResetCH(mag,nCH);
 
 if nargin==2
@@ -22,7 +24,8 @@ end
 
 for i=1:length(B)
     B(i)
-    k220_setI(k220,B(i));
+    %k220_setI(k220,B(i));
+    SetBoptimo(B(i))
     pause(1);
     %str=strcat('80mK_',num2str(B(i)*1e6),'uA');
     %measure_Pos_Neg_Ic(str,ICvalues);
@@ -60,9 +63,10 @@ for i=1:length(B)
         save('ICpairs','ICpairs');
         plot(B(1:i),[ICpairs.p],'o-',B(1:i),[ICpairs.n],'o-'),hold off;grid on;
 end
-k220_setI(k220,0e-6);%%%%
+%k220_setI(k220,0e-6);%%%%
+SetBoptimo(0);%
 fclose(mag)
-fclose(k220)
+%fclose(k220)
 
 %%%Truco para que mande el dilución a Tbase si antes se ha lanzado el
 %%%programa de LabView adecuadamente.
