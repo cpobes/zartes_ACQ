@@ -28,7 +28,7 @@ if nargin==2
     pxi=PXI_init();
     tini=pulsopt.RL/pulsopt.SR/10;%sumimos disparo al 10%.
     mkdir(options.OutputDir)
-    dc=[];Amp=[];Taue=[];
+    dc=[];Amp=[];Area=[];Taue=[];
     for i=1:length(ib50)
         i
         mag_setImag_CH(mag,ib50(i),SourceCH);
@@ -59,12 +59,14 @@ if nargin==2
         %size(pulso), size(dc)
         dc(i)=mean(pulso(1:pulsopt.RL/20,2));
         Amp(i)=max(signo*medfilt1(pulso(:,2)-dc(i),10));
+        Area(i)=max(signo*medfilt1(pulso(:,2)-dc(i),10));
         aux=find(signo*(pulso(:,2)-dc(i))>Amp(i)/exp(1));
         Taue(i)=pulso(aux(end),1)-tini;%0.004=tini
     end
     output.rps=rps;
     output.dc=dc;
     output.Amp=Amp;
+    output.Area=Area;
     output.Tau=Taue;
     fclose(multi)
     fclose(mag)

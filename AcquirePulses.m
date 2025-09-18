@@ -77,9 +77,9 @@ else
     Rf=mag_readRf_FLL_CH(mag,SourceCH);
 end
 
-%Tmc=BFreadMCTemp();
-Tmc=0.05;%!!!
-warning('Ojo, Tmc fijada a mano a 50mK.');
+Tmc=BFreadMCTemp();
+%Tmc=0.05;%!!!
+%warning('Ojo, Tmc fijada a mano a 50mK.');
 
 pulsetype=strcat(num2str(RL/subsampling),'E');
 ttype = {'Pulso' 'Time' 'Temperature' 'Resistence' 'DateTime'};
@@ -139,6 +139,8 @@ else
 end
 fits.writeKey(fptr,'ResetTHR',ResetTHR,'Valor del Autoreset de la electronica magnicon.');
 mag_setAutoResetON_CH(mag,ResetTHR,SourceCH);
+%El autoreset parece afectar bastante a la estabilidad de
+%Tbath, pero sin él, el DC se va facilmente de 1V y no mide bien la PXI.
 
 pulseoptions.SR=options.SR;
 pulseoptions.RL=options.RL;
@@ -175,10 +177,10 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
         %data=pulso(:,2);
         time=now-t0;
-        %x=webread(uri);
-        x.temperature=0.05;
-        x.resistance=0;
-        x.datetime='nan';
+        x=webread(uri);%lectura BF ya arreglado.
+        %x.temperature=0.05;
+        %x.resistance=0;
+        %x.datetime='nan';
         
         %lks_temp=LKS_readKelvinFromInput(lks,'A');
         %Rsensor=LKS_readSensorFromInput(lks,'A');
