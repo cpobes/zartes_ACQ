@@ -140,7 +140,7 @@ end
 slope=0;state=0;jj=1;
 
 if strcmpi(sourceType,'LNCS')
- mag_ConnectLNCS(mag);%%%%
+     mag_ConnectLNCS(mag);%%%%
      mag_setLNCSImag(mag,signo*0.5e3);
      mag_setImag_CH(mag,0,sourceCH);%%%Fuente en Ch1
 end
@@ -150,6 +150,7 @@ slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora divid
 %psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 verbose=1;
 t0start=now;
+sleeptime=0.5;%time is sec after Iset.
 for i=1:length(Ibvalues)
     if verbose disp(strcat('Ibias:',num2str(Ibvalues(i)))); end
     if slope/Rf>slopeTHR && slope<Inf && ~psl
@@ -165,8 +166,10 @@ for i=1:length(Ibvalues)
     
     if strcmpi(sourceType,'LNCS')
         mag_setLNCSImag(mag,Ibvalues(i));%%%Fuente LNCS en Ch3
+            pause(sleeptime)
     else
         mag_setImag_CH(mag,Ibvalues(i),sourceCH);%%%Fuente en Ch1
+            pause(sleeptime)
     end
     %if (Ibvalues(i)<125 & Ibvalues(i)>114),pause(0.5);else pause(2);end%%%%PSL
     %if i==1, pause(2); end
@@ -203,7 +206,7 @@ for i=1:length(Ibvalues)
             Vdc_array(i_av)=mode(aux);
         end
     Vdc=mean(Vdc_array);
-    end
+    end%if
     if strcmpi(sourceType,'LNCS')
         Ireal=mag_readLNCSImag(mag);
     else

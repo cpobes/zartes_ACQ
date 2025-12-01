@@ -18,6 +18,7 @@ if nargin==2
     rango=1e3;
     IVaux=options.IV;
     ib50=BuildIbiasFromRp(IVaux,rps);
+    ib50=ib50(ib50>0);
     SourceCH=options.SourceCH;
     pulsopt=options.pulsopt;
     mag=mag_init();
@@ -26,7 +27,7 @@ if nargin==2
     mag_LoopResetCH(mag,SourceCH);
     multi=multi_init(0);
     pxi=PXI_init();
-    tini=pulsopt.RL/pulsopt.SR/10;%sumimos disparo al 10%.
+    tini=pulsopt.RL/pulsopt.SR/10;%asumimos disparo al 10%.
     mkdir(options.OutputDir)
     dc=[];Amp=[];Area=[];Taue=[];
     for i=1:length(ib50)
@@ -50,6 +51,8 @@ if nargin==2
         catch
             pxi_AbortAcquisition(pxi);
             pulso=zeros(2,pulsopt.RL);
+            file=strcat('PXI_PulseSample_',str,'.txt');
+            save(file,'pulso','-ascii');%salva los datos a fichero.
         end
     if ~strcmp(options.OutputDir,'.')
             file=strcat('PXI_PulseSample_',str,'.txt');
@@ -59,11 +62,11 @@ if nargin==2
         %size(pulso), size(dc)
         dc(i)=mean(pulso(1:pulsopt.RL/20,2));
         Amp(i)=max(signo*medfilt1(pulso(:,2)-dc(i),10));
-        Area(i)=max(signo*medfilt1(pulso(:,2)-dc(i),10));
+        Area(i)=sum(signo*medfilt1(pulso(:,2)-dc(i),10));
         aux=find(signo*(pulso(:,2)-dc(i))>Amp(i)/exp(1));
         Taue(i)=pulso(aux(end),1)-tini;%0.004=tini
     end
-    output.rps=rps;
+    output.rps=rps(1:length(dc));
     output.dc=dc;
     output.Amp=Amp;
     output.Area=Area;

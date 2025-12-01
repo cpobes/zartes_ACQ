@@ -6,13 +6,13 @@ if Temp>0.45 error('ojo a la set Temp');end
 %Tstr=num2str(Temp);
 %wscRead=SimpleClient(Readurl);
 
-if Temp<=0.080 %0.050
+if Temp<=0.0 %0.050 0.080.
     P=0.01;
     I=250;
     D=0;
 elseif Temp<0.2%
-    P=0.05;
-    I=100;
+    P=0.012;%0.05
+    I=150;%100
     D=0;
 else
     P=0.1;

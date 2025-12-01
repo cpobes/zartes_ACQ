@@ -27,6 +27,7 @@ if nargin==0 %show options prototype
     options.optIV.averages=5;
     options.optIV.useFanInOut=1;
     options.excludeList={'LKS','K220','AVS47'};
+    options.bool2channels=0;
     varargout{1}=options;
     return;
 end

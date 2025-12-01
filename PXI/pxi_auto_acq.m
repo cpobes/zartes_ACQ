@@ -150,7 +150,7 @@ for i=1:length(IbValues)
     nopt.subsampling.NpointsDec=100;
     nopt.boolplot=0;
     if(PXIopt.Noise)
-         if isfield(PXIopt,'nAvg')
+         if isfield(PXIopt,'n_avg')
             n_avg=PXIopt.n_avg;
         end
         if isfield(PXIopt,'nSR')
