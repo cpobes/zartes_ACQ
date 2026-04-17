@@ -1,10 +1,13 @@
 function [Temp,varargout]=BFreadMCTemp()
-url='http://192.168.2.121:5001/channel/measurement/latest';
-msg=urlread(url,'Timeout',10);
-msg_str=loadjson(msg);
-while msg_str.channel_nr ~= 6
-    msg=urlread(url);
-    msg_str=loadjson(msg);
-end
-Temp=msg_str.temperature;
-varargout{1}=msg_str;
+% url='http://192.168.2.104:5001/channel/measurement/latest';
+% msg=urlread(url,'Timeout',10);
+% msg_str=loadjson(msg);
+% while msg_str.channel_nr ~= 6
+%     msg=urlread(url);
+%     msg_str=loadjson(msg);
+% end
+%Temp=msg_str.temperature;
+%varargout{1}=msg_str;
+ch=6;
+[Temp,mx]=BFreadChannelTemp(ch);
+varargout{1}=mx;

@@ -1,5 +1,5 @@
 function config=BFgetHeaterConfig(varargin)
-Readurl='http://192.168.2.121:5001/heaters';
+Readurl='http://192.168.2.104:5001/heaters';%121->104.
 %actualconfig=webread(Readurl);%errores de comunicacion?
 xx=urlread(Readurl);
 actualconfig=loadjson(xx);

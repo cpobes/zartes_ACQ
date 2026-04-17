@@ -27,6 +27,7 @@ if nargin==1
     AVS47PA=data.GPIB.AVS47;
     magCOMstr=data.SERIAL.mag;
     PXIname=data.PXI.pxi5922;
+    bfIP=data.ETHERNET.bluefors;
 else
     %%%GPIB Primary Addresses.
     multiPA=4;
@@ -101,7 +102,7 @@ catch
 end
 
 %%%BF check
-uri='http://192.168.2.121:5001/channel/measurement/latest';
+uri=strcat('http://',bfIP,':5001/channel/measurement/latest');
 try
     x=webread(uri);
     BFString=x.status;

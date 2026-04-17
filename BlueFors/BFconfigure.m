@@ -1,7 +1,7 @@
 function BFconfigure(varargin)
 %%%Funcion para configurar el heater del BF. En realidad se podría
 %%%generalizar para configurar también termómetros, etc.
-Writeurl='ws://192.168.2.121:5002/heater/update';
+Writeurl='ws://192.168.2.104:5002/heater/update';%121->104
 config=BFgetHeaterConfig();
 Tstr=num2str(config.setpoint);
 default_msg=strcat('{"heater_nr":4,"pid_mode":1,"active":true,"setpoint":',Tstr,'}');

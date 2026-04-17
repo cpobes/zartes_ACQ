@@ -223,7 +223,11 @@ for i=1:length(temps)
         try  %%%A veces dan error las IVs. pq?
             if bool2channels
                 %%%%%OJO, ad hoc solo para runs IVs sin Zs ni ruidos.
-                optIV.OutputDir='CH1';
+                rootdir='C:\Users\nico\Desktop\DATOS_BLUEFORS\2026\Abril\SQUIDs\';
+                optIV.OutputDir=strcat(rootdir,'CH1\RUN003\IVs');
+                optIV2=optIV;
+                optIV2.sourceCH=2;
+                strcat(rootdir,'CH2\RUN003\IVs');
                 IVaux=acquire_2channel_IVs(Tstring,IbiasValues,optIV);
             else
                 IVaux=acquire_Pos_Neg_Ivs(Tstring,IbiasValues,optIV);

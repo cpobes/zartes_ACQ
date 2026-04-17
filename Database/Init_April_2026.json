@@ -1,0 +1,13 @@
+{"RTs":{
+"CH0":{"name":"sp21","size":"bulk"},
+"CH1":{"name":"sp22","size":"bulk"},
+"CH2":{"name":"sp23","size":"bulk"},
+"CH3":{"name":"4Z6_34_13","size":"40x80"},
+"CH4":{"name":"4Z6_43_31","size":"30x60"},
+"CH5":{"name":"5Z2_37_21","size":"15x15"}
+},
+"SQUIDs":{
+"CH1": {"name":"4Z4_42_12","size":"30x60"},
+"CH2": {"name":"4Z4_42_41","size":"40x40"}
+}
+}
