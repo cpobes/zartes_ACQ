@@ -1,13 +1,20 @@
 function multi=multi_init(varargin)
 %Función para inicializar una sesión con el multimetro HP.
 % 
-Multi_Primary_Address=4;%leer from .json?
-
-if nargin == 0%obsoleto. 
-    gpib_dir=1;%%%antes default = 0.
-else
-    gpib_dir=varargin{1};
+%Multi_Primary_Address=4;%leer from .json?
+%El uso de CheckHW es menos eficiente pq chequea todo el HW, pero 
+%evita tener que definir aqui tb ACQDIR.
+try
+    [~,data]=CheckHW('PrimaryAddresses.json');
+    Multi_Primary_Address=data.GPIB.multi;
+catch
+    Multi_Primary_Address=4;%leer from .json?
 end
+% if nargin == 0%obsoleto. 
+%     gpib_dir=1;%%%antes default = 0.(Abr26 vuelve a ser gpib0)
+% else
+%     gpib_dir=varargin{1};
+% end
 
 %robust gpib_dir find.
 x=instrhwinfo('visa','ni');
@@ -39,7 +46,7 @@ if isempty(x)
 %if ~strcmpi('HP3458A',device(1:7)) %Apr24 da error pq device sale vacío
 %aunq la comunicacion es buena.
     warning('Comprueba comunicacion con Multi');
-end %dispositivo correcto?
+end 
 
 %%% Importante para poder saber si la conexión es buena.
 % device(8:9) = char([13 10]);  % Al parecer estos dos caracteres conforman
@@ -52,3 +59,4 @@ end %dispositivo correcto?
 %command='RESET; END 1; FUNC DCV, 10; NPLC 5'; %%% NPLC 10 -> 1.  % Aquí el FUNC DCV, 10.3e  produce un error de syntaxis. -> .3e es el formato!aqui sobra.
 command='RESET; END 1; NPLC 5';
 query(multi,command);
+clrdevice(multi)

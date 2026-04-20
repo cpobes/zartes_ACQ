@@ -368,6 +368,7 @@ for i=1:length(temps)
                 strcat('error Tb:',num2str(temps(i)))
                 fprintf(2,'%s\n',Error.message);
                 cd(basedir)%%%!!! da error al poner cd basedir.
+                disp(getReport(Error,'extended'))
             end
             %cd .. %%%(en acq Z(w) se sube ya un nivel.)
         end

@@ -15,7 +15,7 @@ function AcquirePulses(options)
 %%%Nota 30Nov2024. Cambio version para pasar IV y Rp. Ibias, I0 y V0 se
 %%%calculan internamente. Se adquieren Nbaselines antes de los pulsos.
 import matlab.io.*
-uri='http://192.168.2.121:5001/channel/measurement/latest';
+uri='http://192.168.2.104:5001/channel/measurement/latest';
 
 try%%%try catch global para poder cerrar el diary
 %%%Setting Log

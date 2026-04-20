@@ -1,4 +1,4 @@
-function out=CheckHW(varargin)
+function [out,varargout]=CheckHW(varargin)
 %%%funcion para chequear el HW activo en prevision de inicializar
 %%%automaticamente.
 %%%V0 22-Oct-2021 funciona correctamente, pero programacion algo cumbersome
@@ -28,6 +28,7 @@ if nargin==1
     magCOMstr=data.SERIAL.mag;
     PXIname=data.PXI.pxi5922;
     bfIP=data.ETHERNET.bluefors;
+    varargout{1}=data;
 else
     %%%GPIB Primary Addresses.
     multiPA=4;

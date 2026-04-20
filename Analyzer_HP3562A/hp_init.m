@@ -1,13 +1,19 @@
 function dsa=hp_init(varargin)
 %Función para inicializar una sesión con el HP.
 % 
-DSA_Primary_Address=11;%leer from .json?
-
-if nargin == 0%obsoleto
-    gpib_dir=1;
-else
-    gpib_dir=varargin{1};
+%El uso de CheckHW es menos eficiente pq chequea todo el HW, pero 
+%evita tener que definir aqui tb ACQDIR.
+try
+    [~,data]=CheckHW('PrimaryAddresses.json');
+    DSA_Primary_Address=data.GPIB.dsa;
+catch
+    DSA_Primary_Address=11;%leer from .json?
 end
+% if nargin == 0%obsoleto
+%     gpib_dir=1;%habitualmente default =0.
+% else
+%     gpib_dir=varargin{1};
+% end
 
 %robust gpib_dir find.
 x=instrhwinfo('visa','ni');
@@ -30,4 +36,8 @@ end
 %fprintf(dsa,'ID?');
 %device=fscanf(dsa)%devuelve HP3562A. Permite comprobar si estamos leyendo el 
 device=query(dsa,'ID?');%esta instruccion es más directa.
-if ~strcmpi('HP3562A',device(1:end-2)), return;end %dispositivo correcto?
+if ~strcmpi('HP3562A',device(1:end-2)), 
+    disp(device);
+    error('HP Device ID no coincide con HP3562A');
+end %dispositivo correcto?
+clrdevice(dsa)
