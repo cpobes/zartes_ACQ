@@ -3,13 +3,14 @@ function multi=multi_init(varargin)
 % 
 %Multi_Primary_Address=4;%leer from .json?
 %El uso de CheckHW es menos eficiente pq chequea todo el HW, pero 
-%evita tener que definir aqui tb ACQDIR.
-try
-    [~,data]=CheckHW('PrimaryAddresses.json');
-    Multi_Primary_Address=data.GPIB.multi;
-catch
+
+%evita tener que definir aqui tb ACQDIR.PERO OJO! CIERRA MAG!!!
+%try
+%    [~,data]=CheckHW('PrimaryAddresses.json');
+ %   Multi_Primary_Address=data.GPIB.multi;
+%catch
     Multi_Primary_Address=4;%leer from .json?
-end
+%end
 % if nargin == 0%obsoleto. 
 %     gpib_dir=1;%%%antes default = 0.(Abr26 vuelve a ser gpib0)
 % else
@@ -57,6 +58,6 @@ end
 %%%de IV etc y tenia que ejecutar a mano el programa de LabView.
 
 %command='RESET; END 1; FUNC DCV, 10; NPLC 5'; %%% NPLC 10 -> 1.  % Aquí el FUNC DCV, 10.3e  produce un error de syntaxis. -> .3e es el formato!aqui sobra.
+%clrdevice(multi)
 command='RESET; END 1; NPLC 5';
 query(multi,command);
-clrdevice(multi)

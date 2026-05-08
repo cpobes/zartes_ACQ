@@ -14,7 +14,7 @@ else
     polarity=1;
 end
 
-multi=multi_init(0);
+multi=multi_init();
 step=0.06125;%step de la fte normal.
 Nsteps=100;
 %DeltaI=10*3.05;%%Delta de corriente en la fuente LNCS.
