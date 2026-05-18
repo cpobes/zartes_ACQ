@@ -192,16 +192,16 @@ for i=1:length(temps)
 
         if(options.IVs.boolacq)%%%Para medir o no IVs finas
         %%%acquireIVs. Automatizar definición de los IbiasValues.
-        if isfield(options.IVs,'TempsArray')
-           ivsarray=options.IVs.TempsArray;
-        else
-           %ivsarray=temps(1:end-1);%[0.07 0.05];
-           ivsarray=temps(temps~=0);
-        end
+            if isfield(options.IVs,'TempsArray')
+                ivsarray=options.IVs.TempsArray;
+            else
+                %ivsarray=temps(1:end-1);%[0.07 0.05];
+                ivsarray=temps(temps~=0);
+            end
         
         if(~isempty(find(ivsarray==temps(i), 1)))
-         mkdir IVs
-         cd IVs
+            mkdir IVs
+            cd IVs
             if isfield(options.IVs,'IbiasValues')
                 IbiasValues=options.IVs.IbiasValues;
             else

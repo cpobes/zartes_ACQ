@@ -1,21 +1,22 @@
-function AcquirePulses(options)
-%%%%Funcion de prueba para adquirir pulsos estando ya en un O.P. y guardar
-%%%%en FITS. Funciona correctamente pero hay que tener bien configurado
-%%%%antes la pxi, porque si no da error el writeCol.
+function AcquireBaselinesBatch(options)
+%%%%Funcion heredada de AcquirePulses para tratar de adquirir capturas en
+%%%%batches grandes para reducir deadtime.
 
-%%Hay que pasar la configuración en options. Recordar incluir:
-%%% Npulsos, RL, SR, filename,comment, longrun y boolplot
-
-%%% Version Feb2024. Eliminamos check manual de Vout y fijamos el
-%%% autoreset.
-
-%%%Nota Sept2024: falta implementar uso o no de FanInOut y programar 
-%%%el PRE. De momento se hace manual.
-
-%%%Nota 30Nov2024. Cambio version para pasar IV y Rp. Ibias, I0 y V0 se
-%%%calculan internamente. Se adquieren Nbaselines antes de los pulsos.
 import matlab.io.*
 uri='http://192.168.2.104:5001/channel/measurement/latest';
+
+%%%%%%%%%%%%
+%%% MAX RL%%%%
+%%%%%%%%%%%%
+max_RL=1e6;%cogemos en batches de 1M.
+Npulsos=options.Npulsos;
+Nbaselines=options.Nbaselines;
+RL=options.RL;
+if mod(Nbaselines,max_RL/RL) 
+    disp(['Nbaselines:' ' ' num2str(Nbaselines)]);
+    disp(['Tamaño batch:' ' ' num2str(max_RL/RL)]);
+    error('Nbaselines no es multiplo del tamaño del batch');
+end
 
 try%%%try catch global para poder cerrar el diary
 %%%Setting Log
@@ -29,9 +30,8 @@ if ~exist(DiaryDir)
 end
 diary(strcat(DiaryDir,'\',DiaryFile));%%%Diary ON
 
-Npulsos=options.Npulsos;
-RL=options.RL;
-FileSize=Npulsos*RL*4;
+FileSize=Nbaselines*RL*4;%
+Npulsos=0;%!cogemos sólo baselines.trigger immediate.
 if FileSize > 1e9
     diary off;
     error('Cuidado, tamaño de fichero demasiado grande.');
@@ -118,12 +118,6 @@ else
     fits.closeFile(fptr)
     error('You are using a new version. Use IV and Rp as fields.');
 end
-% if isfield(options,'I0')
-%     fits.writeKey(fptr,'I0',options.I0,'Corriente en el TES en el punto de operacion.');
-% end
-% if isfield(options,'V0')
-%     fits.writeKey(fptr,'V0',options.V0,'Voltaje en el TES en el punto de operacion.');
-% end
 
 %otras opciones de configuracion.
 
@@ -146,7 +140,14 @@ mag_setAutoResetON_CH(mag,ResetTHR,SourceCH);
 %Tbath, pero sin él, el DC se va facilmente de 1V y no mide bien la PXI.
 
 pulseoptions.SR=options.SR;
-pulseoptions.RL=options.RL;
+%pulseoptions.RL=options.RL;
+
+if mod(max_RL,RL) 
+    diary off;
+    fits.closeFile(fptr)
+    error('RL no es multiplo de max_RL=1e6');
+end
+pulseoptions.RL=max_RL;
 pulseoptions.options.longrun=options.longrun;
 pulseoptions.options.boolplot=options.boolplot;
 if isfield(options,'TriggerType')
@@ -170,14 +171,22 @@ else
 end
 pulseoptions.TriggerType='immediate';
 pxi_Pulses_Configure(pxi,pulseoptions);
-while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
+Ncapturas=Nbaselines*RL/max_RL;
+if mod(Nbaselines,max_RL/RL) 
+    diary off;
+    fits.closeFile(fptr)
+    error('Nbaselines no es multiplo del tamaño del batch');
+end
+index=0;
+while i<Ncapturas && j<1000 && ~exist('stop.txt','file')
     %mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
-    if i==Nbaselines
-        pulseoptions.TriggerType='edge';
-        pxi_Pulses_Configure(pxi,pulseoptions);
-    end
+%     if i==Nbaselines
+%         pulseoptions.TriggerType='edge';
+%         pxi_Pulses_Configure(pxi,pulseoptions);
+%     end
     try   
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
+        buffer=reshape(pulso(:,2),[RL numel(pulso(:,2))/RL])';
         %data=pulso(:,2);
         time=now-t0;
         x=webread(uri);%lectura BF ya arreglado.
@@ -187,16 +196,17 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
         
         %lks_temp=LKS_readKelvinFromInput(lks,'A');
         %Rsensor=LKS_readSensorFromInput(lks,'A');
-        fits.writeCol(fptr,1,i+1,pulso(1:subsampling:end,2)');
-        fits.writeCol(fptr,2,i+1,time);
-        fits.writeCol(fptr,3,i+1,x.temperature);
-        fits.writeCol(fptr,4,i+1,x.resistance);
-        fits.writeCol(fptr,5,i+1,x.datetime);
+        fits.writeCol(fptr,1,index+1,buffer);
+%         fits.writeCol(fptr,2,i+1,time);
+%         fits.writeCol(fptr,3,i+1,x.temperature);
+%         fits.writeCol(fptr,4,i+1,x.resistance);
+%         fits.writeCol(fptr,5,i+1,x.datetime);
         %fits.writeCol(fptr,3,i+1,lks_temp);
         %fits.writeCol(fptr,4,i+1,Rsensor);
         %if range(pulso(:,2))>0.05 continue;end%%%%Si se adquieren lineas de base
-        disp(['Pulse Number: ' num2str(i+1)])
+        disp(['Capture Number: ' num2str(i+1)])
         i=i+1;
+        index=i*(max_RL/RL);
     catch Error
         pxi_AbortAcquisition(pxi);
         'hola, pxi_ACQ error'
@@ -235,6 +245,7 @@ disconnect(pxi),delete(pxi)
 diary off;
 catch Error
     diary off;
+    %fptr
     if ~isempty(who('fptr')) fits.closeFile(fptr);end
     error(Error.message)
 end

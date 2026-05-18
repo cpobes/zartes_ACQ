@@ -8,7 +8,7 @@ boolplot=1;
 boolsave=1;
 longrun=0;
 
-Options.TimeOut=30;%300;%%%60;%%%def:12.
+Options.TimeOut=300;%300;%%%60;%%%def:12.
 Options.channelList='1';%1
 
 if nargin==3
@@ -43,6 +43,7 @@ if(boolplot) %%%plot?
     grid on
     drawnow
     subplot(2,1,2)
+    %size(freq),size(psd),size(data)
     loglog(freq,sqrt(psd),'.-')
     %semilogx(freq,10*log10(psd),'.-')
     grid on
