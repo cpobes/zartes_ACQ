@@ -31,7 +31,7 @@ NpointsDec=subsampling.NpointsDec;
 %get(get(pxi,'horizontal'),'Actual_Sample_Rate')
 %get(get(pxi,'horizontal'),'actual_record_length')
 
-Options.TimeOut=5;
+Options.TimeOut=5;%%%!
 Options.channelList='1';
 
 [data,~]=pxi_GetWaveForm(pxi,Options);

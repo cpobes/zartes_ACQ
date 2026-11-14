@@ -4,7 +4,7 @@ function PID=LKS_getPID(lks,output)
 
 if output>=1 & output<=4
 else
-    error('wrong output number');
+    %error('wrong output number');
 end
 str=strcat('PID? ',num2str(output),'\n')
 PID=query(lks,str);

@@ -1,0 +1,13 @@
+{"RTs":{
+"CH0":{"name":"sp45_AlMoAuAu","size":"bulk"},
+"CH1":{"name":"sp46_MoAuAu","size":"bulk"},
+"CH2":{"name":"sp41_MoW10%Si","size":"bulk"},
+"CH3":{"name":"sp41_MoW10%SiN","size":"bulk"},
+"CH4":{"name":"sp60_MoW2.5%Si","size":"bulk"},
+"CH5":{"name":"sp60_MoW2.5%SiN","size":"bulk"}
+},
+"SQUIDs":{
+"CH1": {"name":"4Z6_34_13","size":"40x80"},
+"CH2": {"name":"4Z6_34_14","size":"40x100"}
+}
+}

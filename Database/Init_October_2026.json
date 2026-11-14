@@ -1,0 +1,13 @@
+{"RTs":{
+"CH0":{"name":"4Z4_42_12","size":"30x60"},
+"CH1":{"name":"sp145_W/Mo(SiN)","size":"?"},
+"CH2":{"name":"sp145_W/Mo(Si)","size":"?"},
+"CH3":{"name":"sp90_Mo/Au(220nm)","size":"?"},
+"CH4":{"name":"sp92_Mo/Au(200nm)","size":"?"},
+"CH5":{"name":"3Z14_37_22","size":"15x15"}
+},
+"SQUIDs":{
+"CH1": {"name":"4Z1_56_01","size":"60x120"},
+"CH2": {"name":"4Z1_56_02","size":"60x120"}
+}
+}

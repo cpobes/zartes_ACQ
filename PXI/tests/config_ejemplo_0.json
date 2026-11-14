@@ -1,0 +1,56 @@
+// Configuracion de ejemplo para adquirir_desde_json.m
+// Se admiten lineas de comentario que empiecen por //
+{
+  "device": {
+    "resource": "PXI1Slot3",
+    "driver": "pxi5922.mdd"
+  },
+
+  "channel": {
+    "name": "1",
+    "range_V": 1.0,
+    "offset_V": 0.0,
+    "coupling": "DC"
+  },
+
+  "horizontal": {
+    "sample_rate_Hz": 1e6,
+    "record_length": 1000,
+    "ref_position_pct": 10,
+    "num_records": 100
+  },
+
+  // type: "immediate" | "edge"
+  "trigger": {
+    "type": "immediate",
+    "source": "ext",
+    "level_V": 0.0,
+    "slope": "falling",
+    "holdoff_s": 0
+  },
+
+  "acquisition": {
+    "fetch_mode": "block",
+    "block_size": 100,
+    "verify": true,
+    "continuous_memory": true,
+    "max_wait_s": 30
+  },
+
+  // data_type: "double" | "single"  (single ocupa la mitad)
+  // compression: 0 (sin compresion) .. 9
+  "output": {
+    "folder": "datos",
+    "file_prefix": "run",
+    "data_type": "double",
+    "compression": 0
+  },
+
+  // Campos libres: se copian como atributos meta_<campo> en el fichero HDF5
+  "metadata": {
+    "operator": "",
+    "sample": "",
+    "temperature_mK": 0,
+    "notes": "prueba de multirregistro"
+  }
+}

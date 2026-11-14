@@ -1,9 +1,9 @@
 function Tset=LKS_getOperatingPoint(lks,output)
 %%%%Función para leer el punto de operación en Kelvin.
 
-if output>=1 & output<=4
+if output>=1 && output<=4
 else
-    error('wrong output number');
+    %error('wrong output number');
 end
 
 str=strcat('setp? ',num2str(output),'\n');

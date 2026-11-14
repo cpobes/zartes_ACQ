@@ -1,4 +1,4 @@
-function IV=acquire_Pos_Neg_Ivs(Temp,Ibias,varargin)
+function IV=acquire_Pos_Neg_IVs(Temp,Ibias,varargin)
 %%%wrapper function to acquire both polarities at once.
 
 if nargin==2

@@ -112,7 +112,7 @@ else
     if Ibvalues(end)>0 pol='p';else pol='n';end
 end
 
-pause(2)
+pause(3)
 mag_LoopResetCH(mag,sourceCH);
 
 if isfield(opt,'IV_THR')
@@ -122,7 +122,7 @@ else
 end
 mag_setAutoResetON_CH(mag,IV_THR,sourceCH);%Dejamos rango para IV pero evitamos salto a 10V.
 %Y si esta puesto a 1V por Zs,pulsos, lo reseteamos.
-pause(2)
+pause(3)
 
 rango=1e3;
 %%%Si la salida es estable, la fluctación en la
@@ -150,7 +150,7 @@ slopeTHR=1; %%% pendiente umbral normalizada. La pendiente superconductora divid
 %psl=0;%%%%condición si se mide PSL pq al hacer el step tan pequeño, puede simularse salto superconductor sin serlo.
 verbose=1;
 t0start=now;
-sleeptime=0.5;%time is sec after Iset.
+sleeptime=0.1;%time is sec after Iset.
 for i=1:length(Ibvalues)
     if verbose disp(strcat('Ibias:',num2str(Ibvalues(i)))); end
     if slope/Rf>slopeTHR && slope<Inf && ~psl

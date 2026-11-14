@@ -25,10 +25,11 @@ gpib_dir=str2num(y.gpib);
 
 %%%%%%%%%%%%Error instrfind!!!!!!!!!!!
 %%clear
- aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',Multi_Primary_Address);
- for i=1:length(aux) delete(aux(i));end
+ aux=instrfind('type','gpib','Status','closed','Boardindex',gpib_dir,'primaryaddress',Multi_Primary_Address);%<----!!!!
+ for i=1:length(aux) delete(aux(i));end%<----!!!!
 
-multi=instrfind('type','gpib','Status','open','primaryaddress',Multi_Primary_Address);
+multi=instrfind('type','gpib','Status','open','primaryaddress',Multi_Primary_Address);%<----!!!!
+%multi=[];
 if isempty(multi)    
     multi=gpib('ni',gpib_dir,Multi_Primary_Address);%dir:1 puede cambiar
     fopen(multi); %cerrar al final.

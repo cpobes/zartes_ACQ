@@ -22,4 +22,4 @@ chk=mod(sum(double(str)),256);
 str=sprintf('%s%02X\r',str,chk);
 out=query(s,str,'%s','%s');
 
-mag_setCalPulseAMP_CH(s,0,0,nch)
+%mag_setCalPulseAMP_CH(s,0,0,nch)

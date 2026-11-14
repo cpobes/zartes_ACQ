@@ -14,8 +14,12 @@ function AcquirePulses(options)
 
 %%%Nota 30Nov2024. Cambio version para pasar IV y Rp. Ibias, I0 y V0 se
 %%%calculan internamente. Se adquieren Nbaselines antes de los pulsos.
+
+%%%10-Junio-2026. Actualizamos para adaptar a formato SIRENA.
+%%%
+
 import matlab.io.*
-uri='http://192.168.2.104:5001/channel/measurement/latest';
+uri='http://192.168.2.100:5001/channel/measurement/latest';
 
 try%%%try catch global para poder cerrar el diary
 %%%Setting Log
@@ -39,6 +43,9 @@ end
 SR=options.SR;
 multi=multi_init(0);
 mag=mag_init();
+%%%%
+flag=0;%%%flag para poner el 'otro' ch en modo AMP o no.
+%%%%
 try
     pxi=PXI_init();%Feb24 mejoro PXI_init(). Ya no seria necesario el try.
 catch
@@ -60,6 +67,10 @@ if isfield(options,'SourceCH')
 else
     SourceCH=2;
 end
+if isfield(options,'Boptimo')
+    Boptimo=options.Boptimo;
+    SetBoptimo(Boptimo);%realmente es la corriente en la bobina para cancelar campo.
+end
 if isfield(options,'Ibias')
     Ibias=options.Ibias;%%%Ojo a si se define como A o como uA!!!!
 else
@@ -78,26 +89,57 @@ else
     Rf=mag_readRf_FLL_CH(mag,SourceCH);
 end
 
-Tmc=BFreadMCTemp();
-%Tmc=0.05;%!!!
-%warning('Ojo, Tmc fijada a mano a 50mK.');
+if isfield(options,'Tcontroller')
+    Tcontroller=options.Tcontroller;
+else
+    Tcontroller='BF';%'BF';'LKS'
+end
+switch Tcontroller
+    case 'BF'
+        Tmc=BFreadMCTemp();
+        %Tmc=0.05;%!!!
+        %warning('Ojo, Tmc fijada a mano a 50mK.');
+    case 'LKS'
+        lks=LKS_init;
+        Tmc=LKS_readKelvinFromInput(lks,0);
+end
 
 pulsetype=strcat(num2str(RL/subsampling),'E');
-ttype = {'Pulso' 'Time' 'Temperature' 'Resistence' 'DateTime'};
-tform = {pulsetype '1E' '1D' '1D' '27A'};
+ttype = {'ADC' 'TIME' 'Temperature' 'Resistence' 'DateTime' 'PIXID' 'PH_ID' 'BSLN'};% 'tholder'};
+tform = {pulsetype '1E' '1D' '1D' '27A' '1J' '1J' '1D'};% '1D'};
 
 if exist(name,'file')==2
     fptr = fits.openFile(name,'readwrite');
 else
     fptr=fits.createFile(name);
 end
+
 %fits.writeDate(fptr); aqui da error
-fits.createTbl(fptr,'binary',0,ttype,tform,{},'pulsos')%Tabla para los pulsos
+fits.createTbl(fptr,'binary',0,ttype,tform,{},'TESRECORDS')%Tabla para los pulsos
 fits.writeKey(fptr,'SR',SR,'sampling rate');
 fits.writeKey(fptr,'RL',RL,'record length');
 %fits.writeKey(fptr,'Ibias',Ibias,'Punto de operación en uA');
 fits.writeKey(fptr,'Rf',Rf,'Resistencia de Feedback en Ohm');
 fits.writeKey(fptr,'Tmc',Tmc,'Temperatura de la M/C');
+
+%%%SIRENA keys%%%%%%%%%%%%%%%%%%
+fits.writeKey(fptr,'TSTART',0,'start time');
+fits.writeKey(fptr,'TSTOP',0,'stop time');
+fits.writeKey(fptr,'TELESCOP','virtual');
+fits.writeKey(fptr,'INSTRUME','virtual');
+fits.writeKey(fptr,'FILTER','none');
+fits.writeKey(fptr,'ANCRFILE','none');
+fits.writeKey(fptr,'RESPFILE','none');
+mjd=juliandate(now)-2400000.5;
+fits.writeKey(fptr,'MJDREF',mjd,'reference MJD');
+fits.writeKey(fptr,'TIMEZERO',0);
+fits.writeKey(fptr,'DELTAT',1/SR,'Sample time (s); invesrse of sampling rate');
+fits.writeKey(fptr,'RECLEN',RL,'Record length (samples)');
+x=webread(uri);
+fits.writeKey(fptr,'DATE-HDU',x.datetime);%datestr(datetime)
+fits.writeKey(fptr,'INMAFILE',options.filename,'INMA data filename');
+fits.writeKey(fptr,'BASESTP',0,'Constant value added to baseline.');
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%automatizamos Ibias, I0 y V0.
 if isfield(options,'IV') && isfield(options,'Rp')
     IV=options.IV;
@@ -107,7 +149,7 @@ if isfield(options,'IV') && isfield(options,'Rp')
     fits.writeKey(fptr,'Rp',Rp,'Punto de operacion R0/Rn');
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias,SourceCH);
-    mag_LoopResetCH(mag,SourceCH);
+    mag_LoopResetCH(mag,SourceCH,flag);
     Ibias=mag_readImag_CH(mag,SourceCH);
     I0=interp1(IV.ibias,IV.ites,Ibias*1e-6);
     fits.writeKey(fptr,'I0',I0,'Corriente en el TES en el punto de operacion.');
@@ -158,7 +200,7 @@ pxi_Pulses_Configure(pxi,pulseoptions);%si hacemos longrun necesitamos configura
 if abs(Ibias-mag_readImag_CH(mag,SourceCH))>1
     Put_TES_toNormal_State_CH(mag,500,SourceCH);
     mag_setImag_CH(mag,Ibias,SourceCH);
-    mag_LoopResetCH(mag,SourceCH);
+    mag_LoopResetCH(mag,SourceCH,flag);
 end
 
 %CalAmpArray=[25.022 49.98   75.0069   100.029];%valores D11
@@ -170,28 +212,85 @@ else
 end
 pulseoptions.TriggerType='immediate';
 pxi_Pulses_Configure(pxi,pulseoptions);
+tini0=0.1;%!!!pretrigger 10%.Ojo si cambia esto!
+
+% %%%pulser
+% pulsetimer=timer;
+% pulsetimer.ExecutionMode='fixedrate';
+% pulsetimer.BusyMode='queue';
+% pulsetimer.Period=30;
+% pulsetimer.TimerFcn = @(src, event) mag_setCalPulseON_CH(mag, 1);disp(char(datetime('now', 'Format', 'HH:mm:ss')));
+% %start(pulsetimer)
+% %%%%%%
+
+%%%%%%%%%%%%
+%%%%%%%%%%%%
+st.magni    = mag;
+periodo=60;
+st.periodo  = periodo;
+st.modo     = 'rejilla';
+st.t0       = tic;        % referencia temporal
+st.proximo  = periodo;    % instante objetivo del siguiente pulso (s desde t0)
+st.tDisparo = [];         % registro de instantes reales de disparo
+st.retraso  = [];         % retraso de cada pulso respecto a su objetivo
+tick = 1;
+t = timer('ExecutionMode', 'fixedRate', ...
+          'Period',        tick, ...
+          'BusyMode',      'drop', ...   % si se pierde un tick no importa
+          'UserData',      st, ...
+          'TimerFcn',      @pulserTick, ...
+          'Name',          'pulser');
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
-    %mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
-    if i==Nbaselines
-        pulseoptions.TriggerType='edge';
-        pxi_Pulses_Configure(pxi,pulseoptions);
+%mag_setCalPulseAMP_CH(mag,0,CalAmpArray(mod(i,numel(CalAmpArray))+1),2);
+    if i==0
+        pause(0)%40sec is a safe wait.(30sec aun se ve la cola de la estabilizacion).
+        disp('Adquiriendo baselines...')
+        pulseoptions.Ncapturas=Nbaselines;
+        baselines=AcquireBatchIntoArray(pulseoptions);
+        if ~isempty(baselines)
+            fits.writeCol(fptr,1,i+1,baselines);
+        end
+        disp(['Adquiridas' num2str(Nbaselines) ' baselines.'])
+        i=Nbaselines;
     end
-    try   
+    if i==Nbaselines
+        pulseoptions.TriggerType='edge';%%%'edge'
+        pxi_Pulses_Configure(pxi,pulseoptions);
+        
+        %%%%
+        %start(pulsetimer)%%%
+        start(t);
+        disp('pulser started')
+    end
+    try         
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
         %data=pulso(:,2);
+        dc=mean(pulso(1:tini0*RL/2,2));
         time=now-t0;
-        x=webread(uri);%lectura BF ya arreglado.
-        %x.temperature=0.05;
-        %x.resistance=0;
-        %x.datetime='nan';
-        
-        %lks_temp=LKS_readKelvinFromInput(lks,'A');
-        %Rsensor=LKS_readSensorFromInput(lks,'A');
+        switch Tcontroller
+            case 'BF'
+                x=webread(uri);%lectura BF ya arreglado.
+                %x.temperature=0.05;
+                %x.resistance=0;
+                %x.datetime='nan';
+            case 'LKS'
+                x.temperature=LKS_readKelvinFromInput(lks,'A');
+                x.resistance=LKS_readSensorFromInput(lks,'A');
+                x.datetime=datetime;
+        end
         fits.writeCol(fptr,1,i+1,pulso(1:subsampling:end,2)');
-        fits.writeCol(fptr,2,i+1,time);
+        fits.writeCol(fptr,2,i+1,time*86400);%10-june-2026. cambiamos a time in sec.
         fits.writeCol(fptr,3,i+1,x.temperature);
         fits.writeCol(fptr,4,i+1,x.resistance);
-        fits.writeCol(fptr,5,i+1,x.datetime);
+        fits.writeCol(fptr,5,i+1,x.datetime);%ojo al formato de datetime. Usa BF datetime 27caracteres.
+        fits.writeCol(fptr,6,i+1,SourceCH);%PIXID
+        fits.writeCol(fptr,7,i+1,i+1);%PH_ID
+        fits.writeCol(fptr,8,i+1,dc);%BSLN
+        %htemp=BFreadChannelTemp(7);
+        %fits.writeCol(fptr,9,i+1,htemp);
         %fits.writeCol(fptr,3,i+1,lks_temp);
         %fits.writeCol(fptr,4,i+1,Rsensor);
         %if range(pulso(:,2))>0.05 continue;end%%%%Si se adquieren lineas de base
@@ -204,7 +303,7 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
         %Put_TES_toNormal_State_CH(mag,500,SourceCH,options.k220);
         Put_TES_toNormal_State_CH(mag,500,SourceCH);
         mag_setImag_CH(mag,Ibias,SourceCH);
-        mag_LoopResetCH(mag,SourceCH);
+        mag_LoopResetCH(mag,SourceCH,flag);
         Vout=multi_read(multi);
         %%monitoreo de vout
         %rango=1e3;
@@ -230,11 +329,50 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
 end
 %mag_setAutoResetOFF_CH(mag,SourceCH); %no cerramos los instrumentos pero desactivamos el autoreset.
 %mejor no desactivarlo pq si salta el Vout, se calienta todo.
+%%%
+%stop(pulsetimer),delete(pulsetimer)
+stop(t),delete(t)
+%%%
 fits.closeFile(fptr)
 disconnect(pxi),delete(pxi)
+%fclose(lks)
 diary off;
 catch Error
     diary off;
+    %fclose(lks)
     if ~isempty(who('fptr')) fits.closeFile(fptr);end
     error(Error.message)
+end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function pulserTick(t, ~)
+st    = t.UserData;
+ahora = toc(st.t0);
+
+if ahora < st.proximo
+    return                          % aún no toca
+end
+
+try
+    mag_setCalPulseON_CH(st.magni, 1);
+catch err
+    warning('pulser:error', 'Fallo al enviar pulso: %s', err.message);
+    return                          % se reintenta en el siguiente tick
+end
+
+st.tDisparo(end+1) = ahora;
+st.retraso(end+1)  = ahora - st.proximo;
+
+switch st.modo
+    case 'rejilla'
+        % siguiente punto de la rejilla; si nos hemos saltado alguno, no se
+        % lanzan pulsos seguidos para "recuperar"
+        nSaltos    = floor((ahora - st.proximo) / st.periodo);
+        st.proximo = st.proximo + (nSaltos + 1) * st.periodo;
+    case 'desdeUltimo'
+        st.proximo = ahora + st.periodo;
+end
+
+t.UserData = st;
 end

@@ -42,6 +42,9 @@ if ~exist(Thismonth, 'dir')
     mkdir('SQUIDs\CH1')
     mkdir('SQUIDs\CH2')
     copyfile(strcat(default_data_dir,'\','circuit*'),'SQUIDs');
+    copyfile(strcat(default_data_dir,'\OptionsMatFiles\','*.mat'),'SQUIDs');%%%070726 Añadimos default option .mat files para no tener que 
+    %%%copiarlos a mano desde enfridas anteriores cada vez,
+    
     %%%Crear también las .xls
     %cd('SQUIDs\CH1')
     %%%slightly cumbersome because I started with 'Summary*' to avoid full

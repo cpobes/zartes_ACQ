@@ -1,0 +1,13 @@
+{"RTs":{
+"CH0":{"name":"sp61_W/Mo(SiN)","size":"bulk"},
+"CH1":{"name":"sp62_W/Mo/Au(SiN)","size":"bulk"},
+"CH2":{"name":"sp61_WMo(Si)","size":"bulk"},
+"CH3":{"name":"sp62_W/Mo/Au(Si)","size":"bulk"},
+"CH4":{"name":"4Z6_34_13","size":"40x80"},
+"CH5":{"name":"3Z5_54_11","size":"10x12"}
+},
+"SQUIDs":{
+"CH1": {"name":"4Z1_62_44","size":"40x40"},
+"CH2": {"name":"4Z1_62_34","size":"25x75"}
+}
+}

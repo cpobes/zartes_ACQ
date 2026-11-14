@@ -14,10 +14,10 @@ function Current=LKS_readHeaterCurrent(lks,output)
 
 if output>=1 && output<=4
     if output~=2
-        error('Funcion aplicable solo a Output 2');
+        %error('Funcion aplicable solo a Output 2');
     end
 else
-    error('wrong output number');
+    %error('wrong output number');
 end
 
 str=strcat('htr? ',num2str(output),'\n');

@@ -3,10 +3,11 @@ function HtrSet=LKS_readHeaterPercentage(lks,output)
 
 if output>=1 && output<=4
 else
-    error('wrong output number');
+    %error('wrong output number');
 end
 
-str=strcat('htr? ',num2str(output),'\n');
+%str=strcat('htr? ',num2str(output),'\n');%LKS350
+str=strcat('htr? \n');%LKS372
 %query(lks,str);%%%Como no hay nada que devolver, el query espera hasta el
 %timeout.
 HtrSet=str2num(query(lks,str));%%%Usando fprintf eliminamos la espera.

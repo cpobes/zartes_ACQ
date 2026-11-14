@@ -21,6 +21,13 @@ end
 waveformArray=zeros(1,numSamples*numChannels);%*numRecords);%%%Prealojamos espacio.
 
 invoke(pxi.Acquisition, 'initiateacquisition'); %%%Puede ir aquí o fuera.
+%%%%%
+estado=0;
+while estado ~= 1
+    estado= invoke(pxi.Acquisition,'acquisitionstatus');
+    pause(0.1);%%%%%Debug para pulsetimer
+end
+%%%%%
 [Wfm, WfmI] = invoke(pxi.Acquisition, 'fetch', channelList,TimeOut, numSamples, waveformArray, waveformInfo); %%
 
 %data=Wfm;return;%
