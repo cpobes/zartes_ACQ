@@ -61,6 +61,10 @@ if(boolsubsampling)%%%subsampleo?
     %NpointsDec=200;%%%
     N=NpointsDec*Ndec;%%%numero de puntos.
     xx=logspace(logfmin,logfmax,N+1);%%%subsampleamos entre 1Hz y 100KHz.
+    %%%Por redondeo, 10^log10(freq(end)) puede quedar ligeramente por encima de
+    %%%freq(end) y interp1 devolveria NaN en el ultimo punto (100 kHz). Se recortan
+    %%%los extremos al rango de freq.
+    xx=min(max(xx,freq(1)),freq(end));
     psd=interp1(freq,psd,xx);
     freq=xx;
 end
