@@ -279,7 +279,10 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
             case 'LKS'
                 x.temperature=LKS_readKelvinFromInput(lks,'A');
                 x.resistance=LKS_readSensorFromInput(lks,'A');
-                x.datetime=datetime;
+                %x.datetime=datetime;
+                x.datetime = char(datetime('now','TimeZone','UTC','Format','yyyy-MM-dd''T''HH:mm:ss.SSSSSS''Z'''));
+            case 'TC'
+                [~, x] = TCreadTemp();   % x.temperature, x.resistance, x.datetime (27 caracteres)    
         end
         fits.writeCol(fptr,1,i+1,pulso(1:subsampling:end,2)');
         fits.writeCol(fptr,2,i+1,time*86400);%10-june-2026. cambiamos a time in sec.
