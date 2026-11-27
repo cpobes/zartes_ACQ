@@ -258,6 +258,8 @@ mag_setAMP_CH(mag,2);
 %%%Deshabilitamos el modo FLL para evitar
 %%%calentar el sistema si salta la salida a 10V.
 
+Rf = mag_readRf_FLL_CH(mag,sourceCH);
+data=ivCorrectSquidJumps(data,Rf,opt.circuit);%%%prueba para corregir saltos de squid.
 IV=corregir1rama(data);
 % IV.ibias=data(:,2)*1e-6;
 % IV.vout=data(:,4)-data(end,4);
@@ -280,5 +282,6 @@ save(outfile,'data','-ascii');
 
 %%%cerrar ficheros
 fclose(mag);delete(mag);
+multi_reset(multi);
 fclose(multi);delete(multi);
 %instrreset

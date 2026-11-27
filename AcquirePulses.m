@@ -102,6 +102,8 @@ switch Tcontroller
     case 'LKS'
         lks=LKS_init;
         Tmc=LKS_readKelvinFromInput(lks,0);
+    case 'TC'
+        Tmc=TCreadTemp(); 
 end
 
 pulsetype=strcat(num2str(RL/subsampling),'E');
@@ -140,6 +142,21 @@ fits.writeKey(fptr,'DATE-HDU',x.datetime);%datestr(datetime)
 fits.writeKey(fptr,'INMAFILE',options.filename,'INMA data filename');
 fits.writeKey(fptr,'BASESTP',0,'Constant value added to baseline.');
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+useFanInOut=1;%%%
+if useFanInOut
+    fan=fanout_init();
+    switch SourceCH
+        case 1
+            CH='b';
+        case 2
+            CH='B';
+    end
+    fanout_set(fan,CH);
+    fclose(fan);
+end
+
+
 %%%automatizamos Ibias, I0 y V0.
 if isfield(options,'IV') && isfield(options,'Rp')
     IV=options.IV;
@@ -262,8 +279,10 @@ while i<Npulsos+Nbaselines && j<1000 && ~exist('stop.txt','file')
         
         %%%%
         %start(pulsetimer)%%%
-        start(t);
-        disp('pulser started')
+        if(0)%configurar.
+            start(t);
+            disp('pulser started')
+        end
     end
     try         
         pulso=pxi_AcquirePulse(pxi,'prueba',pulseoptions);
@@ -358,7 +377,7 @@ if ahora < st.proximo
 end
 
 try
-    mag_setCalPulseON_CH(st.magni, 1);
+    mag_setCalPulseON_CH(st.magni, SourceCH);
 catch err
     warning('pulser:error', 'Fallo al enviar pulso: %s', err.message);
     return                          % se reintenta en el siguiente tick

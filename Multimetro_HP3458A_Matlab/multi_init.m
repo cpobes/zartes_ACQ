@@ -39,6 +39,7 @@ end
 
 %fprintf(dsa,'ID?');
 %device=fscanf(dsa)%devuelve HP3562A. Permite comprobar si estamos leyendo el 
+clrdevice(multi);
 device=query(multi,'ID?'); %esta instruccion es más directa.
 %if ~strcmpi('HP3458A',device(1:end-2)), return;end %dispositivo
 %correcto?Este comando fallaba pq ademas de devolver el código, devuelve también un
@@ -60,5 +61,6 @@ end
 
 %command='RESET; END 1; FUNC DCV, 10; NPLC 5'; %%% NPLC 10 -> 1.  % Aquí el FUNC DCV, 10.3e  produce un error de syntaxis. -> .3e es el formato!aqui sobra.
 %clrdevice(multi)
-command='RESET; END 1; NPLC 5';
-query(multi,command);
+%command='RESET; END 1; NPLC 5';
+%query(multi,command);
+fprintf(multi,'RESET; END 1; NPLC 5; TRIG HOLD');
